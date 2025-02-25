@@ -18,6 +18,7 @@ export default function Register() {
     email: '',
     password: '',
     password_confirmation: '',
+    role: '',
     terms: false,
   });
 
@@ -94,6 +95,21 @@ export default function Register() {
             className="mt-2"
             message={form.errors.password_confirmation}
           />
+        </div>
+
+        <div className='mt-4'>
+            <InputLabel htmlFor="role">Rol:</InputLabel>
+            <select
+                className='mt-1 block w-full block bg-gray-900 font-medium text-sm text-gray-700 dark:text-gray-300'
+                id="role"
+                value={form.data.role}
+                onChange={e => form.setData('role', e.target.value)}
+                required
+                >
+                    <option value="">Selecciona un rol</option>
+                    <option value="admin">Admin</option>
+                    <option value="usuario">Usuario</option>
+                </select>
         </div>
 
         {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
