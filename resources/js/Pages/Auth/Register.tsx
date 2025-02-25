@@ -100,7 +100,7 @@ export default function Register() {
         <div className='mt-4'>
             <InputLabel htmlFor="role">Rol:</InputLabel>
             <select
-                className='mt-1 block w-full block bg-gray-900 font-medium text-sm text-gray-700 dark:text-gray-300'
+                className='mt-1 block w-full block bg-gray-900 font-medium text-sm text-gray-700 dark:text-gray-300 rounded-md'
                 id="role"
                 value={form.data.role}
                 onChange={e => form.setData('role', e.target.value)}
