@@ -15,4 +15,11 @@ class Product extends Model
         'image',
         'stock',
     ];
+
+    public function sales()
+    {
+        return $this->belongsToMany(Sale::class, 'sale_product')
+                    ->withPivot('quantity', 'price')  // Los datos adicionales de la tabla intermedia
+                    ->withTimestamps();
+    }
 }
