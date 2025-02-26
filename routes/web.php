@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,4 +37,6 @@ Route::middleware([
     })->name('dashboard');
     // Ruta de los productos
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/Sales', [SaleController::class, 'index'])->name('sales.index');
 });
