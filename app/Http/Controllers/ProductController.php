@@ -27,23 +27,45 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        // Renderizar la vista React para crear un nuevo producto
+        return Inertia::render('products/Create');
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id', // Si tienes categorías
+            // Otros campos a validar...
+        ]);git status
+
+
+        // Crear el nuevo producto
+        $product = Product::create($validatedData);
+
+        // Redirigir o devolver la vista con el producto creado
+        return redirect()->route('products.index')->with('success', 'Producto creado con éxito.');
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        // Obtener el producto por su ID
+        $product = Product::findOrFail($id);
+
+        // Renderizar la vista React usando Inertia y pasar el producto
+        return Inertia::render('products/Show', [
+            'product' => $product
+        ]);
     }
 
     /**
@@ -51,7 +73,13 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Obtener el producto por su ID
+        $product = Product::findOrFail($id);
+
+        // Renderizar la vista React para editar el producto
+        return Inertia::render('products/Edit', [
+            'product' => $product
+        ]);
     }
 
     /**
@@ -59,7 +87,22 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Obtener el producto por su ID
+        $product = Product::findOrFail($id);
+
+        // Validar los datos recibidos
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id', // Si tienes categorías
+            // Otros campos a validar...
+        ]);
+
+        // Actualizar el producto con los nuevos datos
+        $product->update($validatedData);
+
+        // Redirigir o devolver la vista con el producto actualizado
+        return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
     }
 
     /**
@@ -67,6 +110,13 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Obtener el producto por su ID
+        $product = Product::findOrFail($id);
+
+        // Eliminar el producto
+        $product->delete();
+
+        // Redirigir o devolver la vista con el mensaje de éxito
+        return redirect()->route('products.index')->with('success', 'Producto eliminado con éxito.');
     }
 }
