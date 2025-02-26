@@ -43,7 +43,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id', // Si tienes categorías
             // Otros campos a validar...
-        ]);git status
+        ]);
 
 
         // Crear el nuevo producto
