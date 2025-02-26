@@ -14,7 +14,7 @@ class SaleController extends Controller
     public function index()
     {
         // Obtener las ventas con paginación (puedes ajustar el número de elementos por página)
-        $sales = Sale::with('user')->paginate(10);
+        $sales = Sale::with('user');
 
         // Devolver la vista React usando Inertia y pasar las ventas
         return Inertia::render('sales/Index', [
