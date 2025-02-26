@@ -1,6 +1,7 @@
 import React from 'react';
 import Welcome from '@/Components/Welcome';
 import AppLayout from '@/Layouts/AppLayout';
+import { Link } from '@inertiajs/react';
 
 export default function Dashboard() {
   return (
@@ -17,6 +18,7 @@ export default function Dashboard() {
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
             <Welcome />
           </div>
+          <Link href="/products">Ver productos</Link>
         </div>
       </div>
     </AppLayout>

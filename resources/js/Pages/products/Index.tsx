@@ -1,24 +1,17 @@
+// resources/js/Pages/products/Index.js
 import React from 'react';
-import Welcome from '@/Components/Welcome';
-import AppLayout from '@/Layouts/AppLayout';
 
-export default function Index() {
+const Index = ({ products }) => {
   return (
-    <AppLayout
-      title="Dashboard"
-      renderHeader={() => (
-        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          Products
-        </h2>
-      )}
-    >
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-            <h1>aqui viene la tabla principal</h1>
-          </div>
-        </div>
-      </div>
-    </AppLayout>
+    <div>
+      <h1>Lista de Productos</h1>
+      <ul>
+        {products.map((product) => (
+          <li key={product.id}>{product.name}</li> // Aquí asumes que tienes un campo 'name' en tus productos
+        ))}
+      </ul>
+    </div>
   );
-}
+};
+
+export default Index;

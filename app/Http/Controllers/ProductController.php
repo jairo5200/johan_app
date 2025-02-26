@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -11,7 +13,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.Index');
+        // Obtener los productos
+        $products = Product::all();
+
+        // Devolver la vista React usando Inertia y pasar los productos como datos
+        return Inertia::render('products/Index', [
+            'products' => $products
+        ]);
     }
 
     /**
