@@ -1,7 +1,7 @@
 import React from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
-export default function Products({products}) {
+export default function Products({products}: any) {
   return (
     <AppLayout
       title="Productos"
@@ -17,16 +17,16 @@ export default function Products({products}) {
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
               Lista de productos
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600 dark:text-gray-400"></p>
             {products.map((product: any) => (
           <div>
-            <li key={product.id}>{product.name}</li>
-            <li key={product.id}>{product.description}</li>
+            <li >{product.name}</li>
+            <li >{product.description}</li>
             <img src={product.image} alt="golulu" />
           </div>
 
         ))}
-            </p>
+            
           </div>
         </div>
       </div>
