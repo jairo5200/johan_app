@@ -39,7 +39,7 @@ export default function AppLayout({
       },
     );
   }
-
+console.log(route("users"))
   function logout(e: React.FormEvent) {
     e.preventDefault();
     router.post(route('logout'));
@@ -55,11 +55,11 @@ export default function AppLayout({
         <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
           {/* <!-- Primary Navigation Menu --> */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
+            <div className="flex justify-between ">
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  <Link href={route('dashboard')}>
+                  <Link href={route('products')}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
                 </div>
@@ -67,10 +67,25 @@ export default function AppLayout({
                 {/* <!-- Navigation Links --> */}
                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <NavLink
-                    href={route('dashboard')}
-                    active={route().current('dashboard')}
+                    href={route('products')}
+                    active={route().current('products')}
                   >
-                    Dashboard
+                    Productos
+                  </NavLink>
+                  <NavLink
+                    href={route('sales')}
+                  >
+                    Ventas y devoluciones
+                  </NavLink>
+                  <NavLink
+                    href={route('buy')}
+                  >
+                    Compras
+                  </NavLink>
+                  <NavLink
+                    href={route('users')}
+                  >
+                    Usuarios
                   </NavLink>
                 </div>
               </div>
@@ -408,7 +423,7 @@ export default function AppLayout({
         ) : null}
 
         {/* <!-- Page Content --> */}
-        <main>{children}</main>
+        <main className='h-64 m-auto'>{children}</main>
       </div>
     </div>
   );

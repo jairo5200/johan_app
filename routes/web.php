@@ -19,7 +19,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Login', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -36,7 +36,8 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
     // Ruta de los productos
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/Sales', [SaleController::class, 'index'])->name('sales.index');
+    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/sales', [SaleController::class, 'index'])->name('sales');
+    Route::get('/buy', [BuyController::class, 'index'])->name('buy');
 });
