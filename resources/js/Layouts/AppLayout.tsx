@@ -39,7 +39,6 @@ export default function AppLayout({
       },
     );
   }
-console.log(route("users"))
   function logout(e: React.FormEvent) {
     e.preventDefault();
     router.post(route('logout'));
@@ -59,7 +58,7 @@ console.log(route("users"))
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  <Link href={route('products')}>
+                  <Link href={route('dashboard')}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
                 </div>
