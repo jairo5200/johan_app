@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo  from '../../img/Imagen de WhatsApp 2025-03-03 a las 15.29.10_cbf1284e.jpg';
+import logoPrueba  from '../../../public/img/logoPrueba.png';
 
 export default function ApplicationMark(
   props: React.SVGProps<SVGSVGElement>,
@@ -22,7 +22,7 @@ export default function ApplicationMark(
     // </svg>
     <img
     className="w-16  my-1.5"
-    src={Logo}
+    src={logoPrueba}
     >
     </img>
     

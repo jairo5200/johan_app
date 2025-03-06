@@ -5,7 +5,7 @@ export default function ProductItem({
   }: any) {
     return (
         <tr  className="text-center text-white bg-gray-800 border-b border-gray-300">
-            <td className="px-4 py-2 border-r border-gray-300"><img src={product.image} alt="" className="w-[100px]" /></td>
+            <td className="px-4 py-2 border-r border-gray-300"><img src={`/img/${product.image}`} alt="" className="w-[3rem] h-[3rem]" /></td>
             <td className="px-4 py-2 border-r border-gray-300">{product.name}</td>
             <td className="px-4 py-2 border-r border-gray-300">{product.description}</td>
             <td className="px-4 py-2 border-r border-gray-300">{product.price}</td>
