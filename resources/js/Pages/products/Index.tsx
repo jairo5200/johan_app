@@ -20,7 +20,7 @@ export default function Products({products}: any) {
      Productos
      </h2>
      )}>
-      <div className="py-12">
+      <div className="py-12"></div>
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
           <div className='bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-6'>
             <div className="flex justify-between items-center mb-4">
@@ -29,25 +29,26 @@ export default function Products({products}: any) {
                 Agregar Producto
               </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full shadow-lg border border-gray-300 rounded-lg overflow-hidden">
-                <thead>
-                  <tr className="bg-gray-700 text-white">
-                    <th className="px-4 py-2 border-b border-gray-300">Image</th>
-                    <th className="px-4 py-2 border-b border-gray-300">Name</th>
-                    <th className="px-4 py-2 border-b border-gray-300">Description</th>
-                    <th className="px-4 py-2 border-b border-gray-300">Price</th>
-                    <th className="px-4 py-2 border-b border-gray-300">Stock</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleItems.map((product: any) => (
-                      <ProductItem key={product.id} product={product}/>
+            <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
+              <div className='overflow-hidden'>
+                <table className="w-full table-auto overflow-hidden border-collapse">
+                  <thead>
+                    <tr className="bg-gray-800 text-white">
+                      <th className="px-4 py-2 w-[70px] border-r border-b border-gray-300">Image</th>
+                      <th className="px-4 py-2 w-[200px] border-r border-b border-gray-300">Name</th>
+                      <th className="px-4 py-2 w-[500px] border-r border-b border-gray-300">Description</th>
+                      <th className="px-4 py-2 w-[70px] text-center border-r border-b border-gray-300">Price</th>
+                      <th className="px-2 py-2 w-[60px] text-center border-b border-gray-300">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleItems.map((product: any) => (
+                      <ProductItem key={product.id} product={product} />
                     ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
 
           {/* Paginación */}
           <div className="flex justify-center space-x-2 mt-4">

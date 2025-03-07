@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import React from 'react';
-import Logo from '../../img/Imagen de WhatsApp 2025-03-03 a las 15.29.10_cbf1284e.jpg'
+import Logo from '../../../public/img/logoPrueba.png'
 
 export default function AuthenticationCardLogo() {
   return (

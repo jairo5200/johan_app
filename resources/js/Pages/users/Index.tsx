@@ -21,14 +21,14 @@ export default function Users({ users }: any) {
   const confirmDeleteUser = async () => {
     if (selectedUser) {
       try {
-        const response = await fetch(`/users/${selectedUser.id_usuario}`, {
+        const response = await fetch(`/users/${selectedUser.id_usuario}`, {  // Aquí van las comillas invertidas
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
           },
         });
-
+        
         if (response.ok) {
           console.log('Usuario eliminado:', selectedUser);
           setShowDeleteModal(false);
@@ -107,7 +107,7 @@ export default function Users({ users }: any) {
 
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Eliminar Usuario</h2>
             <p>¿Estás seguro de que deseas eliminar a {selectedUser?.name}?</p>
             <div className="flex justify-end mt-4">
@@ -120,12 +120,12 @@ export default function Users({ users }: any) {
 
       {showAddUserModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
-            <input type="text" name="name" placeholder="Nombre" className="block w-full mb-2 p-2 border rounded-lg" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" className="block w-full mb-2 p-2 border rounded-lg" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Contraseña" className="block w-full mb-2 p-2 border rounded-lg" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirmar Contraseña" className="block w-full mb-2 p-2 border rounded-lg" onChange={handleChange} />
+            <input type="text" name="name" placeholder="Nombre"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+            <input type="email" name="email" placeholder="Email"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+            <input type="password" name="password" placeholder="Contraseña"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+            <input type="password" name="confirmPassword" placeholder="Confirmar Contraseña"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
             <div className="flex justify-end mt-4">
               <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddUserModal}>Cancelar</button>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>

@@ -73,16 +73,19 @@ export default function AppLayout({
                   </NavLink>
                   <NavLink
                     href={route('sales')}
+                    active={route().current('sales')}
                   >
                     Ventas y devoluciones
                   </NavLink>
                   <NavLink
                     href={route('buy')}
+                    active={route().current('buy')}
                   >
                     Compras
                   </NavLink>
                   <NavLink
                     href={route('users')}
+                    active={route().current('users')}
                   >
                     Usuarios
                   </NavLink>
