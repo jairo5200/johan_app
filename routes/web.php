@@ -19,8 +19,8 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Login', [
-        'canLogin' => Route::has('login'),
+    return Inertia::render('Auth/Login', [
+        'canLogin' => Route::has('Login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
