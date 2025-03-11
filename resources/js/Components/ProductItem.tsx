@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-export default function ProductItem({ product }: any) {
+export default function ProductItem({ product, handleDeleteUser }: any) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -19,7 +19,12 @@ export default function ProductItem({ product }: any) {
         <td className="px-4 py-2 border-b border-r border-gray-300">{product.name}</td>
         <td className="px-4 py-2 w-[600px] border-b border-r border-gray-300">{product.description}</td>
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.price}</td>
-        <td className="px-4 py-2 border-b border-gray-300 text-center">{product.stock}</td>
+        <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.stock}</td>
+        <td className="px-4 py-2 border-b border-gray-300">
+          <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" onClick={() => handleDeleteUser(product)}>
+            Eliminar
+          </button>
+        </td>
       </tr>
 
       {isOpen &&

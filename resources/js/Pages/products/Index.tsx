@@ -23,7 +23,53 @@ export default function Products({ products }: any) {
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (page - 1) * itemsPerPage;
   const visibleItems = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: '',
+    description: '',
+    price: '',
+    stock: '',
+  });
+  
+  const handleDeleteUser = (user: any) => {
+    setSelectedProduct(user);
+    setShowDeleteModal(true);
+  };
+  
+  const confirmDeleteUser = async () => {
+    if (selectedProduct) {
+      try {
+        const response = await fetch(`/users/${selectedProduct.id_usuario}`, {  // Aquí van las comillas invertidas
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+          },
+        });
+        
+        if (response.ok) {
+          console.log('producto eliminado:', selectedProduct);
+          setShowDeleteModal(false);
+          // Aquí puedes actualizar la lista de usuarios o recargar la página si es necesario
+          window.location.reload();
+        } else {
+          console.error('Error al eliminar el producto');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    }
+  };
+  
+  const handleAddUser = () => setShowAddUserModal(true);
+  const closeAddUserModal = () => setShowAddUserModal(false);
+  const closeDeleteModal = () => setShowDeleteModal(false);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  };
   return (
     <AppLayout 
       title="Products" 
@@ -42,7 +88,7 @@ export default function Products({ products }: any) {
               <div>
                 <BarraBusqueda setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
               </div>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddUser}>
                 Agregar Producto
               </button>
             </div>
@@ -57,12 +103,13 @@ export default function Products({ products }: any) {
                     <th className="px-4 py-2 w-[200px] border-r border-b border-gray-300">Producto</th>
                     <th className="px-4 py-2 w-[600px] border-r border-b border-gray-300">Descripcion</th>
                     <th className="px-4 py-2 w-[70px] text-center border-r border-b border-gray-300">Precio</th>
-                    <th className="px-2 py-2 w-[60px] text-center border-b border-gray-300">Stock</th>
+                    <th className="px-2 py-2 w-[60px] text-center border-r border-b border-gray-300">Stock</th>
+                    <th className="px-4 py-2 border-b border-gray-300">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {visibleItems.map((product: any) => (
-                    <ProductItem key={product.id} product={product} />
+                    <ProductItem key={product.id} product={product} handleDeleteUser={handleDeleteUser} />
                   ))}
                 </tbody>
               </table>
@@ -101,6 +148,34 @@ export default function Products({ products }: any) {
               >
                 Next »
               </button>
+            </div>
+          )}
+          {showDeleteModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+                <h2 className="text-2xl font-bold mb-4">Eliminar Producto</h2>
+                <p>¿Estás seguro de que deseas eliminar a {selectedProduct?.name}?</p>
+                <div className="flex justify-end mt-4">
+                  <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeDeleteModal}>Cancelar</button>
+                  <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" onClick={confirmDeleteUser}>Confirmar</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showAddUserModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+                <h2 className="text-2xl font-bold mb-4">Agregar Producto</h2>
+                <input type="text" name="name" placeholder="Nombre del producto"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+                <input type="text" name="Description" placeholder="Descripcion"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+                <input type="text" name="price" placeholder="Precio"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+                <input type="text" name="stock" placeholder="Stock"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+                <div className="flex justify-end mt-4">
+                  <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddUserModal}>Cancelar</button>
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
+                </div>
+              </div>
             </div>
           )}
         </div>
