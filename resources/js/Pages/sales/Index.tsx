@@ -51,6 +51,43 @@ export default function SalesAndReturns() {
                 </select>
               </div>
             </div>
+            <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
+              <div className='overflow-hidden'>
+                <table className="w-full table-auto overflow-hidden border-collapse">
+                  <thead>
+                    <tr className="bg-gray-700 text-white">
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Día</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Producto</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Referencia</th>
+                      <th className="px-4 py-2 w-[70px] border-r border-b border-gray-300">Cantidad</th>
+                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* {users.length > 0 ? (
+                      users.map((user: any, index: number) => (
+                        <tr key={index} className="text-center text-white bg-gray-800 border-b border-gray-300">
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.name}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id_usuario}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.email}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.rol}</td>
+                          <td className="px-4 py-2 border-b border-gray-300">
+                            <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-2 text-center text-white">No hay usuarios disponibles</td>
+                      </tr>
+                    )} */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

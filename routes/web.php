@@ -39,5 +39,4 @@ Route::middleware([
     Route::get('/products', [ProductController::class, 'index'])->name('products');
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales');
-    Route::get('/buy', [BuyController::class, 'index'])->name('buy');
 });

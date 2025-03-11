@@ -8,7 +8,7 @@ export default function ProductItem({ product }: any) {
   return (
     <>
       <tr className="text-center text-white bg-gray-800 border-gray-300">
-        <td className="px-4 py-2 border-b border-r border-gray-300">
+        <td className="px-4 py-2 border-b border-r border-gray-300 ">
           <img
             src={`/img/${product.image}`}
             alt={product.name}
@@ -17,7 +17,7 @@ export default function ProductItem({ product }: any) {
           />
         </td>
         <td className="px-4 py-2 border-b border-r border-gray-300">{product.name}</td>
-        <td className="px-4 py-2 w-[500px] border-b border-r border-gray-300">{product.description}</td>
+        <td className="px-4 py-2 w-[600px] border-b border-r border-gray-300">{product.description}</td>
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.price}</td>
         <td className="px-4 py-2 border-b border-gray-300 text-center">{product.stock}</td>
       </tr>
