@@ -75,7 +75,7 @@ export default function Users({ users }: any) {
                       <th className="px-4 py-2 border-r border-b border-gray-300">ID Usuario</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Nombre</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Email</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Rol</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Role</th>
                       <th className="px-4 py-2 border-b border-gray-300">Acciones</th>
                     </tr>
                   </thead>
@@ -83,10 +83,10 @@ export default function Users({ users }: any) {
                     {users.length > 0 ? (
                       users.map((user: any, index: number) => (
                         <tr key={index} className="text-center text-white bg-gray-800 border-b border-gray-300">
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.name}</td>
-                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id_usuario}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.email}</td>
-                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.rol}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.role}</td>
                           <td className="px-4 py-2 border-b border-gray-300">
                             <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
                               Eliminar
