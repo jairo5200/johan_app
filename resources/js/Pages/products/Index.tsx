@@ -38,10 +38,15 @@ export default function Products({ products }: any) {
         <div className='bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-6'>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Productos</h1>
-            <div><BarraBusqueda setSearchTerm={setSearchTerm} searchTerm={searchTerm} /></div>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              Agregar Producto
-            </button>
+            <div className='flex space-x-4 items-center'>
+              <div>
+                <BarraBusqueda setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+              </div>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Agregar Producto
+              </button>
+            </div>
+            
           </div>
           <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
             <div className='overflow-hidden'>

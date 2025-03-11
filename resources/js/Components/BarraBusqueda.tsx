@@ -8,8 +8,8 @@ export default function ProductTable({ setSearchTerm, searchTerm }: any) {
       {/* Barra de búsqueda */}
       <input
         type="text"
-        placeholder="Buscar producto..."
-        className="mb-4 p-2 w-full border rounded-lg"
+        placeholder="Buscar..."
+        className="p-2 w-fullp-2 border rounded-lg bg-gray-800 text-white border rounded-lg"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
