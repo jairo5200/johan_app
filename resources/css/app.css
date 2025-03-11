@@ -22,3 +22,10 @@ th {
 }
 
 
+input:-webkit-autofill {
+    background-color: #1f2937 !important; /* Gris oscuro */
+    color: white !important; /* Texto blanco */
+    -webkit-text-fill-color: white !important; /* Asegura que el texto se mantenga blanco */
+    -webkit-box-shadow: 0 0 0px 1000px #1f2937 inset !important;
+  }
+  

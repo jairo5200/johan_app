@@ -39,7 +39,8 @@ const ChartComponent: React.FC<ChartProps> = ({ title, labels, data }) => {
                 "rgba(153, 102, 255, 1)",
                 "rgba(255, 159, 64, 1)",
               ],
-              borderWidth: 1,
+              borderWidth: 2,
+              borderRadius: 8,
             },
           ],
         },
@@ -61,7 +62,8 @@ const ChartComponent: React.FC<ChartProps> = ({ title, labels, data }) => {
   }, [title, labels, data]);
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl 
+                    border-4 border-blue-300 shadow-blue-300/10">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         {title}
       </h2>
@@ -70,6 +72,7 @@ const ChartComponent: React.FC<ChartProps> = ({ title, labels, data }) => {
       </div>
     </div>
   );
+  
 };
 
 export default ChartComponent;

@@ -83,10 +83,10 @@ export default function Users({ users }: any) {
                     {users.length > 0 ? (
                       users.map((user: any, index: number) => (
                         <tr key={index} className="text-center text-white bg-gray-800 border-b border-gray-300">
-                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.name}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id_usuario}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.email}</td>
-                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.role}</td>
+                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.rol}</td>
                           <td className="px-4 py-2 border-b border-gray-300">
                             <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
                               Eliminar
@@ -124,7 +124,7 @@ export default function Users({ users }: any) {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
-            <input type="text" name="name" placeholder="Nombre"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
+            <input type="text" name="name" placeholder="Nombre"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white focus:bg-gray-800" onChange={handleChange} />
             <input type="text" name="cedula" placeholder="Cedula" className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange}/>
             <input type="email" name="email" placeholder="Email"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
             <input type="password" name="password" placeholder="Contraseña"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
