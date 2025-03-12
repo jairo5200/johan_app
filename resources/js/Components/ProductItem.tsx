@@ -34,7 +34,7 @@ export default function ProductItem({ product, handleDeleteUser }: any) {
             onClick={() => setIsOpen(false)}
           >
             <img
-              src={`/img/${product.image}`}
+              src={`/${product.image}`}
               alt={product.name}
               className="max-w-full max-h-full"
             />
