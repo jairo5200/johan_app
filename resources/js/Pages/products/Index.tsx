@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Link } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
+import useRoute from '@/Hooks/useRoute';
 
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 1; // Elementos por página
+  const itemsPerPage = 5; // Elementos por página
+  const route = useRoute();
 
   // Filtra los productos por nombre
   const filteredProducts = products.filter((product: any) =>
@@ -23,56 +25,88 @@ export default function Products({ products }: any) {
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (page - 1) * itemsPerPage;
   const visibleItems = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [newUser, setNewUser] = useState({
+
+  const { delete: deleteProduct, post, data, setData, errors } = useForm({
     name: '',
     description: '',
     price: '',
     stock: '',
+    image: '',
   });
-  
-  const handleDeleteUser = (user: any) => {
-    setSelectedProduct(user);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+
+  const handleDeleteProduct = (product: any) => {
+    setSelectedProduct(product);
     setShowDeleteModal(true);
   };
-  
-  const confirmDeleteUser = async () => {
+
+  const confirmDeleteProduct = () => {
     if (selectedProduct) {
-      try {
-        const response = await fetch(`/users/${selectedProduct.id_usuario}`, {  // Aquí van las comillas invertidas
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-          },
-        });
-        
-        if (response.ok) {
-          console.log('producto eliminado:', selectedProduct);
+      deleteProduct(route('products.destroy', selectedProduct.id), {
+        onSuccess: () => {
           setShowDeleteModal(false);
-          // Aquí puedes actualizar la lista de usuarios o recargar la página si es necesario
-          window.location.reload();
-        } else {
-          console.error('Error al eliminar el producto');
-        }
-      } catch (error) {
-        console.error('Error en la solicitud:', error);
-      }
+          console.log('Producto eliminado');
+        },
+        onError: (errors) => {
+          console.error('Error al eliminar el producto', errors);
+        },
+      });
     }
   };
-  
-  const handleAddUser = () => setShowAddUserModal(true);
-  const closeAddUserModal = () => setShowAddUserModal(false);
+
+  const handleAddProduct = () => setShowAddProductModal(true);
+  const closeAddProductModal = () => setShowAddProductModal(false);
   const closeDeleteModal = () => setShowDeleteModal(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+    if (name === 'image' && files) {
+      // Si el campo es una imagen, actualizamos el archivo
+      setData({
+        ...data,
+        [name]: files[0], // Guardamos el archivo seleccionado
+      });
+    } else {
+      // Si es un input regular, lo guardamos en el state
+      setData({
+        ...data,
+        [name]: value,
+      });
+    }
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData();  // Creamos un nuevo FormData
+
+    // Agregamos los campos del formulario al FormData
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+    formData.append('price', data.price);
+    formData.append('stock', data.stock);
+
+    // Agregamos el archivo de imagen (si lo hay)
+    if (data.image) {
+      formData.append('image', data.image);
+    }
+
+    // Enviamos el formulario usando FormData
+    post(route('products.store'), {
+      data: formData,  // Aquí pasamos el FormData
+      onSuccess: () => {
+        setShowAddProductModal(false);
+        console.log('Producto agregado con éxito');
+      },
+    });
+  };
+
   return (
-    <AppLayout 
-      title="Products" 
+    <AppLayout
+      title="Productos"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
           Productos
@@ -88,11 +122,10 @@ export default function Products({ products }: any) {
               <div>
                 <BarraBusqueda setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
               </div>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddUser}>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddProduct}>
                 Agregar Producto
               </button>
             </div>
-            
           </div>
           <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
             <div className='overflow-hidden'>
@@ -109,7 +142,7 @@ export default function Products({ products }: any) {
                 </thead>
                 <tbody>
                   {visibleItems.map((product: any) => (
-                    <ProductItem key={product.id} product={product} handleDeleteUser={handleDeleteUser} />
+                    <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} />
                   ))}
                 </tbody>
               </table>
@@ -131,11 +164,7 @@ export default function Products({ products }: any) {
                 <button
                   key={index}
                   onClick={() => setPage(index + 1)}
-                  className={`px-4 py-2 rounded-md ${
-                    page === index + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                  }`}
+                  className={`px-4 py-2 rounded-md ${page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
                 >
                   {index + 1}
                 </button>
@@ -150,6 +179,8 @@ export default function Products({ products }: any) {
               </button>
             </div>
           )}
+
+          {/* Modal Eliminar Producto */}
           {showDeleteModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
@@ -157,24 +188,65 @@ export default function Products({ products }: any) {
                 <p>¿Estás seguro de que deseas eliminar a {selectedProduct?.name}?</p>
                 <div className="flex justify-end mt-4">
                   <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeDeleteModal}>Cancelar</button>
-                  <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" onClick={confirmDeleteUser}>Confirmar</button>
+                  <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" onClick={confirmDeleteProduct}>Confirmar</button>
                 </div>
               </div>
             </div>
           )}
 
-          {showAddUserModal && (
+          {/* Modal Agregar Producto */}
+          {showAddProductModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
                 <h2 className="text-2xl font-bold mb-4">Agregar Producto</h2>
-                <input type="text" name="name" placeholder="Nombre del producto"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
-                <input type="text" name="Description" placeholder="Descripcion"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
-                <input type="text" name="price" placeholder="Precio"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
-                <input type="text" name="stock" placeholder="Stock"  className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" onChange={handleChange} />
-                <div className="flex justify-end mt-4">
-                  <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddUserModal}>Cancelar</button>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
-                </div>
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Nombre del producto"
+                    className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    name="description"
+                    placeholder="Descripción"
+                    className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    name="price"
+                    placeholder="Precio"
+                    className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    name="stock"
+                    placeholder="Stock"
+                    className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                    onChange={handleChange}
+                  />
+                    <div className="col-sm">
+                        <div className="grid grid-cols-1  mx-7">
+                            <label className="uppercase md:text-m text-m text-black text-black font-semibold mb-1">Subir Imagen</label>
+                                <div className='flex items-center justify-center w-full'>
+                                    <label className='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
+                                        <div className='flex flex-col items-center justify-center pt-7'>
+                                        <svg className="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <p className='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione la imagen</p>
+                                        </div>
+                                    <input name="image" id="image" type='file' className="hidden" onChange={handleChange} />
+                                    </label>
+                                </div>
+                        </div>
+                    </div>
+                  <div className="flex justify-end mt-4">
+                    <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddProductModal}>Cancelar</button>
+                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
+                  </div>
+                </form>
               </div>
             </div>
           )}

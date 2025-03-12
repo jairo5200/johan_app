@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -13,53 +15,45 @@ class UserController extends Controller
      */
     public function index()
     {
-       // Obtener los productos
-       $users = User::all();
+        // Obtener el user por su ID
+        $user = User::findOrFail(Auth::id());
 
-       // Devolver la vista React usando Inertia y pasar los productos como datos
-       return Inertia::render('users/Index', [
-           'users' => $users
-       ]);
+        if ($user->role == "admin") {
+            // Obtener los productos
+            $users = User::all();
+
+            // Devolver la vista React usando Inertia y pasar los productos como datos
+            return Inertia::render('users/Index', [
+                'users' => $users
+            ]);
+        }
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Método para almacenar el usuario en la base de datos
     public function store(Request $request)
     {
-        //
-    }
+        // Validación de los datos del formulario
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string|in:admin,usuario',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        // Crear el usuario en la base de datos
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        /* // Autenticar al usuario si lo deseas
+        Auth::guard('web')->login($user); */
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        // Devolver una respuesta Inertia indicando que la creación fue exitosa
+        return redirect()->route('users.index');
     }
 
     /**
@@ -70,10 +64,17 @@ class UserController extends Controller
         // Obtener el user por su ID
         $user = User::findOrFail($id);
 
+        if (Auth::id() == $user->id) {
+            return response()->json(['message' => 'No puedes eliminar tu propio usuario'], 403);
+        }
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
         // Eliminar el producto
         $user->delete();
 
-        // Redirigir o devolver la vista con el mensaje de éxito
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado con éxito.');
+         // Responder con un mensaje de éxito
+         return redirect()->route('users.index'); // Cambia 'dashboard' por la ruta que desees
     }
 }
