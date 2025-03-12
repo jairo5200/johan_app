@@ -43,7 +43,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'numeric',
-            'image' => 'required|image|mimes:jpg,jpeg,png,svg|max:2048',
+            'image' => 'required|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
         ]);
 
        // Procesar la imagen
