@@ -2,17 +2,12 @@ import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Checkbox from '@/Components/Checkbox';
-import InputLabel from '@/Components/InputLabel';
-import InputError from '@/Components/InputError';
-import TextInput from '@/Components/TextInput';
 
 export default function Users({ users }: any) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-    const route = useRoute();
+  const route = useRoute();
   const { delete: deleteUser } = useForm(); // Aquí usamos delete para manejar la solicitud DELETE
   const { data, setData, post, errors } = useForm({
     name: '',
@@ -36,6 +31,7 @@ export default function Users({ users }: any) {
     post(route('users.store'), {
       onFinish: () => console.log('Formulario enviado con éxito'),
     });
+    setShowAddUserModal(false)
   };
 
   const handleDeleteUser = (userId: number) => {
@@ -53,7 +49,6 @@ export default function Users({ users }: any) {
   };
 
   const handleAddUser = () => setShowAddUserModal(true);
-  const closeAddUserModal = () => setShowAddUserModal(false);
   const closeDeleteModal = () => setShowDeleteModal(false);
 
 
@@ -127,104 +122,107 @@ export default function Users({ users }: any) {
       )}
 
       {showAddUserModal && (
-        <>
+         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg w-96 border border-gray-700">
         <Head title="Crear Usuario" />
-        <div className="container mx-auto p-4">
-          <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Nombre
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                className="mt-1 block w-full p-2 border rounded-md"
-                value={data.name}
-                onChange={handleChange}
-                required
-              />
-              {errors.name && <div className="text-red-500 text-xs mt-2">{errors.name}</div>}
-            </div>
+            <div className="container mx-auto p-4">
+            <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    Nombre
+                </label>
+                <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    className="mt-1 block w-full p-2 border rounded-md"
+                    value={data.name}
+                    onChange={handleChange}
+                    required
+                />
+                {errors.name && <div className="text-red-500 text-xs mt-2">{errors.name}</div>}
+                </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="mt-1 block w-full p-2 border rounded-md"
-                value={data.email}
-                onChange={handleChange}
-                required
-              />
-              {errors.email && <div className="text-red-500 text-xs mt-2">{errors.email}</div>}
-            </div>
+                <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Correo Electrónico
+                </label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    className="mt-1 block w-full p-2 border rounded-md"
+                    value={data.email}
+                    onChange={handleChange}
+                    required
+                />
+                {errors.email && <div className="text-red-500 text-xs mt-2">{errors.email}</div>}
+                </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                className="mt-1 block w-full p-2 border rounded-md"
-                value={data.password}
-                onChange={handleChange}
-                required
-              />
-              {errors.password && <div className="text-red-500 text-xs mt-2">{errors.password}</div>}
-            </div>
+                <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Contraseña
+                </label>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    className="mt-1 block w-full p-2 border rounded-md"
+                    value={data.password}
+                    onChange={handleChange}
+                    required
+                />
+                {errors.password && <div className="text-red-500 text-xs mt-2">{errors.password}</div>}
+                </div>
 
-            <div>
-              <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
-                Confirmar Contraseña
-              </label>
-              <input
-                type="password"
-                name="password_confirmation"
-                id="password_confirmation"
-                className="mt-1 block w-full p-2 border rounded-md"
-                value={data.password_confirmation}
-                onChange={handleChange}
-                required
-              />
-              {errors.password_confirmation && <div className="text-red-500 text-xs mt-2">{errors.password_confirmation}</div>}
-            </div>
+                <div>
+                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
+                    Confirmar Contraseña
+                </label>
+                <input
+                    type="password"
+                    name="password_confirmation"
+                    id="password_confirmation"
+                    className="mt-1 block w-full p-2 border rounded-md"
+                    value={data.password_confirmation}
+                    onChange={handleChange}
+                    required
+                />
+                {errors.password_confirmation && <div className="text-red-500 text-xs mt-2">{errors.password_confirmation}</div>}
+                </div>
 
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                Rol
-              </label>
-              <select
-                name="role"
-                id="role"
-                className="mt-1 block w-full p-2 border rounded-md"
-                value={data.role}
-                onChange={handleChange}
-                required
-              >
-                <option value="usuario">Usuario</option>
-                <option value="admin">Administrador</option>
-              </select>
-              {errors.role && <div className="text-red-500 text-xs mt-2">{errors.role}</div>}
-            </div>
+                <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                    Rol
+                </label>
+                <select
+                    name="role"
+                    id="role"
+                    className="mt-1 block w-full p-2 border rounded-md"
+                    value={data.role}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="usuario">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+                {errors.role && <div className="text-red-500 text-xs mt-2">{errors.role}</div>}
+                </div>
 
-            <div className="flex justify-end mt-4">
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Guardar Usuario
-              </button>
+                <div className="flex justify-end mt-4">
+                <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={() => setShowAddUserModal(false)}>Cancelar</button>
+                <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                    Guardar Usuario
+                </button>
+                </div>
+            </form>
             </div>
-          </form>
         </div>
-      </>
+    </div>
       )}
     </AppLayout>
   );

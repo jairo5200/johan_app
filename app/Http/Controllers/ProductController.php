@@ -40,14 +40,32 @@ class ProductController extends Controller
         // Validar los datos del formulario
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id', // Si tienes categorías
-            // Otros campos a validar...
+            'stock' => 'numeric',
+            'image' => 'required|image|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
 
+       // Procesar la imagen
+        if ($request->hasFile('image')) {
+            // Obtener el archivo de la imagen
+            $image = $request->file('image');
 
-        // Crear el nuevo producto
-        $product = Product::create($validatedData);
+            // Generar un nombre único para la imagen
+            $imageName = $image->getClientOriginalName();
+
+            // Mover la imagen al directorio 'public/img'
+            $image->move(public_path('img'), $imageName);
+        }
+
+        // Crear el nuevo producto con la imagen guardada
+        $product = Product::create([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'price' => $validatedData['price'],
+            'stock' => $validatedData['stock'],
+            'image' => 'img/' . $imageName, // Solo guardamos la ruta relativa
+        ]);
 
         // Redirigir o devolver la vista con el producto creado
         return redirect()->route('products.index')->with('success', 'Producto creado con éxito.');

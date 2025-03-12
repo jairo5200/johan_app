@@ -36,9 +36,10 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
     // Ruta de los productos
-    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/sales', [SaleController::class, 'index'])->name('sales');
+    Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
 });

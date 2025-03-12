@@ -66,14 +66,14 @@ export default function AppLayout({
                 {/* <!-- Navigation Links --> */}
                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <NavLink
-                    href={route('products')}
-                    active={route().current('products')}
+                    href={route('products.index')}
+                    active={route().current('products.index')}
                   >
                     Productos
                   </NavLink>
                   <NavLink
-                    href={route('sales')}
-                    active={route().current('sales')}
+                    href={route('sales.index')}
+                    active={route().current('sales.index')}
                   >
                     Ventas y devoluciones
                   </NavLink>

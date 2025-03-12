@@ -15,13 +15,19 @@ class UserController extends Controller
      */
     public function index()
     {
-       // Obtener los productos
-       $users = User::all();
+        // Obtener el user por su ID
+        $user = User::findOrFail(Auth::id());
 
-       // Devolver la vista React usando Inertia y pasar los productos como datos
-       return Inertia::render('users/Index', [
-           'users' => $users
-       ]);
+        if ($user->role == "admin") {
+            // Obtener los productos
+            $users = User::all();
+
+            // Devolver la vista React usando Inertia y pasar los productos como datos
+            return Inertia::render('users/Index', [
+                'users' => $users
+            ]);
+        }
+
     }
 
     // Método para almacenar el usuario en la base de datos
@@ -43,11 +49,11 @@ class UserController extends Controller
             'role' => $validated['role'],
         ]);
 
-        // Autenticar al usuario si lo deseas
-        Auth::guard('web')->login($user);
+        /* // Autenticar al usuario si lo deseas
+        Auth::guard('web')->login($user); */
 
         // Devolver una respuesta Inertia indicando que la creación fue exitosa
-        return redirect()->route('users.index'); // Cambia 'dashboard' por la ruta que desees
+        return redirect()->route('users.index');
     }
 
     /**
@@ -57,6 +63,10 @@ class UserController extends Controller
     {
         // Obtener el user por su ID
         $user = User::findOrFail($id);
+
+        if (Auth::id() == $user->id) {
+            return response()->json(['message' => 'No puedes eliminar tu propio usuario'], 403);
+        }
 
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
