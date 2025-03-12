@@ -78,8 +78,8 @@ export default function AppLayout({
                     Ventas y devoluciones
                   </NavLink>
                   <NavLink
-                    href={route('users')}
-                    active={route().current('users')}
+                    href={route('users.index')}
+                    active={route().current('users.index')}
                   >
                     Usuarios
                   </NavLink>

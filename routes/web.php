@@ -37,6 +37,8 @@ Route::middleware([
     })->name('dashboard');
     // Ruta de los productos
     Route::get('/products', [ProductController::class, 'index'])->name('products');
-    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales');
 });
