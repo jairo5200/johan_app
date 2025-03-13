@@ -102,8 +102,10 @@
 import React, { useState } from "react";
 import AppLayout from "@/Layouts/AppLayout";
 import ChartComponent from "@/Components/ChartComponent";
+import ProductCard from "@/Components/ProductCard";
 
-export default function Dashboard() {
+export default function Dashboard({products}:any) {
+  console.log(products)
   const [filter, setFilter] = useState<"week" | "month" | "year">("month");
 
   const labels = {
@@ -125,7 +127,13 @@ export default function Dashboard() {
   };
 
   return (
-    <AppLayout title="Dashboard">
+    <AppLayout 
+      title="Dashboard" 
+      renderHeader={() => (
+        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+          Dashboard
+        </h2>
+      )}>
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           {/* Contenedor único para ambos gráficos */}
@@ -163,6 +171,14 @@ export default function Dashboard() {
                 data={dataGastos[filter]}
               />
             </div>
+          </div>
+        </div>
+        <div className="container mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-4">Inventario de Productos</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((product:any) => (
+              <ProductCard key={product.id} product={product}/>
+            ))}
           </div>
         </div>
       </div>
