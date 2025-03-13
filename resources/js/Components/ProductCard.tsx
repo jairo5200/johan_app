@@ -2,9 +2,9 @@ import React from "react";
 
 const ProductCard = ({ product}:any) => {
   return (
-    <div className="bg-white shadow rounded-lg p-4 flex flex-col items-center">
+    <div className=" pl-3 flex flex-col border-l-4">
       {/* Título con el nombre del producto */}
-      <div className="text-xl font-semibold mb-2">
+      <div className="text-xl font-semibold ">
         {product.name}
       </div>
       {/* Número de stock */}

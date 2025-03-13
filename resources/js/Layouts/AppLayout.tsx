@@ -419,7 +419,7 @@ export default function AppLayout({
         ) : null}
 
         {/* <!-- Page Content --> */}
-        <main className='h-64 m-auto min-h-screen'>{children}</main>
+        <main className='h-64 m-auto min-h-max'>{children}</main>
       </div>
     </div>
   );

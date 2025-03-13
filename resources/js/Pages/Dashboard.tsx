@@ -173,12 +173,14 @@ export default function Dashboard({products}:any) {
             </div>
           </div>
         </div>
-        <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">Inventario de Productos</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product:any) => (
-              <ProductCard key={product.id} product={product}/>
-            ))}
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-16">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
+            <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">Inventario de Productos</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.map((product:any) => (
+                <ProductCard key={product.id} product={product}/>
+              ))}
+            </div>
           </div>
         </div>
       </div>
