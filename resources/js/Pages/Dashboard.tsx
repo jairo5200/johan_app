@@ -105,7 +105,6 @@ import ChartComponent from "@/Components/ChartComponent";
 import ProductCard from "@/Components/ProductCard";
 
 export default function Dashboard({products}:any) {
-  console.log(products)
   const [filter, setFilter] = useState<"week" | "month" | "year">("month");
 
   const labels = {
@@ -130,7 +129,7 @@ export default function Dashboard({products}:any) {
     <AppLayout 
       title="Dashboard" 
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 className="font-semibold text-xl text-amber-100 leading-tight">
           Dashboard
         </h2>
       )}>
@@ -175,8 +174,8 @@ export default function Dashboard({products}:any) {
         </div>
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-16">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
-            <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">Inventario de Productos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <h2 className="font-semibold text-2xl  text-amber-100 leading-tight mb-4">Inventario</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
               {products.map((product:any) => (
                 <ProductCard key={product.id} product={product}/>
               ))}

@@ -2,13 +2,13 @@ import React from "react";
 
 const ProductCard = ({ product}:any) => {
   return (
-    <div className=" pl-3 flex flex-col border-l-4">
+    <div className=" pl-3 flex flex-col border-l-4 border-amber-100">
       {/* Título con el nombre del producto */}
-      <div className="text-xl font-semibold ">
+      <div className="font-semibold  text-gray-800 dark:text-gray-400 leading-tight">
         {product.name}
       </div>
       {/* Número de stock */}
-      <div className="text-3xl font-bold text-green-500">
+      <div className=" font-bold text-lg text-orange-300">
         {product.stock}
       </div>
     </div>
