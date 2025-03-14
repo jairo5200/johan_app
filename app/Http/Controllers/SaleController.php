@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,13 +14,17 @@ class SaleController extends Controller
      */
     public function index()
     {
-        // Obtener las ventas con paginación (puedes ajustar el número de elementos por página)
-        $sales = Sale::with('user');
+        // Obtener las ventas
+        $sales = Sale::all();
+        // Obtener los productos
+        $products = Product::all();
 
         // Devolver la vista React usando Inertia y pasar las ventas
         return Inertia::render('sales/Index', [
-            'sales' => $sales
+            'sales' => $sales,
+            'products' => $products
         ]);
+
     }
 
     /**
