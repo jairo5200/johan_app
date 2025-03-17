@@ -123,20 +123,20 @@ export default function Users({ users }: any) {
 
       {showAddUserModal && (
          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg w-96 border border-gray-700">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
         <Head title="Crear Usuario" />
             <div className="container mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300">
                     Nombre
                 </label>
                 <input
                     type="text"
                     name="name"
                     id="name"
-                    className="mt-1 block w-full p-2 border rounded-md"
+                    className="mt-1 block w-full p-2 border rounded-lg bg-gray-800 text-white"
                     value={data.name}
                     onChange={handleChange}
                     required
@@ -145,14 +145,14 @@ export default function Users({ users }: any) {
                 </div>
 
                 <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                     Correo Electrónico
                 </label>
                 <input
                     type="email"
                     name="email"
                     id="email"
-                    className="mt-1 block w-full p-2 border rounded-md"
+                    className="mt-1 block w-full p-2 border rounded-lg bg-gray-800 text-white"
                     value={data.email}
                     onChange={handleChange}
                     required
@@ -161,14 +161,14 @@ export default function Users({ users }: any) {
                 </div>
 
                 <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                     Contraseña
                 </label>
                 <input
                     type="password"
                     name="password"
                     id="password"
-                    className="mt-1 block w-full p-2 border rounded-md"
+                    className="mt-1 block w-full p-2 border rounded-lg bg-gray-800 text-white"
                     value={data.password}
                     onChange={handleChange}
                     required
@@ -177,14 +177,14 @@ export default function Users({ users }: any) {
                 </div>
 
                 <div>
-                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-300">
                     Confirmar Contraseña
                 </label>
                 <input
                     type="password"
                     name="password_confirmation"
                     id="password_confirmation"
-                    className="mt-1 block w-full p-2 border rounded-md"
+                    className="mt-1 block w-full p-2 border rounded-lg bg-gray-800 text-white"
                     value={data.password_confirmation}
                     onChange={handleChange}
                     required
@@ -193,13 +193,13 @@ export default function Users({ users }: any) {
                 </div>
 
                 <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="role" className="block text-sm font-medium text-gray-300">
                     Rol
                 </label>
                 <select
                     name="role"
                     id="role"
-                    className="mt-1 block w-full p-2 border rounded-md"
+                    className="mt-1 block w-full p-2 border rounded-lg bg-gray-800 text-white"
                     value={data.role}
                     onChange={handleChange}
                     required
