@@ -31,7 +31,6 @@
       
       .animate-small-flicker {
         position: relative;
-        overflow: hidden;
       }
       
       .animate-small-flicker::before {
@@ -45,12 +44,24 @@
         background: radial-gradient(
           circle closest-side,
           rgba(59, 130, 246, 0.8),
-          transparent 80%
+          transparent 100%
         );
-        animation: small-flicker 2s infinite ease-in-out;
+        animation: small-flicker 2.5s infinite ease-in-out;
         pointer-events: none;
         z-index: 0;
+    }
+    @keyframes flicker {
+        0%, 100% {
+          box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.8);
+        }
+        50% {
+          box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+        }
       }
+      
+      .animate-flicker {
+        animation: flicker 2.5s infinite ease-in-out;
+    }
 }
 
 [x-cloak] {
