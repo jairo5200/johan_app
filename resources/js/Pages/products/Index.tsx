@@ -114,7 +114,7 @@ export default function Products({ products }: any) {
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-          <div className='bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-6'>
+          <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 pt-4 border-2 border-gray-400 shadow-blue-500/50'>
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Productos</h1>
               <div className='flex items-center'>

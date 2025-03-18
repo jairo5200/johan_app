@@ -14,6 +14,12 @@ export default {
 
     theme: {
         extend: {
+            animation: {
+                flicker: 'flicker 1.5s infinite ease-in-out',
+            },
+            animation: {
+                'bg-flicker': 'background-flicker 1.2s infinite ease-in-out',
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
