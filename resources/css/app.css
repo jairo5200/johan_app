@@ -44,7 +44,7 @@
         background: radial-gradient(
           circle closest-side,
           rgba(59, 130, 246, 0.8),
-          transparent 80%
+          transparent 100%
         );
         animation: small-flicker 2.5s infinite ease-in-out;
         pointer-events: none;
