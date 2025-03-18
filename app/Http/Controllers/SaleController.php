@@ -41,6 +41,7 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());  // Esto imprimirá los datos recibidos en la solicitud
         // Validar los datos de la solicitud
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
