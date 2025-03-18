@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
+import { useMemo } from 'react';
 
 
 export default function SalesAndReturns({ products, sales }: any) {
@@ -22,42 +23,36 @@ export default function SalesAndReturns({ products, sales }: any) {
   const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   // Función para filtrar las ventas (sin realizar petición)
-  // const filteredSales = useMemo(() => {
-  //   return sales.filter((sale: any) => {
-  //     // Ejemplo de filtro por fecha
-  //     if (filter === 'hoy') {
-  //       const today = new Date().toISOString().split('T')[0];
-  //       // Se asume que sale.date viene en formato ISO (o se puede adaptar)
-  //       if (!sale.date.startsWith(today)) {
-  //         return false;
-  //       }
-  //     } else if (filter === 'mensual') {
-  //       const currentMonth = new Date().getMonth();
-  //       const saleMonth = new Date(sale.date).getMonth();
-  //       if (saleMonth !== currentMonth) {
-  //         return false;
-  //       }
-  //     } else if (filter === 'anual') {
-  //       const currentYear = new Date().getFullYear();
-  //       const saleYear = new Date(sale.date).getFullYear();
-  //       if (saleYear !== currentYear) {
-  //         return false;
-  //       }
-  //     }
+  const filteredSales = useMemo(() => {
+    if (!sales || !Array.isArray(sales)) return [];
+  
+    return sales.filter((sale: any) => {
+      if (!sale.date) return false; // Evita que `undefined` cause errores
+  
+      const today = new Date().toISOString().split('T')[0];
+      if (filter === 'hoy' && !sale.date.startsWith(today)) {
+        return false;
+      }
+  
+      const saleDate = new Date(sale.date);
+      if (filter === 'mensual' && saleDate.getMonth() !== new Date().getMonth()) {
+        return false;
+      }
+  
+      if (filter === 'anual' && saleDate.getFullYear() !== new Date().getFullYear()) {
+        return false;
+      }
+  
+      if (searchTerm.trim() !== '') {
+        const term = searchTerm.toLowerCase();
+        return sale.product?.toLowerCase().includes(term) || sale.user?.toLowerCase().includes(term);
+      }
+  
+      return true;
+    });
+  }, [sales, filter, searchTerm]);
 
-  //     // Filtro por término de búsqueda (puedes ajustar según los campos disponibles)
-  //     if (searchTerm.trim() !== '') {
-  //       const term = searchTerm.toLowerCase();
-  //       // Se asume que sale tiene propiedades 'producto' y 'usuario' para la búsqueda
-  //       const matchProduct = sale.product?.toLowerCase().includes(term);
-  //       const matchUser = sale.user?.toLowerCase().includes(term);
-  //       return matchProduct || matchUser;
-  //     }
-  //     return true;
-  //   });
-  // }, [sales, filter, searchTerm]);
-
-
+  console.log('Ventas filtradas:', filteredSales);
 
   // Agrega un producto al carrito
   const addProduct = () => {
@@ -115,39 +110,47 @@ export default function SalesAndReturns({ products, sales }: any) {
   };
 
   
-  const { post } = useForm({
-    total: 0,
-    user_id: 1,
-    products: [],
-  });
-  
+  const { post } = useForm(); // 
 
   const handleConfirmSale = (e: React.FormEvent) => {
     e.preventDefault();
-  
-    const payload = {
-      total: total,
-      user_id: 1, // Obtén el ID del usuario autenticado si es posible
-      products: cartItems.map((item) => ({
-        product_id: item.id,
-        quantity: item.quantity,
-        price: item.price,
-      })),
+
+    console.log("Contenido de cartItems antes de enviar:", cartItems);
+
+    if (cartItems.length === 0) {
+        console.error("No hay productos en el carrito. No se puede registrar la venta.");
+        return;
+    }
+
+    const saleData = {
+        total: Number(total), 
+        user_id: 1,
+        products: cartItems.map((item) => ({
+            product_id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+        })),
     };
-  
-    console.log("Payload:", payload);
-    post(route('sales.store'), {
-      data: payload,
-      onSuccess: () => {
-        console.log("Venta registrada con éxito");
-        setShowSaleModal(false);
-        // Limpia el carrito o redirige si es necesario
-      },
-      onError: (errors) => {
-        console.error("Error al registrar la venta:", errors);
-      },
+
+    console.log("Payload JSON antes de enviar:", JSON.stringify(saleData, null, 2));
+
+    post(route("sales.store"), {
+        data: saleData,
+        preserveScroll: true,
+        onSuccess: () => {
+            console.log("Venta registrada con éxito");
+            setShowSaleModal(false);
+        },
+        onError: (errors) => {
+            console.error("Error al registrar la venta:", errors);
+        },
     });
-  };
+};
+
+
+
+
+
 
   
 
@@ -209,9 +212,29 @@ export default function SalesAndReturns({ products, sales }: any) {
                       <th className="px-4 py-2 w-[70px] border-b border-gray-300">Stock</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {/* Datos de la tabla (ventas o inventario) */} 
-                  </tbody>
+                  {filteredSales.length > 0 ? (
+                    <tbody>
+                      {filteredSales.map((sales) => (
+                        <tr key={sales.id} className="border-b border-gray-300">
+                          <td className="px-4 py-2 border-r">{sales.date}</td>
+                          <td className="px-4 py-2 border-r">{sales.user}</td>
+                          <td className="px-4 py-2 border-r">{sales.product}</td>
+                          <td className="px-4 py-2 border-r">{sales.reference}</td>
+                          <td className="px-4 py-2 border-r">{sales.quantity}</td>
+                          <td className="px-4 py-2">{sales.stock}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <tbody>
+                      <tr>
+                        <td colSpan={6} className="text-center py-4">
+                          No se encontraron ventas.
+                        </td>
+                      </tr>
+                    </tbody>
+                  )}
+
                 </table>
               </div>
             </div>

@@ -41,22 +41,30 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos de la solicitud
+        dd($request->all());  // Esto imprimirá los datos recibidos en la solicitud
+        \Log::info("Datos recibidos:", $request->all()); // Para depuración
+    
+        // Asegurar que `total` y `user_id` están presentes en la solicitud
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
-            'user_id' => 'required|exists:users,id', // Asegurarse de que el usuario existe
-            // Otros campos si es necesario...
+            'user_id' => 'required|exists:users,id',
         ]);
-
-        // Crear la nueva venta
+    
+        \Log::info("Datos validados:", $validatedData);
+    
+        // Crear la venta en la base de datos
         $sale = Sale::create([
             'total' => $validatedData['total'],
             'user_id' => $validatedData['user_id'],
         ]);
-
-        // Redirigir o devolver la vista con el producto creado
+    
+        \Log::info("Venta creada:", $sale->toArray());
+    
         return redirect()->route('sales.index')->with('success', 'Venta creada con éxito.');
     }
+    
+    
+    
 
     /**
      * Display the specified resource.
