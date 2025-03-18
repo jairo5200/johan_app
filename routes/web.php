@@ -43,4 +43,5 @@ Route::middleware([
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
+    Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
 });
