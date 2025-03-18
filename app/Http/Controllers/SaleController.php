@@ -42,9 +42,13 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         dd($request->all());  // Esto imprimirá los datos recibidos en la solicitud
+<<<<<<< HEAD
         \Log::info("Datos recibidos:", $request->all()); // Para depuración
     
         // Asegurar que `total` y `user_id` están presentes en la solicitud
+=======
+        // Validar los datos de la solicitud
+>>>>>>> 97cc636cf25564e05f59d05b9ba809c4c1dd8256
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
             'user_id' => 'required|exists:users,id',

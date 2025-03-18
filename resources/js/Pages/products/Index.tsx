@@ -10,6 +10,31 @@ export default function Products({ products }: any) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5; // Elementos por página
   const route = useRoute();
+  const [user, setUser] = useState(null); // Estado para guardar el ID del usuario
+
+
+  const fetchUser = async () => {
+    // Primero, obtén el token CSRF
+    fetch('http://127.0.0.1:8000/sanctum/csrf-cookie', {
+      method: 'GET',
+      credentials: 'include', // Asegúrate de incluir las cookies
+    })
+    .then(response => {
+      // Ahora, puedes hacer tu solicitud de usuario autenticado
+      return fetch('http://127.0.0.1:8000/api/user', {
+          method: 'GET',
+          credentials: 'include', // También necesitas incluir las cookies
+      });
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error al obtener el usuario:', error));
+  };
+  
+  // Llama a la función cuando lo necesites, por ejemplo, al cargar la página
+  fetchUser();
+
+
 
   // Filtra los productos por nombre
   const filteredProducts = products.filter((product: any) =>
