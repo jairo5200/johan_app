@@ -44,7 +44,7 @@ class ProductController extends Controller
         $userAuth = User::findOrFail(Auth::id());
         // Validar los datos del formulario
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'numeric',
