@@ -69,7 +69,7 @@ class ProductController extends Controller
             'description' => $validatedData['description'],
             'price' => $validatedData['price'],
             'stock' => $validatedData['stock'],
-            'image' => 'img/' . $imageName, // Solo guardamos la ruta relativa
+            'image' => $imageName, // Solo guardamos la ruta relativa
         ]);
 
         // Registrar la auditoría de la transacción
@@ -126,6 +126,8 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id){
+
+        dd($request->all());
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
@@ -159,7 +161,7 @@ class ProductController extends Controller
             $image->move(public_path('img'), $imageName);
 
             // Actualizar la imagen del producto con la nueva ruta
-            $product->image = 'img/' . $imageName;
+            $product->image = $imageName;
         }
 
         // Actualizar el resto de los campos del producto

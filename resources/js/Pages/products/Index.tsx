@@ -90,7 +90,7 @@ export default function Products({ products }: any) {
     }
 
     if (selectedProductForEdit) {
-      console.log(selectedProductForEdit);
+      console.log(formData);
       put(route('products.update', selectedProductForEdit.id), {
         data: formData,
         onSuccess: () => {
@@ -356,7 +356,7 @@ export default function Products({ products }: any) {
                     <div className="mb-4">
                       <label className="block mb-2">Imagen actual:</label>
                       <img 
-                        src={`/${selectedProductForEdit?.image}`} 
+                        src={`/img/${selectedProductForEdit?.image}`} 
                         alt="Current" 
                         className="w-20 h-20 object-cover mb-2"
                       />

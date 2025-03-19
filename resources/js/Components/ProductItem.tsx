@@ -10,7 +10,7 @@ export default function ProductItem({ product, handleDeleteProduct, handleEditPr
       <tr className="text-center text-white bg-gray-800 border-gray-300">
         <td className="px-4 py-2 border-b border-r border-gray-300 ">
           <img
-            src={`/${product.image}`}
+            src={`/img/${product.image}`}
             alt={product.name}
             className="w-[3rem] h-[3rem] cursor-pointer"
             onClick={() => setIsOpen(true)}
@@ -45,7 +45,7 @@ export default function ProductItem({ product, handleDeleteProduct, handleEditPr
             onClick={() => setIsOpen(false)}
           >
             <img
-              src={`/${product.image}`}
+              src={`/img/${product.image}`}
               alt={product.name}
               className="max-w-full max-h-full"
             />
