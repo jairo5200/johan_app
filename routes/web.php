@@ -44,5 +44,5 @@ Route::middleware([
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
-    Route::get('/returns',[DashboardController::class, 'index'])->name('returns.index');
+    Route::get('/returns',[ReturnController::class, 'index'])->name('returns.index');
 });
