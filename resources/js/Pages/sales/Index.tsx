@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
+import Swal from 'sweetalert2';
 
 // Define la interfaz para los datos del formulario
 interface SaleData {
@@ -170,11 +171,32 @@ export default function SalesAndReturns({ products, sales }: any) {
   const handleConfirmSale = (e: React.FormEvent) => {
     e.preventDefault();
     post(route("sales.store"), {
-      onFinish: () => {
+      onSuccess: () => {
         console.log("Venta registrada con éxito");
+        setCartItems([]);  // Vaciar el carrito
+        setData({ total: 0, user_id: 1, products: [] });
         setShowSaleModal(false);
       },
+      onError: (errors) => {
+        console.log("Errores capturados:", errors); // Verifica en la consola qué llega
+        if (errors.error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de stock',
+            text: errors.error,
+          });
+        }
+      },
     });
+  };
+  
+  
+  
+
+  const handleCancelSale = () => {
+    setCartItems([]);  // Vaciar el carrito
+    setData({ total: 0, user_id: 1, products: [] }); // Resetear el formulario
+    setShowSaleModal(false); // Cerrar el modal
   };
   
 
@@ -419,7 +441,7 @@ export default function SalesAndReturns({ products, sales }: any) {
             <div className="flex justify-end mt-4">
               <button 
                 className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2"
-                onClick={() => setShowSaleModal(false)}>
+                onClick ={handleCancelSale}>
                 Cancelar
               </button>
               <button 
@@ -452,5 +474,4 @@ export default function SalesAndReturns({ products, sales }: any) {
     </AppLayout>
   );
 }
-
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class SaleController extends Controller
 {
@@ -40,8 +41,9 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // Obtener el usuario que realiza la accion
-        $userAuth = user::findOrFail(Auth::id());
+        // Obtener el usuario que realiza la acción
+        $userAuth = User::findOrFail(Auth::id());
+    
         // Validar la solicitud
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
@@ -54,15 +56,18 @@ class SaleController extends Controller
         // Obtener los datos validados
         $products = $validatedData['products'];
         $total = $validatedData['total'];
-
+    
         foreach ($products as $product) {
             // Validamos el stock de cada producto
             $productModel = Product::findOrFail($product['product_id']);
-            
+    
             if ($productModel->stock < $product['quantity']) {
-                return response()->json(['error' => 'No hay suficiente stock para el producto: ' . $productModel->name], 400);
+                return Redirect::back()->withErrors([
+                    'error' => 'No hay suficiente stock para el producto: ' . $productModel->name
+                ]);
             }
         }
+    
     
         // Crear la venta en la base de datos
         $sale = Sale::create([
