@@ -33,6 +33,8 @@ class UserController extends Controller
     // Método para almacenar el usuario en la base de datos
     public function store(Request $request)
     {
+        // Obtenemos el usuario que realiza la accion
+        $userAuth = User::findOrFail(Auth::id());
         // Validación de los datos del formulario
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -61,6 +63,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+        // Obtener el usuario que realiza la accion
+        $userAuth = User::findOrFail(Auth::id());
         // Obtener el user por su ID
         $user = User::findOrFail($id);
 

@@ -40,8 +40,9 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // Obtener el user por su ID
-        $user = user::findOrFail(Auth::id());
+        // Obtener el usuario que realiza la accion
+        $userAuth = user::findOrFail(Auth::id());
+        // Validar la solicitud
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
             'products' => 'required|array',
@@ -53,11 +54,20 @@ class SaleController extends Controller
         // Obtener los datos validados
         $products = $validatedData['products'];
         $total = $validatedData['total'];
+
+        foreach ($products as $product) {
+            // Validamos el stock de cada producto
+            $productModel = Product::findOrFail($product['product_id']);
+            
+            if ($productModel->stock < $product['quantity']) {
+                return response()->json(['error' => 'No hay suficiente stock para el producto: ' . $productModel->name], 400);
+            }
+        }
     
         // Crear la venta en la base de datos
         $sale = Sale::create([
             'total' => $total,
-            'user_id' => $user->id,
+            'user_id' => $userAuth->id,
         ]);
     
         // Asociar los productos a la venta y actualizar el stock
@@ -65,10 +75,6 @@ class SaleController extends Controller
             // Actualizar el stock de cada producto
             $productModel = Product::findOrFail($product['product_id']);
             
-            if ($productModel->stock < $product['quantity']) {
-                return response()->json(['error' => 'No hay suficiente stock para el producto: ' . $productModel->name], 400);
-            }
-
             // Restar la cantidad vendida del stock
             $productModel->stock -= $product['quantity'];
             $productModel->save();
@@ -141,6 +147,8 @@ class SaleController extends Controller
      */
     public function destroy(string $id)
     {
+        // Obtener el usuario que realiza la accion
+        $userAuth = user::findOrFail(Auth::id());
         // Obtener la venta por su ID
         $sale = Sale::findOrFail($id);
 

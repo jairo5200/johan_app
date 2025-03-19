@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -37,6 +39,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // Obtenemos el usuario que realiza la accion
+        $userAuth = User::findOrFail(Auth::id());
         // Validar los datos del formulario
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -105,6 +109,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // Obtenemos el usuario que realiza la accion
+        $userAuth = User::findOrFail(Auth::id());
         // Obtener el producto por su ID
         $product = Product::findOrFail($id);
 
@@ -128,6 +134,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
+        // Obtenemos el usuario que realiza la accion
+        $userAuth = User::findOrFail(Auth::id());
         // Obtener el producto por su ID
         $product = Product::findOrFail($id);
 
