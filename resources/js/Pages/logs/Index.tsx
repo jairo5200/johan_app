@@ -23,11 +23,12 @@ export default function Logs({ logs }: any) {
   };
 
   // Función para formatear los valores antiguos y nuevos según la acción
-  const formatJson = (jsonString: string, action: string) => {
+  const formatJson = (jsonString: string, action: string, model?: string) => {
     try {
       if (!jsonString) return 'Sin datos';
       const parsed = JSON.parse(jsonString);
       const lowerAction = action.toLowerCase();
+      const lowerModel = model ? model.toLowerCase() : '';
 
       // Caso: Venta Realizada (se espera un array de objetos)
       if (lowerAction === 'venta realizada') {
@@ -43,8 +44,8 @@ export default function Logs({ logs }: any) {
             ))}
           </ul>
         );
-      } 
-      // Caso: Acciones relacionadas con Producto (p.ej. Crear/Eliminar Producto)
+      }
+      // Caso: Acciones relacionadas con Producto (Crear/Eliminar Producto)
       else if (lowerAction.includes('producto')) {
         if (typeof parsed !== 'object' || Array.isArray(parsed))
           return 'Formato inesperado';
@@ -57,9 +58,23 @@ export default function Logs({ logs }: any) {
             ))}
           </ul>
         );
-      } 
-      // Caso: Acciones relacionadas con Usuario (p.ej. Crear Usuario, Desactivar Usuario)
+      }
+      // Caso: Acciones relacionadas con Usuario (Crear Usuario, Desactivar Usuario, etc.)
       else if (lowerAction.includes('usuario')) {
+        if (typeof parsed !== 'object' || Array.isArray(parsed))
+          return 'Formato inesperado';
+        return (
+          <ul>
+            {Object.entries(parsed).map(([key, value]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {String(value)}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+      // Caso: Acciones relacionadas con Reembolso (Registrar Reembolso)
+      else if (lowerAction.includes('reembolso') || lowerModel === 'refund') {
         if (typeof parsed !== 'object' || Array.isArray(parsed))
           return 'Formato inesperado';
         return (
@@ -156,8 +171,8 @@ export default function Logs({ logs }: any) {
                           <td className="px-4 py-2 border-r">{log.user_name}</td>
                           <td className="px-4 py-2 border-r">{log.action}</td>
                           <td className="px-4 py-2 border-r">{log.model}</td>
-                          <td className="px-4 py-2 border-r">{formatJson(log.old_values, log.action)}</td>
-                          <td className="px-4 py-2 border-r">{formatJson(log.new_values, log.action)}</td>
+                          <td className="px-4 py-2 border-r">{formatJson(log.old_values, log.action, log.model)}</td>
+                          <td className="px-4 py-2 border-r">{formatJson(log.new_values, log.action, log.model)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -179,5 +194,6 @@ export default function Logs({ logs }: any) {
     </AppLayout>
   );
 }
+
 
 
