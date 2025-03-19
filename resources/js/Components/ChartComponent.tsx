@@ -64,7 +64,7 @@ const ChartComponent: React.FC<ChartProps> = ({ title, labels, data }) => {
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl 
                     border-4 border-blue-300 shadow-blue-300/10">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-semibold mb-4">
         {title}
       </h2>
       <div className="relative w-full h-80">

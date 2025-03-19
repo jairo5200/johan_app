@@ -65,29 +65,32 @@
 }
 
 [x-cloak] {
-    display: none;
+  display: none;
 }
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
     
 }
 
 th, td {
-    padding: 8px;
-    text-align: left;
+  padding: 8px;
+  text-align: left;
 }
 
 th {
-    background-color: #2D3748; /* Fondo oscuro */
-    color: white;
+  background-color: #2D3748; /* Fondo oscuro */
+  color: white;
 }
 
 
 input:-webkit-autofill {
-    background-color: #1f2937 !important; /* Gris oscuro */
-    color: white !important; /* Texto blanco */
-    -webkit-text-fill-color: white !important; /* Asegura que el texto se mantenga blanco */
-    -webkit-box-shadow: 0 0 0px 1000px #1f2937 inset !important;
-  }
+  background-color: #1f2937 !important; /* Gris oscuro */
+  color: white !important; /* Texto blanco */
+  -webkit-text-fill-color: white !important; /* Asegura que el texto se mantenga blanco */
+  -webkit-box-shadow: 0 0 0px 1000px #1f2937 inset !important;
+}
 
+h2  {
+  color: #FEF3C7
+}
