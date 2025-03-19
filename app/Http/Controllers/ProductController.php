@@ -214,6 +214,9 @@ class ProductController extends Controller
             'created_at' => now(), // Fecha y hora de la transacción
         ]);
 
+        // Cambiar el nombre del producto
+        $product->name = '*'.$product->name;
+
         // Cambiar el estado del producto a 'inactive'
         $product->state = 'inactive';
 
