@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Log;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
@@ -71,6 +72,23 @@ class ProductController extends Controller
             'image' => 'img/' . $imageName, // Solo guardamos la ruta relativa
         ]);
 
+        // Registrar la auditoría de la transacción
+        Log::create([
+            'user_name' => $userAuth->name,
+            'action' => 'Crear Producto',
+            'model' => 'Producto',
+            'old_values' => null, // En este caso es un nuevo registro, por lo que no hay valores antiguos
+            'new_values' => json_encode([
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'image' => $product->image,
+            ]),
+            'created_at' => now(), // Se registra la fecha y hora de la acción
+            'updated_at' => now(), // Se registra la fecha y hora de la acción
+        ]);
+
         // Redirigir o devolver la vista con el producto creado
         return redirect()->route('products.index')->with('success', 'Producto creado con éxito.');
     }
@@ -109,43 +127,100 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Obtenemos el usuario que realiza la accion
-        $userAuth = User::findOrFail(Auth::id());
-        // Obtener el producto por su ID
-        $product = Product::findOrFail($id);
+         // Obtener el usuario que realiza la acción
+    $userAuth = User::findOrFail(Auth::id());
 
-        // Validar los datos recibidos
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id', // Si tienes categorías
-            // Otros campos a validar...
-        ]);
+    // Validar los datos del formulario
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'price' => 'required|numeric|min:0',
+        'stock' => 'numeric',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+    ]);
 
-        // Actualizar el producto con los nuevos datos
-        $product->update($validatedData);
+    // Obtener el producto existente
+    $product = Product::findOrFail($id);
 
-        // Redirigir o devolver la vista con el producto actualizado
-        return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
+    // Guardar los valores antiguos del producto
+    $oldValues = $product->getOriginal();
+
+    // Procesar la imagen solo si se envía una nueva
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $imageName = $image->getClientOriginalName();
+        $image->move(public_path('img'), $imageName);
+
+        // Actualizar la imagen del producto
+        $product->image = 'img/' . $imageName;
+    }
+
+    // Actualizar el resto de los campos del producto
+    $product->name = $validatedData['name'];
+    $product->description = $validatedData['description'];
+    $product->price = $validatedData['price'];
+    $product->stock = $validatedData['stock'];
+
+    // Guardar el producto actualizado
+    $product->save();
+
+    // Registrar la auditoría de la transacción (Actualización)
+    Log::create([
+        'user_name' => $userAuth->name,
+        'action' => 'Actualizar Producto',
+        'model' => 'Product',
+        'old_values' => json_encode($oldValues), // Los valores anteriores antes de la actualización
+        'new_values' => json_encode([
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => $product->price,
+            'stock' => $product->stock,
+            'image' => $product->image,
+        ]), // Los nuevos valores después de la actualización
+        'created_at' => now(), // Se registra la fecha y hora de la acción
+        'updated_at' => now(), // Se registra la fecha y hora de la acción
+    ]);
+
+    // Redirigir o devolver la vista con el producto actualizado
+    return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id){
-    // Obtener el usuario que realiza la acción
-    $userAuth = User::findOrFail(Auth::id());
+        // Obtener el usuario que realiza la acción
+        $userAuth = User::findOrFail(Auth::id());
 
-    // Obtener el producto por su ID
-    $product = Product::findOrFail($id);
+        // Obtener el producto por su ID
+        $product = Product::findOrFail($id);
 
-    // Cambiar el estado del producto a 'inactive'
-    $product->state = 'inactive';
+        // Registrar la auditoría antes de cambiar el estado
+        Log::create([
+            'user_name' => $userAuth->name, // Nombre del usuario
+            'action' => 'Eliminar Producto', // Acción realizada
+            'model' => 'Product', // Modelo afectado
+            'old_values' => json_encode([
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'image' => $product->image,
+                'state' => $product->state, // Estado anterior
+            ]),
+            'new_values' => json_encode([
+                'state' => 'inactive', // Nuevo estado
+            ]),
+            'created_at' => now(), // Fecha y hora de la transacción
+        ]);
 
-    // Guardar los cambios en el producto
-    $product->save();
+        // Cambiar el estado del producto a 'inactive'
+        $product->state = 'inactive';
 
-    // Redirigir o devolver la vista con el mensaje de éxito
-    return redirect()->route('products.index')->with('success', 'Producto eliminado con éxito.');
+        // Guardar los cambios en el producto
+        $product->save();
+
+        // Redirigir o devolver la vista con el mensaje de éxito
+        return redirect()->route('products.index')->with('success', 'Producto marcado como inactivo con éxito.');
     }
 }
