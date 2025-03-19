@@ -209,13 +209,13 @@ export default function SalesAndReturns({ products, sales }: any) {
     reason: '',
     client: '',
     product: '', // o product_id: ''
-    returnDate: new Date().toISOString().split('T')[0],
+    refundDate: new Date().toISOString().split('T')[0],
   });
   const [returnFilteredProducts, setReturnFilteredProducts] = useState<any[]>([]);
   
   const handleReturnSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    postReturn(route('returns.store'), {
+    postReturn(route('refunds.store'), {
       onSuccess: () => {
         console.log("Devolución registrada con éxito");
         resetReturn();
@@ -534,9 +534,9 @@ export default function SalesAndReturns({ products, sales }: any) {
         <label className="block mb-2">Fecha de Compra:</label>
         <input 
           type="date" 
-          name="returnDate"
-          value={returnData.returnDate} 
-          onChange={(e) => setReturnData('returnDate', e.target.value)}
+          name="refundDate"
+          value={returnData.refundDate} 
+          onChange={(e) => setReturnData('refundDate', e.target.value)}
           className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
         />
         <div className="flex justify-end mt-4">

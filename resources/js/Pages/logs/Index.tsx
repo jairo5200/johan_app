@@ -1,34 +1,99 @@
 import React, { useState, useMemo } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
-export default function logs({ logs }: any) {
-  // Estado para el término de búsqueda y filtro
+export default function Logs({ logs }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
 
-  // Filtrado de devoluciones según fecha, usuario, producto o motivo
-  const filteredlogs = useMemo(() => {
+  // Función para formatear fecha a "DD/MM/YYYY HH:MM:SS"
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }).format(date);
+    } catch {
+      return 'Fecha inválida';
+    }
+  };
+
+  // Función para formatear los valores antiguos y nuevos según la acción
+  const formatJson = (jsonString: string, action: string) => {
+    try {
+      if (!jsonString) return 'Sin datos';
+      const parsed = JSON.parse(jsonString);
+      const lowerAction = action.toLowerCase();
+
+      // Caso: Venta Realizada (se espera un array de objetos)
+      if (lowerAction === 'venta realizada') {
+        if (!Array.isArray(parsed))
+          return 'Formato inesperado';
+        return (
+          <ul>
+            {parsed.map((item: any, index: number) => (
+              <li key={index}>
+                {item.product_name} (ID: {item.product_id}) - Stock: {item.old_stock} → {item.new_stock}
+                {item.quantity_sold ? ` (Vendidos: ${item.quantity_sold})` : ''} - Precio: {item.price}
+              </li>
+            ))}
+          </ul>
+        );
+      } 
+      // Caso: Acciones relacionadas con Producto (p.ej. Crear/Eliminar Producto)
+      else if (lowerAction.includes('producto')) {
+        if (typeof parsed !== 'object' || Array.isArray(parsed))
+          return 'Formato inesperado';
+        return (
+          <ul>
+            {Object.entries(parsed).map(([key, value]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {String(value)}
+              </li>
+            ))}
+          </ul>
+        );
+      } 
+      // Caso: Acciones relacionadas con Usuario (p.ej. Crear Usuario, Desactivar Usuario)
+      else if (lowerAction.includes('usuario')) {
+        if (typeof parsed !== 'object' || Array.isArray(parsed))
+          return 'Formato inesperado';
+        return (
+          <ul>
+            {Object.entries(parsed).map(([key, value]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {String(value)}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+      return 'Datos no reconocidos';
+    } catch {
+      return 'Error al formatear datos';
+    }
+  };
+
+  // Filtrado de logs según fecha, búsqueda y filtro
+  const filteredLogs = useMemo(() => {
     if (!logs || !Array.isArray(logs)) return [];
-    
     return logs.filter((log: any) => {
-      // Verificamos que exista la fecha
-      if (!log.date) return false;
-      
-      // Filtrar por fecha: hoy, mensual o anual.
+      if (!log.created_at) return false;
       const today = new Date().toISOString().split('T')[0];
-      if (filter === 'hoy' && !log.date.startsWith(today)) return false;
-      
-      const retDate = new Date(log.date);
-      if (filter === 'mensual' && retDate.getMonth() !== new Date().getMonth()) return false;
-      if (filter === 'anual' && retDate.getFullYear() !== new Date().getFullYear()) return false;
-      
-      // Filtro de búsqueda: puede buscar en usuario, producto o motivo.
+      const logDate = new Date(log.created_at).toISOString().split('T')[0];
+      if (filter === 'hoy' && logDate !== today) return false;
+      if (filter === 'mensual' && new Date(log.created_at).getMonth() !== new Date().getMonth()) return false;
+      if (filter === 'anual' && new Date(log.created_at).getFullYear() !== new Date().getFullYear()) return false;
       if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
         return (
-          log.user?.name.toLowerCase().includes(term) ||
-          log.product?.name.toLowerCase().includes(term) ||
-          log.reason.toLowerCase().includes(term)
+          log.user_name?.toLowerCase().includes(term) ||
+          log.model?.toLowerCase().includes(term) ||
+          log.action?.toLowerCase().includes(term)
         );
       }
       return true;
@@ -37,17 +102,17 @@ export default function logs({ logs }: any) {
 
   return (
     <AppLayout
-      title="Devoluciones"
+      title="Transacciones"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          Devoluciones
+          Transacciones
         </h2>
       )}
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
-            {/* Filtros de búsqueda y filtro desplegable */}
+            {/* Filtros */}
             <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-4">
                 <input 
@@ -69,7 +134,7 @@ export default function logs({ logs }: any) {
               </div>
             </div>
 
-            {/* Tabla de devoluciones */}
+            {/* Tabla de transacciones */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
               <div className="overflow-hidden">
                 <table className="w-full table-auto border-collapse">
@@ -78,29 +143,29 @@ export default function logs({ logs }: any) {
                       <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Cambio</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">ubicación</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">antiguos valores</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">nuevos valores</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Modelo</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Valores antiguos</th>
+                      <th className="px-4 py-2 border-b border-gray-300">Valores nuevos</th>
                     </tr>
                   </thead>
-                  {logs.length > 0 ? (
+                  {filteredLogs.length > 0 ? (
                     <tbody>
-                      {logs.map((log: any) => (
+                      {filteredLogs.map((log: any) => (
                         <tr key={log.id} className="border-b border-gray-300 text-white">
-                          <td className="px-4 py-2 border-r">{log.created_at}</td>
+                          <td className="px-4 py-2 border-r">{formatDate(log.created_at)}</td>
                           <td className="px-4 py-2 border-r">{log.user_name}</td>
                           <td className="px-4 py-2 border-r">{log.action}</td>
                           <td className="px-4 py-2 border-r">{log.model}</td>
-                          <td className="px-4 py-2 border-r">{log.old_values}</td>
-                          <td className="px-4 py-2 border-r">{log.new_values}</td>
+                          <td className="px-4 py-2 border-r">{formatJson(log.old_values, log.action)}</td>
+                          <td className="px-4 py-2 border-r">{formatJson(log.new_values, log.action)}</td>
                         </tr>
                       ))}
                     </tbody>
                   ) : (
                     <tbody>
                       <tr>
-                        <td colSpan={4} className="text-center py-4">
-                          No se encontraron devoluciones.
+                        <td colSpan={6} className="text-center py-4">
+                          No se encontraron transacciones.
                         </td>
                       </tr>
                     </tbody>
@@ -112,4 +177,7 @@ export default function logs({ logs }: any) {
         </div>
       </div>
     </AppLayout>
-  );}
+  );
+}
+
+
