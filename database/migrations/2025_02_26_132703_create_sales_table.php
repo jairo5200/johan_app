@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->Date('sale_date');
             $table->integer('total');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('restrict');
             $table->timestamps();
         });
     }
