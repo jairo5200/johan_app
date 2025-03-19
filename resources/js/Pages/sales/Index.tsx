@@ -215,7 +215,7 @@ export default function SalesAndReturns({ products, sales }: any) {
   
   const handleReturnSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    postReturn(route('returns.store'), {
+    postReturn(route('refunds.store'), {
       onSuccess: () => {
         console.log("Devolución registrada con éxito");
         resetReturn();
