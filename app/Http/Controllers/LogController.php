@@ -14,8 +14,11 @@ class LogController extends Controller
      */
     public function index()
     {
+        $logs = Log::all();
         // Devolver la vista React usando Inertia
-        return Inertia::render('logs/Index');
+        return Inertia::render('logs/Index',[
+            'logs' => $logs
+        ]);
     }
 
     /**
