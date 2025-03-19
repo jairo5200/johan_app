@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Return;
+use App\Models\Log;
 use Inertia\Inertia;
 
 
