@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Return;
 use Inertia\Inertia;
 
-class ReturnController extends Controller
+class RefundController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class ReturnController extends Controller
     public function index()
     {
         // Devolver la vista React usando Inertia
-        return Inertia::render('returns/Index');
+        return Inertia::render('refunds/Index');
     }
 
     /**
@@ -31,6 +31,24 @@ class ReturnController extends Controller
     public function store(Request $request)
     {
        dd($request->all());
+       // Validación de los datos de la solicitud
+       $validatedData = $request->validate([
+        'reason' => 'required|string|max:255',
+        'client' => 'required|string|max:255',
+        'product' => 'required|string|max:255',
+        'refundDate' => 'required|date', // Validación de la fecha
+        ]);
+
+        // Crear el reembolso en la base de datos
+        $refund = Refund::create([
+            'reason' => $validatedData['reason'],
+            'client' => $validatedData['client'],
+            'product' => $validatedData['product'],
+            'refund_date' => $validatedData['refundDate'], // Guardar la fecha del reembolso
+        ]);
+
+        // Retornar una respuesta o redirigir
+        return response()->json(['message' => 'Reembolso registrado con éxito', 'data' => $refund]);
     }
 
     /**

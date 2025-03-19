@@ -84,8 +84,8 @@ export default function AppLayout({
                     Usuarios
                   </NavLink>
                   <NavLink
-                    href={route('returns.index')}
-                    active={route().current('returns.index')}
+                    href={route('refunds.index')}
+                    active={route().current('refunds.index')}
                   >
                     Devoluciones
                   </NavLink>
