@@ -19,8 +19,8 @@ class UserController extends Controller
         $user = User::findOrFail(Auth::id());
 
         if ($user->role == "admin") {
-            // Obtener los productos
-            $users = User::all();
+            // Obtener los usuarios
+            $users = User::where('state', 'active')->get();
 
             // Devolver la vista React usando Inertia y pasar los productos como datos
             return Inertia::render('users/Index', [
@@ -61,24 +61,33 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        // Obtener el usuario que realiza la accion
-        $userAuth = User::findOrFail(Auth::id());
-        // Obtener el user por su ID
-        $user = User::findOrFail($id);
+    public function destroy(string $id){
+    // Obtener el usuario que realiza la acción
+    $userAuth = User::findOrFail(Auth::id());
 
-        if (Auth::id() == $user->id) {
-            return response()->json(['message' => 'No puedes eliminar tu propio usuario'], 403);
-        }
+    // Obtener el usuario por su ID
+    $user = User::findOrFail($id);
 
-        if (!$user) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-        // Eliminar el producto
-        $user->delete();
+    // Verificar si el usuario está intentando eliminar su propio perfil
+    if (Auth::id() == $user->id) {
+        return response()->json(['message' => 'No puedes eliminar tu propio usuario'], 403);
+    }
 
-         // Responder con un mensaje de éxito
-         return redirect()->route('users.index'); // Cambia 'dashboard' por la ruta que desees
+    // Verificar si el usuario existe
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Cambiar el estado del usuario a 'inactivo'
+    $user->state = 'inactive';
+
+    // Modificar el nombre para que empiece con "eliminado"
+    $user->name = 'Eliminado (' . $user->name . ')';
+
+    // Guardar los cambios en la base de datos
+    $user->save();
+
+    // Redirigir o devolver la vista con el mensaje de éxito
+    return redirect()->route('users.index')->with('success', 'Usuario marcado como inactivo y renombrado.');
     }
 }

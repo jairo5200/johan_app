@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
         // Obtener los productos
-        $products = Product::all();
+        $products = Product::where('state', 'active')->get();
 
         // Devolver la vista React usando Inertia y pasar los productos como datos
         return Inertia::render('products/Index', [
@@ -132,17 +132,20 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        // Obtenemos el usuario que realiza la accion
-        $userAuth = User::findOrFail(Auth::id());
-        // Obtener el producto por su ID
-        $product = Product::findOrFail($id);
+    public function destroy(string $id){
+    // Obtener el usuario que realiza la acción
+    $userAuth = User::findOrFail(Auth::id());
 
-        // Eliminar el producto
-        $product->delete();
+    // Obtener el producto por su ID
+    $product = Product::findOrFail($id);
 
-        // Redirigir o devolver la vista con el mensaje de éxito
-        return redirect()->route('products.index')->with('success', 'Producto eliminado con éxito.');
+    // Cambiar el estado del producto a 'inactive'
+    $product->state = 'inactive';
+
+    // Guardar los cambios en el producto
+    $product->save();
+
+    // Redirigir o devolver la vista con el mensaje de éxito
+    return redirect()->route('products.index')->with('success', 'Producto eliminado con éxito.');
     }
 }
