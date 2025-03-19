@@ -14,7 +14,7 @@ class DashboardController extends Controller
     public function index()
     {
         // Obtener los productos
-        $products = Product::all();
+        $products = Product::where('state', 'active')->get();
 
         // Devolver la vista React usando Inertia y pasar los productos como datos
         return Inertia::render('Dashboard', [
