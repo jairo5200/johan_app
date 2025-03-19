@@ -57,7 +57,7 @@ class ProductController extends Controller
             $image = $request->file('image');
 
             // Generar un nombre único para la imagen
-            $imageName = $image->getClientOriginalName();
+            $imageName = time() . '_' . $image->getClientOriginalName();
 
             // Mover la imagen al directorio 'public/img'
             $image->move(public_path('img'), $imageName);
@@ -125,65 +125,73 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-         // Obtener el usuario que realiza la acción
-    $userAuth = User::findOrFail(Auth::id());
+    public function update(Request $request, string $id){
+        // Obtener el usuario que realiza la acción
+        $userAuth = User::findOrFail(Auth::id());
 
-    // Validar los datos del formulario
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'price' => 'required|numeric|min:0',
-        'stock' => 'numeric',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
-    ]);
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'numeric',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+        ]);
 
-    // Obtener el producto existente
-    $product = Product::findOrFail($id);
+        // Obtener el producto existente
+        $product = Product::findOrFail($id);
 
-    // Guardar los valores antiguos del producto
-    $oldValues = $product->getOriginal();
+        // Guardar los valores antiguos del producto
+        $oldValues = $product->getOriginal();
 
-    // Procesar la imagen solo si se envía una nueva
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = $image->getClientOriginalName();
-        $image->move(public_path('img'), $imageName);
+        // Procesar la imagen solo si se envía una nueva
+        if ($request->hasFile('image')) {
+            // Eliminar la imagen anterior si existe
+            if (file_exists(public_path($product->image))) {
+                unlink(public_path($product->image)); // Elimina la imagen anterior
+            }
 
-        // Actualizar la imagen del producto
-        $product->image = 'img/' . $imageName;
+            // Obtener la nueva imagen y generar un nombre único
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Mover la imagen al directorio 'public/img'
+            $image->move(public_path('img'), $imageName);
+
+            // Actualizar la imagen del producto con la nueva ruta
+            $product->image = 'img/' . $imageName;
+        }
+
+        // Actualizar el resto de los campos del producto
+        $product->name = $validatedData['name'];
+        $product->description = $validatedData['description'];
+        $product->price = $validatedData['price'];
+        $product->stock = $validatedData['stock'];
+
+        // Guardar el producto actualizado
+        $product->save();
+
+        // Registrar la auditoría de la transacción (Actualización)
+        Log::create([
+            'user_name' => $userAuth->name,
+            'action' => 'Actualizar Producto',
+            'model' => 'Product',
+            'old_values' => json_encode($oldValues), // Los valores anteriores antes de la actualización
+            'new_values' => json_encode([
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'image' => $product->image,
+            ]), // Los nuevos valores después de la actualización
+            'created_at' => now(), // Se registra la fecha y hora de la acción
+            'updated_at' => now(), // Se registra la fecha y hora de la acción
+        ]);
+
+        // Redirigir o devolver la vista con el producto actualizado
+        return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
     }
 
-    // Actualizar el resto de los campos del producto
-    $product->name = $validatedData['name'];
-    $product->description = $validatedData['description'];
-    $product->price = $validatedData['price'];
-    $product->stock = $validatedData['stock'];
-
-    // Guardar el producto actualizado
-    $product->save();
-
-    // Registrar la auditoría de la transacción (Actualización)
-    Log::create([
-        'user_name' => $userAuth->name,
-        'action' => 'Actualizar Producto',
-        'model' => 'Product',
-        'old_values' => json_encode($oldValues), // Los valores anteriores antes de la actualización
-        'new_values' => json_encode([
-            'name' => $product->name,
-            'description' => $product->description,
-            'price' => $product->price,
-            'stock' => $product->stock,
-            'image' => $product->image,
-        ]), // Los nuevos valores después de la actualización
-        'created_at' => now(), // Se registra la fecha y hora de la acción
-        'updated_at' => now(), // Se registra la fecha y hora de la acción
-    ]);
-
-    // Redirigir o devolver la vista con el producto actualizado
-    return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -214,8 +222,13 @@ class ProductController extends Controller
             'created_at' => now(), // Fecha y hora de la transacción
         ]);
 
+        // Verificar si el producto tiene imagen y eliminarla
+        if (file_exists(public_path($product->image))) {
+            unlink(public_path($product->image)); // Eliminar la imagen del sistema de archivos
+        }
+
         // Cambiar el nombre del producto
-        $product->name = '*'.$product->name;
+        $product->name = time() . '_'.$product->name;
 
         // Cambiar el estado del producto a 'inactive'
         $product->state = 'inactive';
