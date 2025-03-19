@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Models\Log;
 
 class SaleController extends Controller
 {
