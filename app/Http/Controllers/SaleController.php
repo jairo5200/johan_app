@@ -46,6 +46,7 @@ class SaleController extends Controller
     
         // Validar la solicitud
         $validatedData = $request->validate([
+            'purchaseDate' => 'required',
             'total' => 'required|numeric|min:0',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:products,id',
@@ -54,6 +55,7 @@ class SaleController extends Controller
         ]);
     
         // Obtener los datos validados
+        $saleData = $validatedData['purchaseDate'];
         $products = $validatedData['products'];
         $total = $validatedData['total'];
     
@@ -71,6 +73,7 @@ class SaleController extends Controller
     
         // Crear la venta en la base de datos
         $sale = Sale::create([
+            'sale_date' => $saleData,
             'total' => $total,
             'user_id' => $userAuth->id,
         ]);

@@ -293,7 +293,7 @@ export default function SalesAndReturns({ products, sales }: any) {
                     <tbody>
                       {sales.map((sale:any) => (
                         <tr key={sale.id} className="border-b border-gray-300 text-white">
-                          <td className="px-4 py-2 border-r">{sale.created_at}</td>
+                          <td className="px-4 py-2 border-r">{sale.sale_date}</td>
                           <td className="px-4 py-2 border-r">{sale.user.name}</td>
                           <td className="px-4 py-2 border-r">{sale.products.map((product: any) => (
                                         <li key={product.id}>
