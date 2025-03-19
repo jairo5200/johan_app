@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-export default function ProductItem({ product, handleDeleteProduct }: any) {
+export default function ProductItem({ product, handleDeleteProduct, handleEditProduct }: any) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,9 +21,20 @@ export default function ProductItem({ product, handleDeleteProduct }: any) {
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.price}</td>
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.stock}</td>
         <td className="px-4 py-2 border-b border-gray-300">
-          <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" onClick={() => handleDeleteProduct(product)}>
-            Eliminar
-          </button>
+          <div className="flex justify-center space-x-2">
+            <button 
+              className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+              onClick={() => handleEditProduct(product)}
+            >
+              Editar
+            </button>
+            <button 
+              className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" 
+              onClick={() => handleDeleteProduct(product)}
+            >
+              Eliminar
+            </button>
+          </div>
         </td>
       </tr>
 
