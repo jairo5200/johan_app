@@ -16,8 +16,8 @@ class SaleController extends Controller
      */
     public function index()
     {
-        // Obtener las ventas
-        $sales = Sale::all();
+        // Obtener las ventas con los productos y usuarios asociados
+        $sales = Sale::with(['products', 'user'])->get();
         // Obtener los productos
         $products = Product::all();
 

@@ -260,24 +260,26 @@ export default function SalesAndReturns({ products, sales }: any) {
                 <table className="w-full table-auto overflow-hidden border-collapse">
                   <thead>
                     <tr className="bg-gray-700 text-white">
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Día</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Producto</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Referencia</th>
-                      <th className="px-4 py-2 w-[70px] border-r border-b border-gray-300">Cantidad</th>
-                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">Stock</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Total</th>
+                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">opciones?</th>
                     </tr>
                   </thead>
-                  {filteredSales.length > 0 ? (
+                  {sales.length > 0 ? (
                     <tbody>
-                      {filteredSales.map((sales) => (
-                        <tr key={sales.id} className="border-b border-gray-300">
-                          <td className="px-4 py-2 border-r">{sales.date}</td>
-                          <td className="px-4 py-2 border-r">{sales.user}</td>
-                          <td className="px-4 py-2 border-r">{sales.product}</td>
-                          <td className="px-4 py-2 border-r">{sales.reference}</td>
-                          <td className="px-4 py-2 border-r">{sales.quantity}</td>
-                          <td className="px-4 py-2">{sales.stock}</td>
+                      {sales.map((sale:any) => (
+                        <tr key={sale.id} className="border-b border-gray-300 text-white">
+                          <td className="px-4 py-2 border-r">{sale.created_at}</td>
+                          <td className="px-4 py-2 border-r">{sale.user.name}</td>
+                          <td className="px-4 py-2 border-r">{sale.products.map((product: any) => (
+                                        <li key={product.id}>
+                                            {product.name} - {product.pivot.quantity} unidades a ${product.pivot.price}
+                                        </li>
+                                    ))}</td>
+                          <td className="px-4 py-2 border-r">{sale.total}</td>
+                          <td className="px-4 py-2"><button className='bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700'>eliminar</button></td>
                         </tr>
                       ))}
                     </tbody>
