@@ -85,9 +85,9 @@ export default function Refunds({ refunds }: any) {
                     <tbody>
                       {filteredrefunds.map((refund: any) => (
                         <tr key={refund.id} className="border-b border-gray-300 text-white">
-                          <td className="px-4 py-2 border-r">{refund.date}</td>
-                          <td className="px-4 py-2 border-r">{refund.user?.name}</td>
-                          <td className="px-4 py-2 border-r">{refund.product?.name}</td>
+                          <td className="px-4 py-2 border-r">{refund.refund_date}</td>
+                          <td className="px-4 py-2 border-r">{refund.client}</td>
+                          <td className="px-4 py-2 border-r">{refund.product}</td>
                           <td className="px-4 py-2 border-r">{refund.reason}</td>
                         </tr>
                       ))}
