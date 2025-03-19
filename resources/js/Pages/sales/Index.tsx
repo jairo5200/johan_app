@@ -1,9 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
 
+// Define la interfaz para los datos del formulario
+interface SaleData {
+  total: number;
+  user_id: number;
+  products: {
+    product_id: number;
+    quantity: number;
+    price: number;
+  }[];
+}
+
+type CartItem = {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+};
 
 export default function SalesAndReturns({ products, sales }: any) {
   // Estados para los modales generales
@@ -12,16 +29,37 @@ export default function SalesAndReturns({ products, sales }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
   const route = useRoute();
+  
+  // Usa useForm con la interfaz SaleData
+  const { data, setData, post, errors } = useForm<SaleData>({
+    total: 0,
+    user_id: 1, // Puedes cambiar esto según corresponda
+    products: [], // Inicialmente vacío
+  });
 
   // Estados para el modal de "Registrar Venta" (Carrito de Compras)
   const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [newProduct, setNewProduct] = useState({ id: 0, name: '', quantity: 1, price: 0 });
-  const [filteredProducts, setFilteredProducts] = useState<any[]>([]); // Para sugerencias de productos
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [newProduct, setNewProduct] = useState<CartItem>({ id: 0, name: '', quantity: 1, price: 0 });
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
 
   // Calcula el total de la venta
   const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
+  // useEffect para actualizar los datos del formulario cuando cambia el carrito
+  useEffect(() => {
+    setData('total', total);
+    setData(
+      'products',
+      cartItems.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }))
+    );
+  }, [cartItems, total, setData]);
+  
+  
   // Función para filtrar las ventas (sin realizar petición)
   const filteredSales = useMemo(() => {
     if (!sales || !Array.isArray(sales)) return [];
@@ -57,6 +95,8 @@ export default function SalesAndReturns({ products, sales }: any) {
   // Agrega un producto al carrito
   const addProduct = () => {
     if (newProduct.id === 0 || newProduct.quantity <= 0) return;
+
+    
 
     // Verifica si el producto ya está en el carrito
     const existingItemIndex = cartItems.findIndex(item => item.id === newProduct.id);
@@ -109,43 +149,57 @@ export default function SalesAndReturns({ products, sales }: any) {
     setCartItems(updatedCart);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   
-  const { post } = useForm(); // 
 
   const handleConfirmSale = (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Contenido de cartItems antes de enviar:", cartItems);
-
-    if (cartItems.length === 0) {
-        console.error("No hay productos en el carrito. No se puede registrar la venta.");
-        return;
-    }
-
-    const saleData = {
-        total: Number(total), 
-        user_id: 1,
-        products: cartItems.map((item) => ({
-            product_id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-        })),
-    };
-
-    console.log("Payload JSON antes de enviar:", JSON.stringify(saleData, null, 2));
-
     post(route("sales.store"), {
-        data: saleData,
-        preserveScroll: true,
-        onSuccess: () => {
-            console.log("Venta registrada con éxito");
-            setShowSaleModal(false);
-        },
-        onError: (errors) => {
-            console.error("Error al registrar la venta:", errors);
-        },
+      onFinish: () => {
+        console.log("Venta registrada con éxito");
+        setShowSaleModal(false);
+      },
     });
-};
+  };
+  
+
+//     console.log("Contenido de cartItems antes de enviar:", cartItems);
+
+//     if (cartItems.length === 0) {
+//         console.error("No hay productos en el carrito. No se puede registrar la venta.");
+//         return;
+//     }
+
+//     const saleData = {
+//         total: Number(total), 
+//         user_id: 1,
+//         products: cartItems.map((item) => ({
+//             product_id: item.id,
+//             quantity: item.quantity,
+//             price: item.price,
+//         })),
+//     };
+
+//     console.log("Payload JSON antes de enviar:", JSON.stringify(saleData, null, 2));
+
+//     post(route("sales.store"), {
+//         data: saleData,
+//         preserveScroll: true,
+//         onSuccess: () => {
+//             console.log("Venta registrada con éxito");
+//             setShowSaleModal(false);
+//         },
+//         onError: (errors) => {
+//             console.error("Error al registrar la venta:", errors);
+//         },
+//     });
+// };
 
 
 
