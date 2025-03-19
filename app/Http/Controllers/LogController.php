@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Return;
+use Inertia\Inertia;
+
 
 class LogController extends Controller
 {

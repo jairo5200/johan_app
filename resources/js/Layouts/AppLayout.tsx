@@ -89,6 +89,12 @@ export default function AppLayout({
                   >
                     Devoluciones
                   </NavLink>
+                  <NavLink
+                    href={route('logs.index')}
+                    active={route().current('logs.index')}
+                  >
+                    Transacciones
+                  </NavLink>
                 </div>
               </div>
 

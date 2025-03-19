@@ -108,10 +108,4 @@ export default function Returns({ returns }: any) {
         </div>
       </div>
     </AppLayout>
-  );
-}
-
-
-
-
-
+  );}

@@ -4,6 +4,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,5 +46,7 @@ Route::middleware([
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
-    Route::get('/returns',[ReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
+    Route::post('/returns', [ReturnController::class, 'store'])->name('returns.store');
+    Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
 });

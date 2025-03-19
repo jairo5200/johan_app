@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Return;
+use Inertia\Inertia;
 
 class ReturnController extends Controller
 {
@@ -28,7 +30,7 @@ class ReturnController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       //
     }
 
     /**
