@@ -1,24 +1,24 @@
 import React, { useState, useMemo } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
-export default function Returns({ returns }: any) {
+export default function logs({ logs }: any) {
   // Estado para el término de búsqueda y filtro
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
 
   // Filtrado de devoluciones según fecha, usuario, producto o motivo
-  const filteredReturns = useMemo(() => {
-    if (!returns || !Array.isArray(returns)) return [];
+  const filteredlogs = useMemo(() => {
+    if (!logs || !Array.isArray(logs)) return [];
     
-    return returns.filter((ret: any) => {
+    return logs.filter((log: any) => {
       // Verificamos que exista la fecha
-      if (!ret.date) return false;
+      if (!log.date) return false;
       
       // Filtrar por fecha: hoy, mensual o anual.
       const today = new Date().toISOString().split('T')[0];
-      if (filter === 'hoy' && !ret.date.startsWith(today)) return false;
+      if (filter === 'hoy' && !log.date.startsWith(today)) return false;
       
-      const retDate = new Date(ret.date);
+      const retDate = new Date(log.date);
       if (filter === 'mensual' && retDate.getMonth() !== new Date().getMonth()) return false;
       if (filter === 'anual' && retDate.getFullYear() !== new Date().getFullYear()) return false;
       
@@ -26,14 +26,14 @@ export default function Returns({ returns }: any) {
       if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
         return (
-          ret.user?.name.toLowerCase().includes(term) ||
-          ret.product?.name.toLowerCase().includes(term) ||
-          ret.reason.toLowerCase().includes(term)
+          log.user?.name.toLowerCase().includes(term) ||
+          log.product?.name.toLowerCase().includes(term) ||
+          log.reason.toLowerCase().includes(term)
         );
       }
       return true;
     });
-  }, [returns, filter, searchTerm]);
+  }, [logs, filter, searchTerm]);
 
   return (
     <AppLayout
@@ -77,18 +77,22 @@ export default function Returns({ returns }: any) {
                     <tr className="bg-gray-700 text-white">
                       <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Producto</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Motivo</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Cambio</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">ubicación</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">antiguos valores</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">nuevos valores</th>
                     </tr>
                   </thead>
-                  {filteredReturns.length > 0 ? (
+                  {logs.length > 0 ? (
                     <tbody>
-                      {filteredReturns.map((ret: any) => (
-                        <tr key={ret.id} className="border-b border-gray-300 text-white">
-                          <td className="px-4 py-2 border-r">{ret.date}</td>
-                          <td className="px-4 py-2 border-r">{ret.user?.name}</td>
-                          <td className="px-4 py-2 border-r">{ret.product?.name}</td>
-                          <td className="px-4 py-2 border-r">{ret.reason}</td>
+                      {logs.map((log: any) => (
+                        <tr key={log.id} className="border-b border-gray-300 text-white">
+                          <td className="px-4 py-2 border-r">{log.created_at}</td>
+                          <td className="px-4 py-2 border-r">{log.user_name}</td>
+                          <td className="px-4 py-2 border-r">{log.action}</td>
+                          <td className="px-4 py-2 border-r">{log.model}</td>
+                          <td className="px-4 py-2 border-r">{log.old_values}</td>
+                          <td className="px-4 py-2 border-r">{log.new_values}</td>
                         </tr>
                       ))}
                     </tbody>
