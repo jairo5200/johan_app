@@ -36,35 +36,40 @@ class SaleController extends Controller
         return Inertia::render('sales/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        dd($request->all());  // Esto imprimirá los datos recibidos en la solicitud
-<<<<<<< HEAD
-        \Log::info("Datos recibidos:", $request->all()); // Para depuración
-    
-        // Asegurar que `total` y `user_id` están presentes en la solicitud
-=======
-        // Validar los datos de la solicitud
->>>>>>> 97cc636cf25564e05f59d05b9ba809c4c1dd8256
+        dd($request->all());
+        // Validar los datos recibidos en la solicitud
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
             'user_id' => 'required|exists:users,id',
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
         ]);
     
-        \Log::info("Datos validados:", $validatedData);
+        // Obtener los datos validados
+        $products = $validatedData['products'];
+        $total = $validatedData['total'];
+        $user_id = $validatedData['user_id'];
     
         // Crear la venta en la base de datos
         $sale = Sale::create([
-            'total' => $validatedData['total'],
-            'user_id' => $validatedData['user_id'],
+            'total' => $total,
+            'user_id' => $user_id,
         ]);
     
-        \Log::info("Venta creada:", $sale->toArray());
+        // Asociar los productos a la venta
+        foreach ($products as $product) {
+            $sale->products()->attach($product['product_id'], [
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+            ]);
+        }
     
-        return redirect()->route('sales.index')->with('success', 'Venta creada con éxito.');
+        // Redirigir a la vista 'sales.index' con un mensaje de éxito
+        return redirect()->route('sales.index')->with('success', 'Venta creada con éxito');
     }
     
     
