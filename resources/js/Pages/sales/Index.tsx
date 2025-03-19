@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 
 // Define la interfaz para los datos del formulario
 interface SaleData {
+  purchaseDate: Date;
   total: number;
-  user_id: number;
   products: {
     product_id: number;
     quantity: number;
@@ -32,8 +32,8 @@ export default function SalesAndReturns({ products, sales }: any) {
   
   // Usa useForm con la interfaz SaleData
   const { data, setData, post, errors } = useForm<SaleData>({
+    purchaseDate: new Date().toISOString().split('T')[0],
     total: 0,
-    user_id: 1, // Puedes cambiar esto según corresponda
     products: [], // Inicialmente vacío
   });
 
@@ -151,10 +151,19 @@ export default function SalesAndReturns({ products, sales }: any) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  
+    // Si el campo que se cambia es 'purchaseDate'
+    if (name === 'purchaseDate') {
+      // Si el valor es vacío, asignamos la fecha actual
+      const newPurchaseDate = value || new Date().toISOString().split('T')[0];
+      
+      // Actualizamos el estado local y el estado del formulario
+      setPurchaseDate(newPurchaseDate);
+      setData((prevData) => ({
+        ...prevData,
+        purchaseDate: newPurchaseDate, // Aquí actualizamos purchaseDate en el formulario
+      }));
+    }
   };
   
 
@@ -200,13 +209,6 @@ export default function SalesAndReturns({ products, sales }: any) {
 //         },
 //     });
 // };
-
-
-
-
-
-
-  
 
 
   return (
@@ -305,8 +307,9 @@ export default function SalesAndReturns({ products, sales }: any) {
             <label className="block mb-2">Fecha de Compra:</label>
             <input 
               type="date" 
+              name="purchaseDate"
               value={purchaseDate} 
-              onChange={(e) => setPurchaseDate(e.target.value)}
+              onChange={handleChange}
               className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
             />
             {/* Formulario para agregar un producto */}

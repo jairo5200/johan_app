@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
@@ -38,17 +40,10 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());  // Esto imprimirá los datos recibidos en la solicitud
-<<<<<<< HEAD
-        \Log::info("Datos recibidos:", $request->all()); // Para depuración
-    
-        // Asegurar que `total` y `user_id` están presentes en la solicitud
-=======
-        // Validar los datos de la solicitud
->>>>>>> 97cc636cf25564e05f59d05b9ba809c4c1dd8256
+        // Obtener el user por su ID
+        $user = user::findOrFail(Auth::id());
         $validatedData = $request->validate([
             'total' => 'required|numeric|min:0',
-            'user_id' => 'required|exists:users,id',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
@@ -58,16 +53,27 @@ class SaleController extends Controller
         // Obtener los datos validados
         $products = $validatedData['products'];
         $total = $validatedData['total'];
-        $user_id = $validatedData['user_id'];
     
         // Crear la venta en la base de datos
         $sale = Sale::create([
             'total' => $total,
-            'user_id' => $user_id,
+            'user_id' => $user->id,
         ]);
     
-        // Asociar los productos a la venta
+        // Asociar los productos a la venta y actualizar el stock
         foreach ($products as $product) {
+            // Actualizar el stock de cada producto
+            $productModel = Product::findOrFail($product['product_id']);
+            
+            if ($productModel->stock < $product['quantity']) {
+                return response()->json(['error' => 'No hay suficiente stock para el producto: ' . $productModel->name], 400);
+            }
+
+            // Restar la cantidad vendida del stock
+            $productModel->stock -= $product['quantity'];
+            $productModel->save();
+
+            // Asociar el producto a la venta
             $sale->products()->attach($product['product_id'], [
                 'quantity' => $product['quantity'],
                 'price' => $product['price'],

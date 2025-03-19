@@ -33,7 +33,6 @@ class UserController extends Controller
     // Método para almacenar el usuario en la base de datos
     public function store(Request $request)
     {
-        dd($request->all());
         // Validación de los datos del formulario
         $validated = $request->validate([
             'name' => 'required|string|max:255',
