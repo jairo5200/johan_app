@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('price');
             $table->string('image');
             $table->integer('stock');
+            $table->string('state')->default('active');  // Establecer 'active' como valor por defecto;
             $table->timestamps();
         });
     }

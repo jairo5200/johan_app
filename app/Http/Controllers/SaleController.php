@@ -39,11 +39,10 @@ class SaleController extends Controller
         return Inertia::render('sales/Create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
-    
+        
         // Validar la solicitud
         $validatedData = $request->validate([
             'purchaseDate' => 'required',
@@ -53,47 +52,73 @@ class SaleController extends Controller
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.price' => 'required|numeric|min:0',
         ]);
-    
+        
         // Obtener los datos validados
         $saleData = $validatedData['purchaseDate'];
         $products = $validatedData['products'];
         $total = $validatedData['total'];
-    
+        
+        // Array para almacenar los valores antiguos y nuevos de todos los productos
+        $oldValues = [];
+        $newValues = [];
+
+        // Validar el stock de cada producto
         foreach ($products as $product) {
-            // Validamos el stock de cada producto
             $productModel = Product::findOrFail($product['product_id']);
-    
+            
             if ($productModel->stock < $product['quantity']) {
                 return Redirect::back()->withErrors([
                     'error' => 'No hay suficiente stock para el producto: ' . $productModel->name
                 ]);
             }
+
+            // Registrar el valor antiguo del stock para el log
+            $oldValues[] = [
+                'product_id' => $product['product_id'],
+                'product_name' => $productModel->name,
+                'old_stock' => $productModel->stock,
+            ];
+
+            // Actualizar el stock de cada producto
+            $productModel->stock -= $product['quantity'];
+            $productModel->save();
+
+            // Registrar el valor nuevo del stock después de la venta
+            $newValues[] = [
+                'product_id' => $product['product_id'],
+                'product_name' => $productModel->name,
+                'new_stock' => $productModel->stock,
+                'quantity_sold' => $product['quantity'],
+                'price' => $product['price'],
+            ];
         }
-    
-    
+
         // Crear la venta en la base de datos
         $sale = Sale::create([
             'sale_date' => $saleData,
             'total' => $total,
             'user_id' => $userAuth->id,
         ]);
-    
-        // Asociar los productos a la venta y actualizar el stock
-        foreach ($products as $product) {
-            // Actualizar el stock de cada producto
-            $productModel = Product::findOrFail($product['product_id']);
-            
-            // Restar la cantidad vendida del stock
-            $productModel->stock -= $product['quantity'];
-            $productModel->save();
 
-            // Asociar el producto a la venta
+        // Asociar los productos a la venta
+        foreach ($products as $product) {
             $sale->products()->attach($product['product_id'], [
                 'quantity' => $product['quantity'],
                 'price' => $product['price'],
             ]);
         }
-    
+
+        // Registrar el log de la venta (una vez con todos los productos)
+        Log::create([
+            'user_name' => $userAuth->name, // Usuario que realizó la acción
+            'action' => 'Venta Realizada', // Acción realizada
+            'model' => 'Sale', // Modelo afectado
+            'old_values' => json_encode($oldValues), // Valores antiguos (stock antes de la venta)
+            'new_values' => json_encode($newValues), // Nuevos valores (stock después de la venta)
+            'created_at' => now(), // Fecha y hora de la transacción
+            'updated_at' => now(), // Fecha y hora de la transacción
+        ]);
+
         // Redirigir a la vista 'sales.index' con un mensaje de éxito
         return redirect()->route('sales.index')->with('success', 'Venta creada con éxito');
     }

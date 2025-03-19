@@ -32,7 +32,7 @@ export default function SalesAndReturns({ products, sales }: any) {
   const route = useRoute();
   
   // Usa useForm con la interfaz SaleData
-  const { data, setData, post, errors } = useForm<SaleData>({
+  const { data, setData, post, errors, reset } = useForm<SaleData>({
     purchaseDate: new Date().toISOString().split('T')[0],
     total: 0,
     products: [], // Inicialmente vacío
@@ -173,8 +173,14 @@ export default function SalesAndReturns({ products, sales }: any) {
     post(route("sales.store"), {
       onSuccess: () => {
         console.log("Venta registrada con éxito");
+        Swal.fire({
+          icon: "success",
+          title: "Venta exitosa",
+          text: "La venta se ha registrado correctamente",
+        });
         setCartItems([]);  // Vaciar el carrito
         setData({ total: 0, user_id: 1, products: [] });
+        reset();
         setShowSaleModal(false);
       },
       onError: (errors) => {
@@ -198,40 +204,62 @@ export default function SalesAndReturns({ products, sales }: any) {
     setData({ total: 0, user_id: 1, products: [] }); // Resetear el formulario
     setShowSaleModal(false); // Cerrar el modal
   };
+
+  const { data: returnData, setData: setReturnData, post: postReturn, reset: resetReturn } = useForm({
+    reason: '',
+    client: '',
+    product: '', // o product_id: ''
+    purchaseDate: new Date().toISOString().split('T')[0],
+  });
+  const [returnFilteredProducts, setReturnFilteredProducts] = useState<any[]>([]);
   
+  const handleReturnSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    postReturn(route('returns.store'), {
+      onSuccess: () => {
+        console.log("Devolución registrada con éxito");
+        resetReturn();
+        setShowReturnModal(false);
+      },
+      onError: (errors) => {
+        console.error("Error al registrar la devolución:", errors);
+        if (errors.error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en la devolución',
+            text: errors.error,
+          });
+        }
+      },
+    });
+  };
 
-//     console.log("Contenido de cartItems antes de enviar:", cartItems);
-
-//     if (cartItems.length === 0) {
-//         console.error("No hay productos en el carrito. No se puede registrar la venta.");
-//         return;
-//     }
-
-//     const saleData = {
-//         total: Number(total), 
-//         user_id: 1,
-//         products: cartItems.map((item) => ({
-//             product_id: item.id,
-//             quantity: item.quantity,
-//             price: item.price,
-//         })),
-//     };
-
-//     console.log("Payload JSON antes de enviar:", JSON.stringify(saleData, null, 2));
-
-//     post(route("sales.store"), {
-//         data: saleData,
-//         preserveScroll: true,
-//         onSuccess: () => {
-//             console.log("Venta registrada con éxito");
-//             setShowSaleModal(false);
-//         },
-//         onError: (errors) => {
-//             console.error("Error al registrar la venta:", errors);
-//         },
-//     });
-// };
-
+  
+  const handleReturnProductInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Actualiza el campo "product" en returnData
+    setReturnData('product', value);
+    
+    if (value.trim().length > 0) {
+      // Filtra la lista de productos (suponiendo que "products" es la lista completa que recibes)
+      const filtered = products.filter((p: any) =>
+        p.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setReturnFilteredProducts(filtered);
+    } else {
+      setReturnFilteredProducts([]);
+    }
+  };
+  
+  const selectReturnProduct = (product: any) => {
+    // Actualiza el campo "product" en returnData con el nombre del producto (o puedes guardar el id en otro campo)
+    setReturnData('product', product.name);
+    // Limpia las sugerencias
+    setReturnFilteredProducts([]);
+  };
+  
+  
+  
 
   return (
     <AppLayout
@@ -458,19 +486,83 @@ export default function SalesAndReturns({ products, sales }: any) {
 
       {/* Modal para Registrar Devolución */}
       {showReturnModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
-            <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
-            <input type="text" placeholder="Usuario" className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" />
-            <input type="text" placeholder="Referencia del Producto" className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" />
-            <input type="date" className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" />
-            <div className="flex justify-end mt-4">
-              <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={() => setShowReturnModal(false)}>Cancelar</button>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
-            </div>
-          </div>
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+      <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
+      <form onSubmit={handleReturnSubmit}>
+        {/* Campo para el motivo */}
+        <input 
+          type="text" 
+          name="reason"
+          placeholder="Motivo" 
+          value={returnData.reason} 
+          onChange={(e) => setReturnData('reason', e.target.value)}
+          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
+        />
+        {/* Input para Producto con autocompletar */}
+        <input 
+          type="text" 
+          name="product"
+          placeholder="Producto" 
+          value={returnData.product} 
+          onChange={handleReturnProductInputChange}
+          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
+        />
+        {returnFilteredProducts.length > 0 && (
+          <ul className="bg-gray-700 rounded-lg mt-1 shadow-lg">
+            {returnFilteredProducts.map((prod: any) => (
+              <li 
+                key={prod.id} 
+                className="p-2 hover:bg-gray-600 cursor-pointer"
+                onClick={() => selectReturnProduct(prod)}
+              >
+                {prod.name} - ${prod.price}
+              </li>
+            ))}
+          </ul>
+        )}
+        {/* Campo para los datos del cliente */}
+        <input 
+          type="text" 
+          name="client"
+          placeholder="Datos del cliente" 
+          value={returnData.client} 
+          onChange={(e) => setReturnData('client', e.target.value)}
+          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
+        />
+        {/* Fecha de Compra */}
+        <label className="block mb-2">Fecha de Compra:</label>
+        <input 
+          type="date" 
+          name="purchaseDate"
+          value={returnData.purchaseDate} 
+          onChange={(e) => setReturnData('purchaseDate', e.target.value)}
+          className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
+        />
+        <div className="flex justify-end mt-4">
+          <button 
+            type="button"
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2"
+            onClick={() => {
+              resetReturn();
+              setShowReturnModal(false);
+            }}
+          >
+            Cancelar
+          </button>
+          <button 
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Guardar
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
+
+
     </AppLayout>
   );
 }
