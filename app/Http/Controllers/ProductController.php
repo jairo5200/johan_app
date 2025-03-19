@@ -228,7 +228,7 @@ class ProductController extends Controller
         }
 
         // Cambiar el nombre del producto
-        $product->name = '*'.$product->name;
+        $product->name = time() . '_'.$product->name;
 
         // Cambiar el estado del producto a 'inactive'
         $product->state = 'inactive';
