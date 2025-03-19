@@ -83,6 +83,12 @@ export default function AppLayout({
                   >
                     Usuarios
                   </NavLink>
+                  <NavLink
+                    href={route('returns.index')}
+                    active={route().current('returns.index')}
+                  >
+                    Devoluciones
+                  </NavLink>
                 </div>
               </div>
 
