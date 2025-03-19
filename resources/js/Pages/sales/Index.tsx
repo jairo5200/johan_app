@@ -209,7 +209,7 @@ export default function SalesAndReturns({ products, sales }: any) {
     reason: '',
     client: '',
     product: '', // o product_id: ''
-    purchaseDate: new Date().toISOString().split('T')[0],
+    returnDate: new Date().toISOString().split('T')[0],
   });
   const [returnFilteredProducts, setReturnFilteredProducts] = useState<any[]>([]);
   
@@ -534,9 +534,9 @@ export default function SalesAndReturns({ products, sales }: any) {
         <label className="block mb-2">Fecha de Compra:</label>
         <input 
           type="date" 
-          name="purchaseDate"
-          value={returnData.purchaseDate} 
-          onChange={(e) => setReturnData('purchaseDate', e.target.value)}
+          name="returnDate"
+          value={returnData.returnDate} 
+          onChange={(e) => setReturnData('returnDate', e.target.value)}
           className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
         />
         <div className="flex justify-end mt-4">
