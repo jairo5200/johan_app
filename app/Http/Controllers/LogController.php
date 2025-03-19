@@ -14,7 +14,7 @@ class LogController extends Controller
      */
     public function index()
     {
-        $logs = Log::all();
+        $logs = Log::orderBy('created_at', 'desc')->get();
         // Devolver la vista React usando Inertia
         return Inertia::render('logs/Index',[
             'logs' => $logs

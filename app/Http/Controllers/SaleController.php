@@ -21,7 +21,7 @@ class SaleController extends Controller
         // Obtener las ventas con los productos y usuarios asociados
         $sales = Sale::with(['products', 'user'])->get();
         // Obtener los productos
-        $products = Product::all();
+        $products = Product::where('state', 'active')->get();
 
         // Devolver la vista React usando Inertia y pasar las ventas
         return Inertia::render('sales/Index', [
