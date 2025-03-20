@@ -65,7 +65,7 @@ export default function Refunds({ refunds }: any) {
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+          <div className="bg-gray-600 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             
             {/* Filtros de búsqueda y fecha */}
             <div className="flex justify-between items-center mb-4">
