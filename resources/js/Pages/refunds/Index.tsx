@@ -51,7 +51,7 @@ export default function Refunds({ refunds }: any) {
 
   // Obtener los datos paginados para la página actual
   const paginatedRefunds = useMemo(() => {
-    return filteredRefunds.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    return [...filteredRefunds].reverse().slice((page - 1) * itemsPerPage, page * itemsPerPage);
   }, [filteredRefunds, page, itemsPerPage]);
 
   return (

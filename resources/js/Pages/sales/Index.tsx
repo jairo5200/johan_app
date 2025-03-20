@@ -317,7 +317,7 @@ export default function SalesAndReturns({ products, sales }: any) {
 
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
-  const paginatedSales = filteredSales.slice(
+  const paginatedSales = [...filteredSales].reverse().slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
@@ -381,15 +381,6 @@ export default function SalesAndReturns({ products, sales }: any) {
                 </select>
               </div>
             </div>
-  
-            {/* Aquí se asume que ya tienes definido filteredSales (useMemo) en tu lógica */}
-            {/* Agregamos estados de paginación */}
-            {/*
-              const [page, setPage] = useState(1);
-              const itemsPerPage = 10;
-              const totalPages = useMemo(() => Math.ceil(filteredSales.length / itemsPerPage), [filteredSales, itemsPerPage]);
-              const paginatedSales = useMemo(() => filteredSales.slice((page - 1) * itemsPerPage, page * itemsPerPage), [filteredSales, page, itemsPerPage]);
-            */}
   
             {/* Tabla de ventas */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">

@@ -115,6 +115,18 @@ export default function Logs({ logs }: any) {
     });
   }, [logs, filter, searchTerm]);
 
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const paginatedLogs = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredLogs.slice(startIndex, endIndex);
+  }, [filteredLogs, currentPage]);
+  
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+
+
   return (
     <AppLayout
       title="Transacciones"
@@ -148,6 +160,8 @@ export default function Logs({ logs }: any) {
                 </select>
               </div>
             </div>
+            
+
 
             {/* Tabla de transacciones */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
@@ -163,34 +177,68 @@ export default function Logs({ logs }: any) {
                       <th className="px-4 py-2 border-b border-gray-300">Valores nuevos</th>
                     </tr>
                   </thead>
-                  {filteredLogs.length > 0 ? (
-                    <tbody>
-                      {filteredLogs.map((log: any) => (
-                        <tr key={log.id} className="border-b border-gray-300 text-white">
-                          <td className="px-4 py-2 border-r">{formatDate(log.created_at)}</td>
-                          <td className="px-4 py-2 border-r">{log.user_name}</td>
-                          <td className="px-4 py-2 border-r">{log.action}</td>
-                          <td className="px-4 py-2 border-r">{log.model}</td>
-                          <td className="px-4 py-2 border-r">{formatJson(log.old_values, log.action, log.model)}</td>
-                          <td className="px-4 py-2 border-r">{formatJson(log.new_values, log.action, log.model)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  ) : (
-                    <tbody>
-                      <tr>
-                        <td colSpan={6} className="text-center py-4">
-                          No se encontraron transacciones.
-                        </td>
+                  {paginatedLogs.length > 0 ? (
+                  <tbody>
+                    {paginatedLogs.map((log: any) => (
+                      <tr key={log.id} className="border-b border-gray-300 text-white">
+                        <td className="px-4 py-2 border-r">{formatDate(log.created_at)}</td>
+                        <td className="px-4 py-2 border-r">{log.user_name}</td>
+                        <td className="px-4 py-2 border-r">{log.action}</td>
+                        <td className="px-4 py-2 border-r">{log.model}</td>
+                        <td className="px-4 py-2 border-r">{formatJson(log.old_values, log.action, log.model)}</td>
+                        <td className="px-4 py-2 border-r">{formatJson(log.new_values, log.action, log.model)}</td>
                       </tr>
-                    </tbody>
-                  )}
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td colSpan={6} className="text-center py-4">
+                        No se encontraron transacciones.
+                      </td>
+                    </tr>
+                  </tbody>
+                )}
+
                 </table>
               </div>
             </div>
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="flex justify-center space-x-2 mt-4">
+                <button
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  « Prev
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={`px-4 py-2 rounded-md ${
+                      currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Next »
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+      
     </AppLayout>
   );
 }
