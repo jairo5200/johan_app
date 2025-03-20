@@ -5,6 +5,14 @@ import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
 import useRoute from '@/Hooks/useRoute';
 
+interface EditData {
+  name: string;           // El nombre del producto, que debe ser una cadena de texto
+  description: string;    // La descripción del producto, que también debe ser una cadena
+  price: string;          // El precio del producto, que debe ser un número
+  stock: string ;   // El stock del producto, que debe ser un número, y puede ser null si no se proporciona
+  image: File | null;     // La imagen del producto, puede ser un archivo (File) o null si no se proporciona
+}
+
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -38,12 +46,12 @@ export default function Products({ products }: any) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProductForEdit, setSelectedProductForEdit] = useState<any>(null);
 
-  const { put, data: editData, setData: setEditData, errors: editErrors } = useForm({
+  const { put: putEdit, data: editData, setData: setEditData, errors: editErrors } = useForm<EditData>({
     name: '',
     description: '',
     price: '',
     stock: '',
-    image: null as File | null,
+    image: null,
   });
 
   // Manejar clic en editar
@@ -91,8 +99,7 @@ export default function Products({ products }: any) {
 
     if (selectedProductForEdit) {
       console.log(formData);
-      put(route('products.update', selectedProductForEdit.id), {
-        data: formData,
+      putEdit(route('products.update', selectedProductForEdit.id), {
         onSuccess: () => {
           setShowEditModal(false);
           console.log('Producto actualizado');
@@ -144,6 +151,7 @@ export default function Products({ products }: any) {
       });
     }
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
