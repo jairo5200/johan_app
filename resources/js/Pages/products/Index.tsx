@@ -94,10 +94,6 @@ export default function Products({ products }: any) {
     image: '',
   });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
