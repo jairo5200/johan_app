@@ -64,21 +64,23 @@ export default function Users({ users }: any) {
   };
   
 
+
+
   const handleDeleteUser = (userId: number) => {
     deleteUser(route('users.destroy', userId), {
-      preserveScroll: true, // Si lo necesitas para evitar refrescos inesperados
-      onSuccess: () => {
-        console.log('Usuario eliminado con éxito');
-        // Muestra alerta de éxito y luego actualiza la lista o redirige
-        showAlert("Usuario eliminado", "El usuario ha sido eliminado exitosamente", "success")
-          .then(() => {
-            // Aquí actualizas la lista de usuarios o haces alguna redirección
-            // Por ejemplo: refreshUsersList() o router.reload();
-          });
+      preserveScroll: true,
+      onSuccess: (page: any) => {
+        if (page.props.flash?.error) {
+          showAlert("Error al eliminar usuario", page.props.flash.error, "error");
+        } else {
+          showAlert("Usuario eliminado", "El usuario ha sido eliminado exitosamente", "success")
+            .then(() => {
+              // Aquí actualizas la lista de usuarios o haces alguna redirección
+            });
+        }
       },
       onError: (errors) => {
         console.error('Error al eliminar el usuario:', errors);
-        // Si el error tiene una propiedad 'error', úsala; de lo contrario, mensaje genérico.
         if (errors.error) {
           showAlert("Error al eliminar usuario", errors.error, "error");
         } else {
@@ -87,6 +89,9 @@ export default function Users({ users }: any) {
       }
     });
   };
+  
+  
+  
   
 
   const handleAddUser = () => setShowAddUserModal(true);
