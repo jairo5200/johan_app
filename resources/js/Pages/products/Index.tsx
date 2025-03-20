@@ -5,14 +5,6 @@ import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
 import useRoute from '@/Hooks/useRoute';
 
-interface EditData {
-  name: string;           // El nombre del producto, que debe ser una cadena de texto
-  description: string;    // La descripción del producto, que también debe ser una cadena
-  price: string;          // El precio del producto, que debe ser un número
-  stock: string ;   // El stock del producto, que debe ser un número, y puede ser null si no se proporciona
-  image: File | null;     // La imagen del producto, puede ser un archivo (File) o null si no se proporciona
-}
-
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -42,74 +34,6 @@ export default function Products({ products }: any) {
     stock: '',
     image: '',
   });
-
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedProductForEdit, setSelectedProductForEdit] = useState<any>(null);
-
-  const { put: putEdit, data: editData, setData: setEditData, errors: editErrors } = useForm<EditData>({
-    name: '',
-    description: '',
-    price: '',
-    stock: '',
-    image: null,
-  });
-
-  // Manejar clic en editar
-  const handleEditProduct = (product: any) => {
-    setSelectedProductForEdit(product);
-    setEditData({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      image: null, // No establecer la imagen actual aquí para evitar problemas
-    });
-    setShowEditModal(true);
-  };
-  // Manejar cambio en formulario de edición
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    if (name === 'image' && files) {
-      setEditData({
-        ...editData,
-        [name]: files[0],
-      });
-    } else {
-      setEditData({
-        ...editData,
-        [name]: value,
-      });
-    }
-  };
-
-  // Enviar formulario de edición
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('_method', 'PUT'); // Para método PUT en Laravel
-    formData.append('name', editData.name);
-    formData.append('description', editData.description);
-    formData.append('price', editData.price);
-    formData.append('stock', editData.stock);
-    
-    if (editData.image) {
-      formData.append('image', editData.image);
-    }
-
-    if (selectedProductForEdit) {
-      console.log(formData);
-      putEdit(route('products.update', selectedProductForEdit.id), {
-        onSuccess: () => {
-          setShowEditModal(false);
-          console.log('Producto actualizado');
-        },
-        onError: (errors) => {
-          console.error('Error al actualizar el producto', errors);
-        },
-      });
-    }
-  };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -151,7 +75,6 @@ export default function Products({ products }: any) {
       });
     }
   };
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,7 +139,7 @@ export default function Products({ products }: any) {
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
-                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} handleEditProduct={handleEditProduct}/>
+                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} />
                     ))}
                   </tbody>
                 </table>
@@ -319,94 +242,6 @@ export default function Products({ products }: any) {
                     <div className="flex justify-end mt-4">
                       <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddProductModal}>Cancelar</button>
                       <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-            {showEditModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
-                  <h2 className="text-2xl font-bold mb-4">Editar Producto</h2>
-                  <form onSubmit={handleEditSubmit}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Nombre del producto"
-                      value={editData.name}
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      type="text"
-                      name="description"
-                      placeholder="Descripción"
-                      value={editData.description}
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      type="text"
-                      name="price"
-                      placeholder="Precio"
-                      value={editData.price}
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      type="text"
-                      name="stock"
-                      placeholder="Stock"
-                      value={editData.stock}
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleEditChange}
-                    />
-                    <div className="mb-4">
-                      <label className="block mb-2">Imagen actual:</label>
-                      <img 
-                        src={`/img/${selectedProductForEdit?.image}`} 
-                        alt="Current" 
-                        className="w-20 h-20 object-cover mb-2"
-                      />
-                    </div>
-                    <div className="col-sm">
-                      <div className="grid grid-cols-1 mx-7">
-                        <label className="uppercase md:text-m text-m text-black font-semibold mb-1">
-                          Nueva Imagen (opcional)
-                        </label>
-                        <div className='flex items-center justify-center w-full'>
-                          <label className='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
-                            <div className='flex flex-col items-center justify-center pt-7'>
-                              <svg className="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                              </svg>
-                              <p className='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione nueva imagen</p>
-                            </div>
-                            <input 
-                              name="image" 
-                              id="image" 
-                              type='file' 
-                              className="hidden" 
-                              onChange={handleEditChange} 
-                            />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      <button 
-                        type="button" 
-                        className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" 
-                        onClick={() => setShowEditModal(false)}
-                      >
-                        Cancelar
-                      </button>
-                      <button 
-                        type="submit" 
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                      >
-                        Guardar Cambios
-                      </button>
                     </div>
                   </form>
                 </div>

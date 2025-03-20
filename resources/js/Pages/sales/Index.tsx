@@ -311,109 +311,168 @@ export default function SalesAndReturns({ products, sales }: any) {
     setReturnFilteredProducts([]);
   };
   
+  //Funciones para paginacion.
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10; // Número de elementos por página
+
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+
+  const paginatedSales = filteredSales.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
   
+
   
 
   return (
     <AppLayout
-       title="Ventas y Devoluciones"
-    renderHeader={() => (
-      <h2 className="font-semibold text-xl text-white leading-tight">
-        Ventas y Devoluciones
-      </h2>
-    )}
-  >
-    <div className="py-12">
-      <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
-
-          {/* Botones de acción */}
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <button 
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-4" 
-                onClick={() => setShowSaleModal(true)}
-              >
-                Registrar Venta
-              </button>
-              <button 
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" 
-                onClick={() => setShowReturnModal(true)}
-              >
-                Registrar Devolución
-              </button>
+      title="Ventas y Devoluciones"
+      renderHeader={() => (
+        <h2 className="font-semibold text-xl text-white leading-tight">
+          Ventas y Devoluciones
+        </h2>
+      )}
+    >
+      <div className="py-12">
+        <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+            
+            {/* Botones de acción */}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <button 
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-4" 
+                  onClick={() => setShowSaleModal(true)}
+                >
+                  Registrar Venta
+                </button>
+                <button 
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700" 
+                  onClick={() => setShowReturnModal(true)}
+                >
+                  Registrar Devolución
+                </button>
+              </div>
+  
+              {/* Filtros */}
+              <div className="flex space-x-4">
+                <input 
+                  type="text" 
+                  placeholder="Buscar por usuario o producto..." 
+                  className="p-2 border rounded-lg bg-gray-800 text-white" 
+                  value={searchTerm} 
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar búsqueda
+                  }}
+                />
+                <select 
+                  className="p-2 border rounded-lg bg-gray-800 text-white" 
+                  value={filter} 
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar filtro
+                  }}
+                >
+                  <option value="hoy">Hoy</option>
+                  <option value="mensual">Mensual</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
             </div>
-
-            {/* Filtros */}
-            <div className="flex space-x-4">
-              <input 
-                type="text" 
-                placeholder="Buscar por usuario o producto..." 
-                className="p-2 border rounded-lg bg-gray-800 text-white" 
-                value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <select 
-                className="p-2 border rounded-lg bg-gray-800 text-white" 
-                value={filter} 
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="hoy">Hoy</option>
-                <option value="mensual">Mensual</option>
-                <option value="anual">Anual</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Tabla de ventas */}
-          <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
-            <div className="overflow-hidden">
-              <table className="w-full table-auto border-collapse">
-                <thead>
-                  <tr className="bg-gray-700 text-white">
-                    <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
-                    <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
-                    <th className="px-4 py-2 border-r border-b border-gray-300">Productos</th>
-                    <th className="px-4 py-2 border-r border-b border-gray-300">Total</th>
-                    <th className="px-4 py-2 w-[70px] border-b border-gray-300">Opciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredSales.length > 0 ? (
-                    filteredSales.map((sale: any) => (
-                      <tr key={sale.id} className="border-b border-gray-300 text-white">
-                        <td className="px-4 py-2 border-r">{sale.sale_date}</td>
-                        <td className="px-4 py-2 border-r">{sale.user?.name || "Sin usuario"}</td>
-                        <td className="px-4 py-2 border-r">
-                          {sale.products?.length > 0
-                            ? sale.products.map((product: any, index: number) => (
-                                <span key={index}>
-                                  {product.name} ({product.pivot.quantity}x) - ${product.pivot.price}
-                                  {index !== sale.products.length - 1 && ", "}
-                                </span>
-                              ))
-                            : "Sin productos"}
-                        </td>
-                        <td className="px-4 py-2 border-r">${sale.total}</td>
-                        <td className="px-4 py-2">
-                          <button className='bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700'>
-                            Eliminar
-                          </button>
+  
+            {/* Aquí se asume que ya tienes definido filteredSales (useMemo) en tu lógica */}
+            {/* Agregamos estados de paginación */}
+            {/*
+              const [page, setPage] = useState(1);
+              const itemsPerPage = 10;
+              const totalPages = useMemo(() => Math.ceil(filteredSales.length / itemsPerPage), [filteredSales, itemsPerPage]);
+              const paginatedSales = useMemo(() => filteredSales.slice((page - 1) * itemsPerPage, page * itemsPerPage), [filteredSales, page, itemsPerPage]);
+            */}
+  
+            {/* Tabla de ventas */}
+            <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
+              <div className="overflow-hidden">
+                <table className="w-full table-auto border-collapse">
+                  <thead>
+                    <tr className="bg-gray-700 text-white">
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Productos</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Total</th>
+                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedSales.length > 0 ? (
+                      paginatedSales.map((sale: any) => (
+                        <tr key={sale.id} className="border-b border-gray-300 text-white">
+                          <td className="px-4 py-2 border-r">{sale.sale_date}</td>
+                          <td className="px-4 py-2 border-r">{sale.user?.name || "Sin usuario"}</td>
+                          <td className="px-4 py-2 border-r">
+                            {sale.products?.length > 0
+                              ? sale.products.map((product: any, index: number) => (
+                                  <span key={index}>
+                                    {product.name} ({product.pivot.quantity}x) - ${product.pivot.price}
+                                    {index !== sale.products.length - 1 && ", "}
+                                  </span>
+                                ))
+                              : "Sin productos"}
+                          </td>
+                          <td className="px-4 py-2 border-r">${sale.total}</td>
+                          <td className="px-4 py-2">
+                            <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="text-center py-4 text-white">
+                          No se encontraron ventas.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={5} className="text-center py-4">
-                        No se encontraron ventas.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-
+                    )}
+                  </tbody>
                 </table>
               </div>
             </div>
+  
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="flex justify-center space-x-2 mt-4">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  « Prev
+                </button>
+  
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setPage(index + 1)}
+                    className={`px-4 py-2 rounded-md ${
+                      page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+  
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Next »
+                </button>
+              </div>
+            )}
+  
           </div>
         </div>
       </div>
