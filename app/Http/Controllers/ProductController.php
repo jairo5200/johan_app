@@ -128,7 +128,10 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id){
+<<<<<<< HEAD
+=======
 
+>>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
         dd($request->all());
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
@@ -150,20 +153,14 @@ class ProductController extends Controller
 
         // Procesar la imagen solo si se envía una nueva
         if ($request->hasFile('image')) {
-            // Eliminar la imagen anterior si existe
-            if (file_exists(public_path($product->image))) {
-                unlink(public_path($product->image)); // Elimina la imagen anterior
+            if ($product->image) {
+                Storage::delete('public/'.$product->image);
             }
-
-            // Obtener la nueva imagen y generar un nombre único
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-
-            // Mover la imagen al directorio 'public/img'
-            $image->move(public_path('img'), $imageName);
-
-            // Actualizar la imagen del producto con la nueva ruta
-            $product->image = $imageName;
+            $path = $request->file('image')->store('public/products');
+            $validated['image'] = str_replace('public/', '', $path);
+        } else {
+            // Mantener la imagen existente si no se sube nueva
+            $validated['image'] = $product->image;
         }
 
         // Actualizar el resto de los campos del producto
