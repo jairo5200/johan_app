@@ -559,11 +559,13 @@ export default function SalesAndReturns({ products, sales }: any) {
                         <td className="px-2 py-1 border">{item.name}</td>
                         <td className="px-2 py-1 border">
                           <div className="flex items-center justify-center gap-1">
-                            <button 
+                            <button
+                              type="button" 
                               onClick={() => updateQuantity(index, item.quantity - 1)} 
                               className="bg-gray-700 px-2 py-1 rounded">-</button>
                             <span>{item.quantity}</span>
                             <button 
+                              type="button"
                               onClick={() => updateQuantity(index, item.quantity + 1)} 
                               className="bg-gray-700 px-2 py-1 rounded">+</button>
                           </div>
