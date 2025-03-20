@@ -52,7 +52,7 @@ class RefundController extends Controller
 
         // Verificar si el producto existe
         if (!$product) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
+            return back()->withErrors(['error' => 'Producto no encontrado']);
         }
 
         // Devolver 1 unidad al stock del producto

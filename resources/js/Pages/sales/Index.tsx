@@ -4,6 +4,7 @@ import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
 import Swal from 'sweetalert2';
+import { showAlert } from "@/Components/Showalert2";
 
 // Define la interfaz para los datos del formulario
 interface SaleData {
@@ -170,31 +171,66 @@ export default function SalesAndReturns({ products, sales }: any) {
 
   const handleConfirmSale = (e: React.FormEvent) => {
     e.preventDefault();
+  
+    console.log("Enviando datos a Inertia...");
+  
     post(route("sales.store"), {
+      preserveScroll: true, // Evita que la página haga un refresh inesperado
       onSuccess: () => {
         console.log("Venta registrada con éxito");
-        Swal.fire({
-          icon: "success",
-          title: "Venta exitosa",
-          text: "La venta se ha registrado correctamente",
-        });
-        setCartItems([]);  // Vaciar el carrito
-        setData({ total: 0, user_id: 1, products: [] });
-        reset();
-        setShowSaleModal(false);
+  
+        showAlert("Venta exitosa", "La venta se ha registrado correctamente", "success")
+          .then(() => {
+            console.log("Alerta cerrada, reseteando datos...");
+  
+            // 🔹 Restaurar estado correctamente
+            setCartItems([]);
+            setData({
+              total: 0,
+              user_id: 1,
+              purchaseDate: new Date().toISOString().split("T")[0], // Asegurar que la fecha esté siempre presente
+              products: []
+            });
+  
+            reset(); 
+            setShowSaleModal(false);
+          });
       },
       onError: (errors) => {
-        console.log("Errores capturados:", errors); // Verifica en la consola qué llega
-        if (errors.error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error de stock',
-            text: errors.error,
-          });
+        console.log("Errores capturados:", errors);
+  
+        if (errors.purchaseDate) {
+          console.log("Error: falta la fecha de compra");
+  
+          // 🔹 Restaurar `purchaseDate` automáticamente para evitar futuros errores
+          setData((prev) => ({
+            ...prev,
+            purchaseDate: new Date().toISOString().split("T")[0] // Se asegura de que siempre tenga una fecha válida
+          }));
+  
+          showAlert("Error en la venta", "La fecha de compra es obligatoria", "error");
+        } else if (errors.error) {
+          console.log("Error de stock detectado");
+  
+          showAlert("Error de stock", errors.error, "error")
+            .then(() => {
+              console.log("Error de stock cerrado, restaurando datos...");
+  
+              // 🔹 Restaurar `purchaseDate` después de un error de stock también
+              setData((prev) => ({
+                ...prev,
+                purchaseDate: new Date().toISOString().split("T")[0] 
+              }));
+            });
         }
       },
     });
+  
+    console.log("post() ha sido ejecutado");
   };
+  
+  
+  
   
   
   
@@ -218,16 +254,29 @@ export default function SalesAndReturns({ products, sales }: any) {
     postReturn(route('refunds.store'), {
       onSuccess: () => {
         console.log("Devolución registrada con éxito");
+        
+
+        setTimeout(() => {
+          showAlert(
+            "Devolución exitosa",
+            "La devolución se ha registrado correctamente",
+            "success"
+          );
+        }, 100);
+
         resetReturn();
         setShowReturnModal(false);
       },
       onError: (errors) => {
         console.error("Error al registrar la devolución:", errors);
         if (errors.error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error en la devolución',
-            text: errors.error,
+          setTimeout(() => {
+            showAlert(
+              "Error en la devolución",
+              errors.error,
+              "error"
+            );
+  
           });
         }
       },
