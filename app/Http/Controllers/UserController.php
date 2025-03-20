@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use App\Models\Log;
 
 class UserController extends Controller
@@ -84,12 +85,14 @@ class UserController extends Controller
         // Verificar si el usuario está intentando eliminar su propio perfil
         if(auth()->id() == $user->id) {
             // Redirecciona de vuelta con un error, lo que es una respuesta Inertia válida.
-            return redirect()->back()->withErrors('error', 'No puedes eliminar tu propio usuario');
+            return Redirect::back()->withErrors([
+                'error' => 'No puedes eliminar tu propio usuario'
+            ]);
         }
 
         // Verificar si el usuario existe
         if (!$user) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
         }
 
         // Registrar los valores antiguos para la auditoría

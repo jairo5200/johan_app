@@ -201,6 +201,7 @@ export default function SalesAndReturns({ products, sales }: any) {
           });
       },
       onError: (errors) => {
+        showAlert("error", errors.products ,"error")
         console.log("Errores capturados:", errors);
   
         if (errors.purchaseDate) {
@@ -272,6 +273,14 @@ export default function SalesAndReturns({ products, sales }: any) {
         setShowReturnModal(false);
       },
       onError: (errors) => {
+        if(errors.reason){
+          showAlert("error", errors.reason,"error")
+        }else if(errors.client){
+          showAlert("error",errors.client ,"error")
+        }else if(errors.product){
+          showAlert("error", errors.product ,"error")
+        }
+        
         console.error("Error al registrar la devolución:", errors);
         if (errors.error) {
           setTimeout(() => {
