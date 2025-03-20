@@ -45,6 +45,11 @@ class RefundController extends Controller
             'client' => 'required|string|max:255',
             'product' => 'required|string|max:255',
             'refundDate' => 'required|date', // Validación de la fecha
+        ],[
+            'product.required' => 'Debe seleccionar un producto.',
+            'refundDate.required' => 'La fecha de devolución es obligatoria.',
+            'reason.required' => 'el motivo de la devolucion es obligatorio.',
+            'client.required' => 'El cliente es obligatorio.',
         ]);
 
         // Buscar el producto por nombre (o id si usas product_id)
@@ -52,7 +57,7 @@ class RefundController extends Controller
 
         // Verificar si el producto existe
         if (!$product) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
+            return back()->withErrors(['error' => 'Producto no encontrado']);
         }
 
         // Devolver 1 unidad al stock del producto

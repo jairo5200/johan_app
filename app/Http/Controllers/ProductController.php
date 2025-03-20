@@ -42,14 +42,16 @@ class ProductController extends Controller
     {
         // Obtenemos el usuario que realiza la accion
         $userAuth = User::findOrFail(Auth::id());
+
         // Validar los datos del formulario
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:products,name',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'numeric',
+            'price' => 'required|numeric|min:1',
+            'stock' => 'numeric|min:1',
             'image' => 'required|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
         ]);
+
 
        // Procesar la imagen
         if ($request->hasFile('image')) {
@@ -69,7 +71,7 @@ class ProductController extends Controller
             'description' => $validatedData['description'],
             'price' => $validatedData['price'],
             'stock' => $validatedData['stock'],
-            'image' => 'img/' . $imageName, // Solo guardamos la ruta relativa
+            'image' => $imageName, // Solo guardamos la ruta relativa
         ]);
 
         // Registrar la auditoría de la transacción
@@ -126,6 +128,10 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id){
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
         dd($request->all());
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());

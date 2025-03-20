@@ -94,7 +94,10 @@ export default function Products({ products }: any) {
     image: '',
   });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
@@ -199,7 +202,7 @@ export default function Products({ products }: any) {
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
-                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} handleEditProduct={handleEditProduct}/>
+                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} />
                     ))}
                   </tbody>
                 </table>
@@ -307,6 +310,7 @@ export default function Products({ products }: any) {
                 </div>
               </div>
             )}
+<<<<<<< HEAD
             {/* Modal Editar Producto */}
             {showEditModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -373,6 +377,8 @@ export default function Products({ products }: any) {
                 </div>
               </div>
             )}
+=======
+>>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ class SaleController extends Controller
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.price' => 'required|numeric|min:0',
-        ]);
+        ],['products.required' => 'Debe seleccionar al menos un producto.',]);
         
         // Obtener los datos validados
         $saleData = $validatedData['purchaseDate'];

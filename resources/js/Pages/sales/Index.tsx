@@ -4,6 +4,7 @@ import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
 import Swal from 'sweetalert2';
+import { showAlert } from "@/Components/Showalert2";
 
 // Define la interfaz para los datos del formulario
 interface SaleData {
@@ -30,7 +31,10 @@ export default function SalesAndReturns({ products, sales }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
   const route = useRoute();
-  
+  const today = new Date();
+  const todayISO = today.toISOString().split('T')[0];
+
+
   // Usa useForm con la interfaz SaleData
   const { data, setData, post, errors, reset } = useForm<SaleData>({
     purchaseDate: new Date().toISOString().split('T')[0],
@@ -64,29 +68,30 @@ export default function SalesAndReturns({ products, sales }: any) {
   // Función para filtrar las ventas (sin realizar petición)
   const filteredSales = useMemo(() => {
     if (!sales || !Array.isArray(sales)) return [];
-  
+
     return sales.filter((sale: any) => {
-      if (!sale.date) return false; // Evita que `undefined` cause errores
-  
-      const today = new Date().toISOString().split('T')[0];
-      if (filter === 'hoy' && !sale.date.startsWith(today)) {
-        return false;
-      }
-  
-      const saleDate = new Date(sale.date);
-      if (filter === 'mensual' && saleDate.getMonth() !== new Date().getMonth()) {
-        return false;
-      }
-  
-      if (filter === 'anual' && saleDate.getFullYear() !== new Date().getFullYear()) {
-        return false;
-      }
-  
+      if (!sale.sale_date) return false; // Asegurar que tenga fecha
+
+      // Conversión de fecha para comparación
+      const saleDate = new Date(sale.sale_date);
+      const isToday = sale.sale_date.startsWith(todayISO);
+      const isMonthly = saleDate.getMonth() === today.getMonth() && saleDate.getFullYear() === today.getFullYear();
+      const isYearly = saleDate.getFullYear() === today.getFullYear();
+
+      // Aplicar filtro de fecha
+      if (filter === 'hoy' && !isToday) return false;
+      if (filter === 'mensual' && !isMonthly) return false;
+      if (filter === 'anual' && !isYearly) return false;
+
+      // Filtro de búsqueda
       if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
-        return sale.product?.toLowerCase().includes(term) || sale.user?.toLowerCase().includes(term);
+        return (
+          sale.user?.name?.toLowerCase().includes(term) || 
+          sale.products.some((product: any) => product.name.toLowerCase().includes(term))
+        );
       }
-  
+
       return true;
     });
   }, [sales, filter, searchTerm]);
@@ -170,31 +175,67 @@ export default function SalesAndReturns({ products, sales }: any) {
 
   const handleConfirmSale = (e: React.FormEvent) => {
     e.preventDefault();
+  
+    console.log("Enviando datos a Inertia...");
+  
     post(route("sales.store"), {
+      preserveScroll: true, // Evita que la página haga un refresh inesperado
       onSuccess: () => {
         console.log("Venta registrada con éxito");
-        Swal.fire({
-          icon: "success",
-          title: "Venta exitosa",
-          text: "La venta se ha registrado correctamente",
-        });
-        setCartItems([]);  // Vaciar el carrito
-        setData({ total: 0, user_id: 1, products: [] });
-        reset();
-        setShowSaleModal(false);
+  
+        showAlert("Venta exitosa", "La venta se ha registrado correctamente", "success")
+          .then(() => {
+            console.log("Alerta cerrada, reseteando datos...");
+  
+            // 🔹 Restaurar estado correctamente
+            setCartItems([]);
+            setData({
+              total: 0,
+              user_id: 1,
+              purchaseDate: new Date().toISOString().split("T")[0], // Asegurar que la fecha esté siempre presente
+              products: []
+            });
+  
+            reset(); 
+            setShowSaleModal(false);
+          });
       },
       onError: (errors) => {
-        console.log("Errores capturados:", errors); // Verifica en la consola qué llega
-        if (errors.error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error de stock',
-            text: errors.error,
-          });
+        showAlert("error", errors.products ,"error")
+        console.log("Errores capturados:", errors);
+  
+        if (errors.purchaseDate) {
+          console.log("Error: falta la fecha de compra");
+  
+          // 🔹 Restaurar `purchaseDate` automáticamente para evitar futuros errores
+          setData((prev) => ({
+            ...prev,
+            purchaseDate: new Date().toISOString().split("T")[0] // Se asegura de que siempre tenga una fecha válida
+          }));
+  
+          showAlert("Error en la venta", "La fecha de compra es obligatoria", "error");
+        } else if (errors.error) {
+          console.log("Error de stock detectado");
+  
+          showAlert("Error de stock", errors.error, "error")
+            .then(() => {
+              console.log("Error de stock cerrado, restaurando datos...");
+  
+              // 🔹 Restaurar `purchaseDate` después de un error de stock también
+              setData((prev) => ({
+                ...prev,
+                purchaseDate: new Date().toISOString().split("T")[0] 
+              }));
+            });
         }
       },
     });
+  
+    console.log("post() ha sido ejecutado");
   };
+  
+  
+  
   
   
   
@@ -218,16 +259,37 @@ export default function SalesAndReturns({ products, sales }: any) {
     postReturn(route('refunds.store'), {
       onSuccess: () => {
         console.log("Devolución registrada con éxito");
+        
+
+        setTimeout(() => {
+          showAlert(
+            "Devolución exitosa",
+            "La devolución se ha registrado correctamente",
+            "success"
+          );
+        }, 100);
+
         resetReturn();
         setShowReturnModal(false);
       },
       onError: (errors) => {
+        if(errors.reason){
+          showAlert("error", errors.reason,"error")
+        }else if(errors.client){
+          showAlert("error",errors.client ,"error")
+        }else if(errors.product){
+          showAlert("error", errors.product ,"error")
+        }
+        
         console.error("Error al registrar la devolución:", errors);
         if (errors.error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error en la devolución',
-            text: errors.error,
+          setTimeout(() => {
+            showAlert(
+              "Error en la devolución",
+              errors.error,
+              "error"
+            );
+  
           });
         }
       },
@@ -258,19 +320,34 @@ export default function SalesAndReturns({ products, sales }: any) {
     setReturnFilteredProducts([]);
   };
   
+  //Funciones para paginacion.
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10; // Número de elementos por página
+
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+
+  const paginatedSales = [...filteredSales].reverse().slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
   
+
   
 
   return (
     <AppLayout
       title="Ventas y Devoluciones"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-white leading-tight">Ventas y Devoluciones</h2>
+        <h2 className="font-semibold text-xl text-white leading-tight">
+          Ventas y Devoluciones
+        </h2>
       )}
     >
       <div className="py-12">
         <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+            
+            {/* Botones de acción */}
             <div className="flex justify-between items-center mb-4">
               <div>
                 <button 
@@ -286,18 +363,26 @@ export default function SalesAndReturns({ products, sales }: any) {
                   Registrar Devolución
                 </button>
               </div>
+  
+              {/* Filtros */}
               <div className="flex space-x-4">
                 <input 
                   type="text" 
-                  placeholder="Buscar..." 
+                  placeholder="Buscar por usuario o producto..." 
                   className="p-2 border rounded-lg bg-gray-800 text-white" 
                   value={searchTerm} 
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar búsqueda
+                  }}
                 />
                 <select 
                   className="p-2 border rounded-lg bg-gray-800 text-white" 
                   value={filter} 
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar filtro
+                  }}
                 >
                   <option value="hoy">Hoy</option>
                   <option value="mensual">Mensual</option>
@@ -305,47 +390,89 @@ export default function SalesAndReturns({ products, sales }: any) {
                 </select>
               </div>
             </div>
+  
+            {/* Tabla de ventas */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
               <div className="overflow-hidden">
-                <table className="w-full table-auto overflow-hidden border-collapse">
+                <table className="w-full table-auto border-collapse">
                   <thead>
                     <tr className="bg-gray-700 text-white">
                       <th className="px-4 py-2 border-r border-b border-gray-300">Fecha</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Usuario</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Producto</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300">Productos</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Total</th>
-                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">opciones?</th>
+                      <th className="px-4 py-2 w-[70px] border-b border-gray-300">Opciones</th>
                     </tr>
                   </thead>
-                  {sales.length > 0 ? (
-                    <tbody>
-                      {sales.map((sale:any) => (
+                  <tbody>
+                    {paginatedSales.length > 0 ? (
+                      paginatedSales.map((sale: any) => (
                         <tr key={sale.id} className="border-b border-gray-300 text-white">
                           <td className="px-4 py-2 border-r">{sale.sale_date}</td>
-                          <td className="px-4 py-2 border-r">{sale.user.name}</td>
-                          <td className="px-4 py-2 border-r">{sale.products.map((product: any) => (
-                                        <li key={product.id}>
-                                            {product.name} - {product.pivot.quantity} unidades a ${product.pivot.price}
-                                        </li>
-                                    ))}</td>
-                          <td className="px-4 py-2 border-r">{sale.total}</td>
-                          <td className="px-4 py-2"><button className='bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700'>eliminar</button></td>
+                          <td className="px-4 py-2 border-r">{sale.user?.name || "Sin usuario"}</td>
+                          <td className="px-4 py-2 border-r">
+                            {sale.products?.length > 0
+                              ? sale.products.map((product: any, index: number) => (
+                                  <span key={index}>
+                                    {product.name} ({product.pivot.quantity}x) - ${product.pivot.price}
+                                    {index !== sale.products.length - 1 && ", "}
+                                  </span>
+                                ))
+                              : "Sin productos"}
+                          </td>
+                          <td className="px-4 py-2 border-r">${sale.total}</td>
+                          <td className="px-4 py-2">
+                            <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">
+                              Eliminar
+                            </button>
+                          </td>
                         </tr>
-                      ))}
-                    </tbody>
-                  ) : (
-                    <tbody>
+                      ))
+                    ) : (
                       <tr>
-                        <td colSpan={6} className="text-center py-4">
+                        <td colSpan={5} className="text-center py-4 text-white">
                           No se encontraron ventas.
                         </td>
                       </tr>
-                    </tbody>
-                  )}
-
+                    )}
+                  </tbody>
                 </table>
               </div>
             </div>
+  
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="flex justify-center space-x-2 mt-4">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  « Prev
+                </button>
+  
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setPage(index + 1)}
+                    className={`px-4 py-2 rounded-md ${
+                      page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+  
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Next »
+                </button>
+              </div>
+            )}
+  
           </div>
         </div>
       </div>
@@ -396,7 +523,10 @@ export default function SalesAndReturns({ products, sales }: any) {
               type="number" 
               placeholder="Cantidad" 
               value={newProduct.quantity} 
-              onChange={(e) => setNewProduct({ ...newProduct, quantity: Number(e.target.value) })}
+              onChange={(e) => {
+                const value = Math.max(0, Number(e.target.value)); // Evita valores negativos
+                setNewProduct({ ...newProduct, quantity: value });
+              }}
               className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
             />
             
@@ -438,11 +568,13 @@ export default function SalesAndReturns({ products, sales }: any) {
                         <td className="px-2 py-1 border">{item.name}</td>
                         <td className="px-2 py-1 border">
                           <div className="flex items-center justify-center gap-1">
-                            <button 
+                            <button
+                              type="button" 
                               onClick={() => updateQuantity(index, item.quantity - 1)} 
                               className="bg-gray-700 px-2 py-1 rounded">-</button>
                             <span>{item.quantity}</span>
                             <button 
+                              type="button"
                               onClick={() => updateQuantity(index, item.quantity + 1)} 
                               className="bg-gray-700 px-2 py-1 rounded">+</button>
                           </div>
@@ -485,20 +617,21 @@ export default function SalesAndReturns({ products, sales }: any) {
        )}
 
       {/* Modal para Registrar Devolución */}
-      {showReturnModal && (
+      {/* Modal para Registrar Devolución */}
+{showReturnModal && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+    <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
       <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
       <form onSubmit={handleReturnSubmit}>
-        {/* Campo para el motivo */}
-        <input 
-          type="text" 
+        {/* Campo para el motivo (ahora con textarea) */}
+        <textarea
           name="reason"
-          placeholder="Motivo" 
-          value={returnData.reason} 
+          placeholder="Motivo de la devolución..."
+          value={returnData.reason}
           onChange={(e) => setReturnData('reason', e.target.value)}
-          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
+          className="block w-full h-24 mb-2 p-2 border rounded-lg bg-gray-800 text-white resize-none"
         />
+        
         {/* Input para Producto con autocompletar */}
         <input 
           type="text" 
@@ -521,6 +654,7 @@ export default function SalesAndReturns({ products, sales }: any) {
             ))}
           </ul>
         )}
+
         {/* Campo para los datos del cliente */}
         <input 
           type="text" 
@@ -530,6 +664,7 @@ export default function SalesAndReturns({ products, sales }: any) {
           onChange={(e) => setReturnData('client', e.target.value)}
           className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
         />
+
         {/* Fecha de Compra */}
         <label className="block mb-2">Fecha de Compra:</label>
         <input 
@@ -539,6 +674,7 @@ export default function SalesAndReturns({ products, sales }: any) {
           onChange={(e) => setReturnData('refundDate', e.target.value)}
           className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
         />
+
         <div className="flex justify-end mt-4">
           <button 
             type="button"
@@ -561,6 +697,8 @@ export default function SalesAndReturns({ products, sales }: any) {
     </div>
   </div>
 )}
+
+
 
 
     </AppLayout>
