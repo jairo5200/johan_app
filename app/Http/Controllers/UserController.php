@@ -85,7 +85,9 @@ class UserController extends Controller
         // Verificar si el usuario está intentando eliminar su propio perfil
         if(auth()->id() == $user->id) {
             // Redirecciona de vuelta con un error, lo que es una respuesta Inertia válida.
-            return redirect()->back()->withErrors('error', 'No puedes eliminar tu propio usuario');
+            return Redirect::back()->withErrors([
+                'error' => 'No puedes eliminar tu propio usuario'
+            ]);
         }
 
         // Verificar si el usuario existe
