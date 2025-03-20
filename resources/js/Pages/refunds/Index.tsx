@@ -5,6 +5,10 @@ export default function Refunds({ refunds }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
 
+  // Estados para la paginación
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Obtener la fecha actual
   const today = new Date();
   const todayISO = today.toISOString().split('T')[0];
@@ -31,15 +35,24 @@ export default function Refunds({ refunds }: any) {
       if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
         return (
-          refund.client?.toLowerCase().includes(term) || 
+          refund.client?.toLowerCase().includes(term) ||
           refund.product?.toLowerCase().includes(term) ||
           refund.reason?.toLowerCase().includes(term)
         );
       }
-
       return true;
     });
-  }, [refunds, filter, searchTerm]);
+  }, [refunds, filter, searchTerm, todayISO]);
+
+  // Calcular el total de páginas
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredRefunds.length / itemsPerPage);
+  }, [filteredRefunds, itemsPerPage]);
+
+  // Obtener los datos paginados para la página actual
+  const paginatedRefunds = useMemo(() => {
+    return filteredRefunds.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  }, [filteredRefunds, page, itemsPerPage]);
 
   return (
     <AppLayout
@@ -62,12 +75,18 @@ export default function Refunds({ refunds }: any) {
                   placeholder="Buscar por usuario, producto o motivo..."
                   className="p-2 border rounded-lg bg-gray-800 text-white"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar la búsqueda
+                  }}
                 />
                 <select
                   className="p-2 border rounded-lg bg-gray-800 text-white"
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1); // Reinicia la página al cambiar el filtro
+                  }}
                 >
                   <option value="hoy">Hoy</option>
                   <option value="mensual">Mensual</option>
@@ -89,8 +108,8 @@ export default function Refunds({ refunds }: any) {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRefunds.length > 0 ? (
-                      filteredRefunds.map((refund: any) => (
+                    {paginatedRefunds.length > 0 ? (
+                      paginatedRefunds.map((refund: any) => (
                         <tr key={refund.id} className="border-b border-gray-300 text-white">
                           <td className="px-4 py-2 border-r">{refund.refund_date}</td>
                           <td className="px-4 py-2 border-r">{refund.client}</td>
@@ -100,7 +119,7 @@ export default function Refunds({ refunds }: any) {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={4} className="text-center py-4">
+                        <td colSpan={4} className="text-center py-4 text-white">
                           No se encontraron devoluciones.
                         </td>
                       </tr>
@@ -110,12 +129,44 @@ export default function Refunds({ refunds }: any) {
               </div>
             </div>
 
+            {/* Controles de paginación */}
+            {totalPages > 1 && (
+              <div className="flex justify-center space-x-2 mt-4">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  « Prev
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setPage(index + 1)}
+                    className={`px-4 py-2 rounded-md ${page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Next »
+                </button>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
     </AppLayout>
   );
 }
+
 
 
 
