@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
+import { showAlert } from "@/Components/Showalert2";
 
 export default function Users({ users }: any) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,27 +27,67 @@ export default function Users({ users }: any) {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+  
     post(route('users.store'), {
-      onFinish: () => console.log('Formulario enviado con éxito'),
-    });
-    setShowAddUserModal(false)
-  };
-
-  const handleDeleteUser = (userId: number) => {
-    deleteUser(route('users.destroy', userId), {
+      preserveScroll: true, // Evita que la página haga un refresh inesperado
       onSuccess: () => {
-        // Aquí puedes hacer algo cuando la eliminación sea exitosa
-        console.log('Usuario eliminado con éxito');
-        // Actualizar la lista de usuarios o redirigir a otra página
+        console.log('Usuario registrado con éxito');
+  
+        showAlert("Usuario agregado", "El usuario se ha registrado correctamente", "success")
+          .then(() => {
+            console.log("Alerta cerrada, reseteando formulario...");
+            
+            // Restablecer el modal
+            setShowAddUserModal(false);
+            
+            // Aquí puedes limpiar los campos del formulario si tienes un estado `setData`
+            // setData({ name: "", email: "", ...otrosCampos });
+          });
       },
       onError: (errors) => {
-        // Manejo de errores
-        console.error('Error al eliminar el usuario:', errors);
+        console.error('Error al registrar el usuario:', errors);
+  
+        if (errors.email) {
+          showAlert("Error en el registro", "El correo electrónico ya está en uso", "error");
+        } else if (errors.error) {
+          showAlert("Error", errors.error, "error");
+        } else {
+          showAlert("Error", "Ocurrió un error al registrar el usuario", "error");
+        }
+      },
+      onFinish: () => {
+        console.log('Formulario enviado con éxito');
       }
     });
   };
+  
+
+  const handleDeleteUser = (userId: number) => {
+    deleteUser(route('users.destroy', userId), {
+      preserveScroll: true, // Si lo necesitas para evitar refrescos inesperados
+      onSuccess: () => {
+        console.log('Usuario eliminado con éxito');
+        // Muestra alerta de éxito y luego actualiza la lista o redirige
+        showAlert("Usuario eliminado", "El usuario ha sido eliminado exitosamente", "success")
+          .then(() => {
+            // Aquí actualizas la lista de usuarios o haces alguna redirección
+            // Por ejemplo: refreshUsersList() o router.reload();
+          });
+      },
+      onError: (errors) => {
+        console.error('Error al eliminar el usuario:', errors);
+        // Si el error tiene una propiedad 'error', úsala; de lo contrario, mensaje genérico.
+        if (errors.error) {
+          showAlert("Error al eliminar usuario", errors.error, "error");
+        } else {
+          showAlert("Error", "Ocurrió un error al eliminar el usuario", "error");
+        }
+      }
+    });
+  };
+  
 
   const handleAddUser = () => setShowAddUserModal(true);
   const closeDeleteModal = () => setShowDeleteModal(false);
