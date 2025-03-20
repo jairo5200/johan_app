@@ -70,25 +70,27 @@ export default function Users({ users }: any) {
     deleteUser(route('users.destroy', userId), {
       preserveScroll: true,
       onSuccess: (page: any) => {
-        if (page.props.flash?.error) {
-          showAlert("Error al eliminar usuario", page.props.flash.error, "error");
+        if (page.props.errors?.error) {
+          showAlert("Error al eliminar usuario", page.props.errors.error, "error");
         } else {
           showAlert("Usuario eliminado", "El usuario ha sido eliminado exitosamente", "success")
             .then(() => {
-              // Aquí actualizas la lista de usuarios o haces alguna redirección
+              // Actualiza la lista o redirige
             });
         }
       },
       onError: (errors) => {
         console.error('Error al eliminar el usuario:', errors);
-        if (errors.error) {
-          showAlert("Error al eliminar usuario", errors.error, "error");
-        } else {
-          showAlert("Error", "Ocurrió un error al eliminar el usuario", "error");
-        }
+        
+        // Obtén la primera clave del objeto errors
+        const keys = Object.keys(errors);
+        const mensaje = keys.length > 0 ? keys[0] : "Ocurrió un error al eliminar el usuario";
+        
+        showAlert("Error al eliminar usuario", mensaje, "error");
       }
     });
   };
+  
   
   
   
