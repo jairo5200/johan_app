@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
+import { Link, Head } from '@inertiajs/react';
 import classNames from 'classnames';
-import ApplicationMark from '@/Components/ApplicationMark';
-import Banner from '@/Components/Banner';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import Dropdown from '@/Components/Dropdown';
-import DropdownLink from '@/Components/DropdownLink';
-import ThemeToggle from '@/Components/ThemeToggle';
+import React, { PropsWithChildren, useState } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
+import ApplicationMark from '@/Components/ApplicationMark';
+import Banner from '@/Components/Banner';
+import Dropdown from '@/Components/Dropdown';
+import DropdownLink from '@/Components/DropdownLink';
+import NavLink from '@/Components/NavLink';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
-import { router } from '@inertiajs/core';
+import ThemeToggle from '@/Components/ThemeToggle';
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
 }
 
-export default function AppLayout({ title, renderHeader, children }: React.PropsWithChildren<Props>) {
+export default function AppLayout({ title, renderHeader, children }: PropsWithChildren<Props>) {
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -43,8 +43,8 @@ export default function AppLayout({ title, renderHeader, children }: React.Props
       <Banner />
 
       {/* Contenedor general sin fondo global, para separar navbar y contenido */}
-      <div className="min-h-screen">
-        {/* Navbar con fondo independiente (aquí lo definimos con bg-blue-800 para modo claro) */}
+      <div className="min-h-screen bg-white dark:bg-gray-900">
+        {/* Navbar con fondo independiente */}
         <nav className="bg-blue-800 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center">
@@ -60,6 +60,7 @@ export default function AppLayout({ title, renderHeader, children }: React.Props
                 {/* Enlaces principales (se muestran en sm y superiores) */}
                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <NavLink href={route("products.index")} active={route().current("products.index")}>
+                    Products
                   </NavLink>
                   <NavLink href={route("sales.index")} active={route().current("sales.index")}>
                     Ventas y devoluciones
@@ -181,7 +182,7 @@ export default function AppLayout({ title, renderHeader, children }: React.Props
               <div className="-mr-2 flex items-center sm:hidden">
                 <button
                   onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150 ease-in-out"
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150"
                 >
                   <svg
                     className="h-6 w-6"
@@ -215,64 +216,94 @@ export default function AppLayout({ title, renderHeader, children }: React.Props
             </div>
           </div>
 
-          {/* Menú Responsive (móviles) */}
+          {/* Menú Responsive (móviles) siempre renderizado */}
           {showingNavigationDropdown && (
-          <div
-            className={classNames(
-              'fixed inset-0 z-50 flex flex-col bg-black bg-opacity-50 transform transition-all duration-300',
-              {
-                'translate-y-0 opacity-100': showingNavigationDropdown,
-                '-translate-y-full opacity-0': !showingNavigationDropdown,
-              }
-            )}
-          >
-            {/* Opcional: un botón para cerrar el menú */}
-            <div className="flex justify-end p-4">
-              <button
+            <div
+              className={classNames(
+                'fixed inset-0 z-50 flex flex-col bg-black bg-opacity-50 transform transition-all duration-300',
+                {
+                  'translate-y-0 opacity-100': showingNavigationDropdown,
+                  '-translate-y-full opacity-0': !showingNavigationDropdown,
+                }
+              )}
+            >
+              {/* Fondo overlay semi-transparente */}
+              <div
+                className="absolute inset-0 bg-black bg-opacity-50"
                 onClick={() => setShowingNavigationDropdown(false)}
-                className="text-white text-2xl focus:outline-none"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="bg-blue-800 dark:bg-gray-800 mx-4 rounded-lg p-4">
-              <div className="space-y-2">
-                <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                  Dashboard
-                </ResponsiveNavLink>
-                <ResponsiveNavLink href={route('products.index')} active={route().current('products.index')}>
-                  Productos
-                </ResponsiveNavLink>
-                <ResponsiveNavLink href={route('sales.index')} active={route().current('sales.index')}>
-                  Ventas y devoluciones
-                </ResponsiveNavLink>
-                <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')}>
-                  Usuarios
-                </ResponsiveNavLink>
-                <ResponsiveNavLink href={route('refunds.index')} active={route().current('refunds.index')}>
-                  Devoluciones
-                </ResponsiveNavLink>
-                <ResponsiveNavLink href={route('logs.index')} active={route().current('logs.index')}>
-                  Transacciones
-                </ResponsiveNavLink>
-              </div>
-              {/* Opciones de Configuración para móviles */}
-              <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
-                <ResponsiveNavLink href={route('profile.show')} active={route().current('profile.show')}>
-                  Profile
-                </ResponsiveNavLink>
-                {page.props.jetstream.hasApiFeatures && (
-                  <ResponsiveNavLink href={route('api-tokens.index')} active={route().current('api-tokens.index')}>
-                    API Tokens
+              ></div>
+              {/* Contenedor del menú */}
+              <div className="relative mx-4 mt-20 bg-blue-800 dark:bg-gray-800 rounded-lg p-4">
+                {/* Botón para cerrar */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setShowingNavigationDropdown(false)}
+                    className="text-white text-2xl focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+                <div className="space-y-2 mt-2">
+                  <ResponsiveNavLink
+                    href={route('dashboard')}
+                    active={route().current('dashboard')}
+                  >
+                    Dashboard
                   </ResponsiveNavLink>
-                )}
-                <form method="POST" onSubmit={logout}>
-                  <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
-                </form>
+                  <ResponsiveNavLink
+                    href={route('products.index')}
+                    active={route().current('products.index')}
+                  >
+                    Productos
+                  </ResponsiveNavLink>
+                  <ResponsiveNavLink
+                    href={route('sales.index')}
+                    active={route().current('sales.index')}
+                  >
+                    Ventas y devoluciones
+                  </ResponsiveNavLink>
+                  <ResponsiveNavLink
+                    href={route('users.index')}
+                    active={route().current('users.index')}
+                  >
+                    Usuarios
+                  </ResponsiveNavLink>
+                  <ResponsiveNavLink
+                    href={route('refunds.index')}
+                    active={route().current('refunds.index')}
+                  >
+                    Devoluciones
+                  </ResponsiveNavLink>
+                  <ResponsiveNavLink
+                    href={route('logs.index')}
+                    active={route().current('logs.index')}
+                  >
+                    Transacciones
+                  </ResponsiveNavLink>
+                </div>
+                {/* Opciones de Configuración para móviles */}
+                <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+                  <ResponsiveNavLink
+                    href={route('profile.show')}
+                    active={route().current('profile.show')}
+                  >
+                    Profile
+                  </ResponsiveNavLink>
+                  {page.props.jetstream.hasApiFeatures && (
+                    <ResponsiveNavLink
+                      href={route('api-tokens.index')}
+                      active={route().current('api-tokens.index')}
+                    >
+                      API Tokens
+                    </ResponsiveNavLink>
+                  )}
+                  <form method="POST" onSubmit={logout}>
+                    <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         </nav>
 
         {/* Page Heading */}
@@ -285,9 +316,7 @@ export default function AppLayout({ title, renderHeader, children }: React.Props
         )}
 
         {/* Page Content */}
-        <main className="bg-white dark:bg-gray-900">
-          {children}
-        </main>
+        <main className="bg-white dark:bg-gray-900">{children}</main>
       </div>
     </div>
   );
