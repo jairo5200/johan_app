@@ -28,6 +28,12 @@ class UserController extends Controller
         // Obtener el usuario autenticado por su ID
         $userAuth = User::findOrFail(Auth::id());
 
+        // Verificar si el usuario tiene el rol de 'usuario'
+        if ($userAuth->role == 'usuario') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+
         // Obtener todos los usuarios activos
         $users = User::where('state', 'active')->get();
 
