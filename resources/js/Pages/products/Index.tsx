@@ -4,13 +4,13 @@ import { Head, useForm } from '@inertiajs/react';
 import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
 import useRoute from '@/Hooks/useRoute';
+import { showAlert } from "@/Components/Showalert2";
 
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const itemsPerPage = 5; // Elementos por página
   const route = useRoute();
-  const [user, setUser] = useState(null); // Estado para guardar el ID del usuario
 
   // Estado para controlar el modal de edición y almacenar el producto seleccionado
   const [showEditModal, setShowEditModal] = useState(false);
@@ -34,7 +34,7 @@ export default function Products({ products }: any) {
       description: product.description,
       price: product.price,
       stock: product.stock,
-      image: null, // Inicialmente null, se actualizará si el usuario selecciona una nueva imagen
+      image: product.image, // Inicialmente null, se actualizará si el usuario selecciona una nueva imagen
     });
     setShowEditModal(true);
   };
@@ -42,30 +42,49 @@ export default function Products({ products }: any) {
   // Manejador de cambios para el formulario de edición
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
-    if (name === 'image' && files) {
-      setEditData({
-        ...editData,
-        [name]: files[0],
-      });
-    } else {
       setEditData({
         ...editData,
         [name]: value,
       });
-    }
   };
 
   // Función que se ejecuta al enviar el formulario de edición
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Crear una instancia de FormData
+  const formData = new FormData();
+
+  // Agregar los campos del formulario al FormData
+  formData.append("name", editData.name);
+  formData.append("description", editData.description);
+  formData.append("price", editData.price.toString());
+  formData.append("stock", editData.stock.toString());
+
+  // Si hay una imagen, agregarla a FormData
+  if (editData.image) {
+    formData.append("image", editData.image); // Aquí editData.image es el archivo
+  }
+    
     console.log(editData); // Depura el contenido del formulario
-    put(route('products.update', selectedProductForEdit), {
+    put(route('products.update', selectedProductForEdit.id), {
       onSuccess: () => {
         setShowEditModal(false);
         setSelectedProductForEdit(null);
       },
       onError: (errors) => {
-        console.error('Error al editar el producto', errors);
+        if(errors.name){
+          showAlert("error", errors.name,"error")
+        }
+        else if(errors.description){
+          showAlert("error", errors.description,"error")
+        }
+        else if(errors.price){
+          showAlert("error", errors.price,"error")
+        }
+        else if(errors.stock){
+          showAlert("error", errors.stock,"error")
+        }
       },
     });
   };
@@ -158,7 +177,23 @@ export default function Products({ products }: any) {
         setShowAddProductModal(false);
         console.log('Producto agregado con éxito');
       },
-    });
+      onError: (errors) => {
+        if(errors.name){
+          showAlert("error", errors.name,"error")
+        }
+        else if(errors.description){
+          showAlert("error", errors.description,"error")
+        }
+        else if(errors.price){
+          showAlert("error", errors.price,"error")
+        }
+        else if(errors.stock){
+          showAlert("error", errors.stock,"error")
+        }
+        else if(errors.image){
+          showAlert("error", errors.image,"error")
+        }
+  }});
   };
   return (
     <AppLayout
@@ -198,7 +233,7 @@ export default function Products({ products }: any) {
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
-                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} />
+                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} handleEditProduct={handleEditProduct} />
                     ))}
                   </tbody>
                 </table>
@@ -344,22 +379,6 @@ export default function Products({ products }: any) {
                       className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
                       onChange={handleEditChange}
                     />
-                    <div className="col-sm">
-                      <div className="grid grid-cols-1 mx-7">
-                        <label className="uppercase md:text-m text-m font-semibold mb-1 text-black">Subir Imagen</label>
-                        <div className="flex items-center justify-center w-full">
-                          <label className="flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group">
-                            <div className="flex flex-col items-center justify-center pt-7">
-                              <svg className="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              <p className="text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider">Seleccione la imagen</p>
-                            </div>
-                            <input name="image" id="image" type="file" className="hidden" onChange={handleEditChange} />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
                     <div className="flex justify-end mt-4">
                       <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={() => setShowEditModal(false)}>
                         Cancelar
