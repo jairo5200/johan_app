@@ -153,7 +153,7 @@ class ProductController extends Controller
         $userAuth = User::findOrFail(Auth::id());
 
         $validatedData = $request->validate([
-            'name' => 'required|string|unique:products,name|max:255',
+            'name' => 'required|string|unique:products,name,' . $id . '|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:1',
             'stock' => 'required|numeric|min:1',
