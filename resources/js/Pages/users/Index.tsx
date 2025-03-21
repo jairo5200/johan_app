@@ -109,7 +109,7 @@ export default function Users({ users }: any) {
     >
       <div className="py-12">
         <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+         <div className="bg-gray-600 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Usuarios</h1>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddUser}>

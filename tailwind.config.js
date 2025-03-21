@@ -4,7 +4,7 @@ import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  // darkMode: 'class', // Habilita el modo oscuro a través de una clase
+  darkMode: 'class', // Habilita el modo oscuro a través de una clase
   content: [
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './vendor/laravel/jetstream/**/*.blade.php',
@@ -15,30 +15,33 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Definimos colores para el light mode como valores predeterminados
+        // background: '#414345', // Fondo general en modo claro
+        body: '#333333',       // Color de texto principal en modo claro
+
+        // Puedes seguir usando tus colores para elementos específicos
         primary: {
-          // Estos colores se usarán para elementos generales
-          light: '#f0f0f0',  // Color para el modo claro (por ejemplo, un fondo suave)
-          dark: '#1a202c',   // Color para el modo oscuro
+          light: '#D36135',  // Por ejemplo, fondo de botones o tarjetas
+          dark: '#1a202c',   // Valor para modo oscuro
         },
         secondary: {
-          // Por ejemplo, para el navbar u otros elementos específicos
-          light: '#e0f2fe',  // Un azul muy claro para el modo claro (puedes ajustar a tu gusto)
-          dark: '#2d3748',   // Un tono más oscuro para el modo oscuro
+          light: '#CE4257',  // Por ejemplo, para el navbar u otros elementos
+          dark: '#2d3748',   // Valor para modo oscuro
         },
+      },
+      fontFamily: {
+        sans: ['Figtree', ...defaultTheme.fontFamily.sans],
       },
       animation: {
         flicker: 'flicker 1.5s infinite ease-in-out',
         'bg-flicker': 'background-flicker 1.2s infinite ease-in-out',
       },
-      fontFamily: {
-        sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-      },
+      
     },
   },
-
-
   plugins: [forms, typography],
 };
+
   // theme: {
   //   extend: {
   //     animation: {
