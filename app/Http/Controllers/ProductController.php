@@ -48,8 +48,20 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products,name',
             'description' => 'required|string',
             'price' => 'required|numeric|min:1',
-            'stock' => 'numeric|min:1',
+            'stock' => 'required|numeric|min:1',
             'image' => 'required|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+        ],[
+            'name.required' => 'El nombre del producto es requerido',
+            'name.unique' => 'El nombre del producto ya existe',
+            'description.required' => 'La descripción del producto es requerida',
+            'price.required' => 'El precio del producto es requerido',
+            'stock.required' => 'El stock del producto es requerido',
+            'price.min' => 'El precio del producto debe ser mayor a 0',
+            'stock.min' => 'El stock del producto debe ser mayor a 0',
+            'image.required' => 'La imagen del producto es requerida',
+            'image.image' => 'el archivo subido no es una imagen',
+            'image.mimes' => 'La imagen del producto debe ser una imagen de tipo jpg,jpeg, png, svg o webp',
+            'image.max' => 'La imagen del producto debe ser menor a 2048 KB',
         ]);
 
 
@@ -128,21 +140,25 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id){
-<<<<<<< HEAD
-=======
-
->>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
-        dd($request->all());
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
         // Validar los datos del formulario
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|unique:products,name|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'numeric',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+            'price' => 'required|numeric|min:1',
+            'stock' => 'required|numeric|min:1',
+        ],[
+            'name.required' => 'El nombre del producto es requerido',
+            'name.unique' => 'El nombre del producto ya existe',
+            'description.required' => 'La descripción del producto es requerida',
+            'price.required' => 'El precio del producto es requerido',
+            'price.numeric' => 'El precio del producto debe ser un numero',
+            'price.min' => 'El precio del producto debe ser mayor a 0',
+            'stock.required' => 'El stock del producto es requerido',
+            'stock.numeric' => 'El stock del producto debe ser un numero',
+            'stock.min' => 'El stock del producto debe ser mayor a 0',
         ]);
 
         // Obtener el producto existente
@@ -151,23 +167,12 @@ class ProductController extends Controller
         // Guardar los valores antiguos del producto
         $oldValues = $product->getOriginal();
 
-        // Procesar la imagen solo si se envía una nueva
-        if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::delete('public/'.$product->image);
-            }
-            $path = $request->file('image')->store('public/products');
-            $validated['image'] = str_replace('public/', '', $path);
-        } else {
-            // Mantener la imagen existente si no se sube nueva
-            $validated['image'] = $product->image;
-        }
-
         // Actualizar el resto de los campos del producto
         $product->name = $validatedData['name'];
         $product->description = $validatedData['description'];
         $product->price = $validatedData['price'];
         $product->stock = $validatedData['stock'];
+
 
         // Guardar el producto actualizado
         $product->save();
