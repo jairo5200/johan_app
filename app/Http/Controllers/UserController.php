@@ -33,6 +33,11 @@ class UserController extends Controller
             // Redirigir al usuario a la vista de productos
             return redirect()->route('products.index');
         }
+        // Verificar si el usuario tiene el rol de 'usuario'
+        else if ($userAuth->role == 'admin') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
 
         // Obtener todos los usuarios activos
         $users = User::where('state', 'active')->get();

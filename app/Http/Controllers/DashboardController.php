@@ -29,6 +29,17 @@ class DashboardController extends Controller
         // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
+        // Verificar si el usuario tiene el rol de 'usuario'
+        if ($userAuth->role == 'usuario') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+        // Verificar si el usuario tiene el rol de 'usuario'
+        else if ($userAuth->role == 'admin') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+
         // Obtener el total de ventas por día
         $salesByDay = Sale::select(DB::raw('sale_date, SUM(total) as total_sales'))
             ->groupBy('sale_date')
