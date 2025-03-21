@@ -7,7 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla `refunds`.
+     *
+     * Esta migración crea la tabla `refunds`, que almacena la información de los reembolsos 
+     * solicitados, incluyendo el motivo, el cliente, el producto relacionado y la fecha del reembolso.
+     *
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
     public function up(): void
     {
@@ -22,10 +28,13 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Reversa la migración, eliminando la tabla `refunds`.
+     *
+     * Esta función elimina la tabla `refunds` de la base de datos.
+     * Es útil para revertir la migración si es necesario.
      */
     public function down(): void
     {
-        Schema::dropIfExists('refunds');
+        Schema::dropIfExists('refunds');  // Elimina la tabla 'refunds' si existe
     }
 };

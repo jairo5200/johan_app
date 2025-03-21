@@ -13,28 +13,46 @@ use App\Models\Log;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de todos los usuarios activos.
+     * 
+     * Este método obtiene todos los usuarios activos de la base de datos 
+     * y los pasa a la vista React usando Inertia, junto con el usuario autenticado.
+     * 
+     * @return \Inertia\Response La vista con la lista de usuarios y el usuario autenticado.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
     public function index()
     {
-        // Obtener el user por su ID
-        $user = User::findOrFail(Auth::id());
+        // Obtener el usuario autenticado por su ID
+        $userAuth = User::findOrFail(Auth::id());
 
-        if ($user->role == "admin") {
-            // Obtener los usuarios
-            $users = User::where('state', 'active')->get();
+        // Obtener todos los usuarios activos
+        $users = User::where('state', 'active')->get();
 
-            // Devolver la vista React usando Inertia y pasar los productos como datos
-            return Inertia::render('users/Index', [
-                'users' => $users
-            ]);
-        }
-
+        // Devolver la vista React usando Inertia y pasar los usuarios y el usuario autenticado
+        return Inertia::render('users/Index', [
+            'users' => $users,
+            'userAuth' => $userAuth,
+        ]);
     }
 
-    // Método para almacenar el usuario en la base de datos
-    public function store(Request $request){
-        // Obtenemos el usuario que realiza la acción
+    /**
+     * Almacena un nuevo usuario en la base de datos.
+     * 
+     * Este método valida los datos del formulario, crea un nuevo usuario 
+     * y registra la acción en los logs para auditoría.
+     * 
+     * @param \Illuminate\Http\Request $request Los datos del usuario.
+     * @return \Illuminate\Http\RedirectResponse Redirige a la lista de usuarios.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
+     */
+    public function store(Request $request)
+    {
+        // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
         // Validación de los datos del formulario
@@ -68,14 +86,24 @@ class UserController extends Controller
             'updated_at' => now(), // Fecha y hora de la transacción
         ]);
 
-        // Devolver una respuesta Inertia indicando que la creación fue exitosa
+        // Redirigir a la lista de usuarios con mensaje de éxito
         return redirect()->route('users.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un usuario de la base de datos.
+     * 
+     * Este método desactiva un usuario marcándolo como "inactivo" 
+     * y renombra el usuario como "Eliminado". También registra la acción en los logs de auditoría.
+     * 
+     * @param string $id El ID del usuario a eliminar.
+     * @return \Illuminate\Http\RedirectResponse Redirige a la lista de usuarios con un mensaje de éxito.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
-    public function destroy(string $id){
+    public function destroy(string $id)
+    {
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
@@ -84,7 +112,7 @@ class UserController extends Controller
 
         // Verificar si el usuario está intentando eliminar su propio perfil
         if(auth()->id() == $user->id) {
-            // Redirecciona de vuelta con un error, lo que es una respuesta Inertia válida.
+            // Redirigir con un mensaje de error si el usuario intenta eliminarse a sí mismo
             return Redirect::back()->withErrors([
                 'error' => 'No puedes eliminar tu propio usuario'
             ]);
@@ -105,7 +133,7 @@ class UserController extends Controller
         // Cambiar el estado del usuario a 'inactivo'
         $user->state = 'inactive';
 
-        // Modificar el nombre para que empiece con "eliminado"
+        // Modificar el nombre del usuario para marcarlo como eliminado
         $user->name = 'Eliminado (' . $user->name . ')';
 
         // Guardar los cambios en la base de datos
