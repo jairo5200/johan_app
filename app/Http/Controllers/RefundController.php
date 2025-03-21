@@ -28,8 +28,8 @@ class RefundController extends Controller
         // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
         
-        // Obtener todos los reembolsos
-        $refunds = Refund::all();
+        // Obtener todos los reembolsos ordenados por la fecha de manera descendente
+        $refunds = Refund::orderBy('created_at', 'asc')->get();
 
         // Devolver la vista React usando Inertia y pasar los reembolsos y el usuario
         return Inertia::render('refunds/Index', [
