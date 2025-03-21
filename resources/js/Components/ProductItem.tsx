@@ -1,14 +1,26 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { createPortal } from "react-dom";
+import { LockClosedIcon } from '@heroicons/react/24/solid';
 
-export default function ProductItem({ product, handleDeleteProduct, handleEditProduct }: any) {
+interface ProductItemProps {
+  product: any;
+  handleDeleteProduct: (product: any) => void;
+  handleEditProduct: (product: any) => void;
+  isPrivileged: boolean;
+}
+
+export default function ProductItem({
+  product,
+  handleDeleteProduct,
+  handleEditProduct,
+  isPrivileged
+}: ProductItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <tr className="text-center text-white bg-gray-800 border-gray-300">
-        <td className="px-4 py-2 border-b border-r border-gray-300 ">
+        <td className="px-4 py-2 border-b border-r border-gray-300">
           <img
             src={`/img/${product.image}`}
             alt={product.name}
@@ -21,20 +33,26 @@ export default function ProductItem({ product, handleDeleteProduct, handleEditPr
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.price}</td>
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.stock}</td>
         <td className="px-4 py-2 border-b border-gray-300">
-          <div className="flex justify-center space-x-2">
-            <button 
-              className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
-              onClick={() => handleEditProduct(product)}
-            >
-              Editar
-            </button>
-            <button 
-              className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700" 
-              onClick={() => handleDeleteProduct(product)}
-            >
-              Eliminar
-            </button>
-          </div>
+          {isPrivileged ? (
+            <div className="flex justify-center space-x-2">
+              <button
+                className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+                onClick={() => handleEditProduct(product)}
+              >
+                Editar
+              </button>
+              <button
+                className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
+                onClick={() => handleDeleteProduct(product)}
+              >
+                Eliminar
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-center text-gray-400">
+              <LockClosedIcon className="h-5 w-5" title="Sin permisos" />
+            </div>
+          )}
         </td>
       </tr>
 

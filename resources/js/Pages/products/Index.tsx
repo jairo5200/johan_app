@@ -5,6 +5,7 @@ import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
 import useRoute from '@/Hooks/useRoute';
 import { showAlert } from "@/Components/Showalert2";
+import { usePage } from '@inertiajs/react';
 
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -195,6 +196,11 @@ export default function Products({ products }: any) {
         }
   }});
   };
+
+  const { props } = usePage();
+  const userAuth = props.auth.user;
+  const isPrivileged = userAuth?.role?.trim().toLowerCase() !== "usuario";
+
   return (
     <AppLayout
       title="Productos"
@@ -233,7 +239,13 @@ export default function Products({ products }: any) {
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
-                      <ProductItem key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} handleEditProduct={handleEditProduct} />
+                    <ProductItem
+                      key={product.id}
+                      product={product}
+                      handleDeleteProduct={handleDeleteProduct}
+                      handleEditProduct={handleEditProduct}
+                      isPrivileged={isPrivileged}
+                    />
                     ))}
                   </tbody>
                 </table>
