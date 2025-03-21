@@ -12,35 +12,48 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de los productos activos.
+     * 
+     * Este método obtiene los productos que están marcados como 'activos' en la base de datos 
+     * y los pasa a la vista principal de productos. También obtiene el usuario autenticado que realiza la acción.
+     * Luego, los datos se pasan al front-end utilizando Inertia para renderizar la vista correspondiente.
+     * 
+     * @return \Inertia\Response La vista con la lista de productos activos y el usuario autenticado.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
     public function index()
     {
-        // Obtener los productos
+        // Obtener el usuario autenticado que realiza la acción
+        $userAuth = User::findOrFail(Auth::id());
+
+        // Obtener los productos activos
         $products = Product::where('state', 'active')->get();
 
         // Devolver la vista React usando Inertia y pasar los productos como datos
         return Inertia::render('products/Index', [
-            'products' => $products
+            'products' => $products,
+            'userAuth' => $userAuth,
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        // Renderizar la vista React para crear un nuevo producto
-        return Inertia::render('products/Create');
-    }
-
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo producto en la base de datos.
+     * 
+     * Este método valida los datos del formulario de creación de producto, procesa la imagen, 
+     * guarda el nuevo producto en la base de datos y registra la auditoría de la transacción.
+     * 
+     * @param \Illuminate\Http\Request $request Los datos del formulario del nuevo producto.
+     * @return \Illuminate\Http\RedirectResponse Redirige a la vista de la lista de productos con un mensaje de éxito.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
     public function store(Request $request)
     {
-        // Obtenemos el usuario que realiza la accion
+        // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
         // Validar los datos del formulario
@@ -60,20 +73,14 @@ class ProductController extends Controller
             'stock.min' => 'El stock del producto debe ser mayor a 0',
             'image.required' => 'La imagen del producto es requerida',
             'image.image' => 'el archivo subido no es una imagen',
-            'image.mimes' => 'La imagen del producto debe ser una imagen de tipo jpg,jpeg, png, svg o webp',
+            'image.mimes' => 'La imagen del producto debe ser de tipo jpg,jpeg,png,svg o webp',
             'image.max' => 'La imagen del producto debe ser menor a 2048 KB',
         ]);
 
-
-       // Procesar la imagen
+        // Procesar la imagen
         if ($request->hasFile('image')) {
-            // Obtener el archivo de la imagen
             $image = $request->file('image');
-
-            // Generar un nombre único para la imagen
             $imageName = time() . '_' . $image->getClientOriginalName();
-
-            // Mover la imagen al directorio 'public/img'
             $image->move(public_path('img'), $imageName);
         }
 
@@ -83,15 +90,15 @@ class ProductController extends Controller
             'description' => $validatedData['description'],
             'price' => $validatedData['price'],
             'stock' => $validatedData['stock'],
-            'image' => $imageName, // Solo guardamos la ruta relativa
+            'image' => $imageName,
         ]);
 
-        // Registrar la auditoría de la transacción
+        // Registrar la auditoría de la creación
         Log::create([
             'user_name' => $userAuth->name,
             'action' => 'Crear Producto',
             'model' => 'Producto',
-            'old_values' => null, // En este caso es un nuevo registro, por lo que no hay valores antiguos
+            'old_values' => null,
             'new_values' => json_encode([
                 'name' => $product->name,
                 'description' => $product->description,
@@ -99,51 +106,52 @@ class ProductController extends Controller
                 'stock' => $product->stock,
                 'image' => $product->image,
             ]),
-            'created_at' => now(), // Se registra la fecha y hora de la acción
-            'updated_at' => now(), // Se registra la fecha y hora de la acción
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        // Redirigir o devolver la vista con el producto creado
+        // Redirigir a la vista de la lista de productos con mensaje de éxito
         return redirect()->route('products.index')->with('success', 'Producto creado con éxito.');
     }
 
-
     /**
-     * Display the specified resource.
+     * Muestra los detalles de un producto especificado por su ID.
+     * 
+     * Este método obtiene el producto por su ID y lo pasa a la vista correspondiente para mostrar su detalle.
+     * 
+     * @param string $id El ID del producto a mostrar.
+     * @return \Inertia\Response La vista con los detalles del producto.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
     public function show(string $id)
     {
-        // Obtener el producto por su ID
         $product = Product::findOrFail($id);
 
-        // Renderizar la vista React usando Inertia y pasar el producto
         return Inertia::render('products/Show', [
             'product' => $product
         ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Actualiza un producto existente en la base de datos.
+     * 
+     * Este método valida los datos del formulario de actualización, 
+     * guarda los valores anteriores del producto, actualiza los valores con los nuevos datos 
+     * y registra la auditoría de la transacción.
+     * 
+     * @param \Illuminate\Http\Request $request Los datos del formulario de actualización.
+     * @param string $id El ID del producto a actualizar.
+     * @return \Illuminate\Http\RedirectResponse Redirige a la vista de la lista de productos con mensaje de éxito.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
-    public function edit(string $id)
+    public function update(Request $request, string $id)
     {
-        // Obtener el producto por su ID
-        $product = Product::findOrFail($id);
-
-        // Renderizar la vista React para editar el producto
-        return Inertia::render('products/Edit', [
-            'product' => $product
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id){
-        // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
-        // Validar los datos del formulario
         $validatedData = $request->validate([
             'name' => 'required|string|unique:products,name|max:255',
             'description' => 'required|string',
@@ -154,95 +162,86 @@ class ProductController extends Controller
             'name.unique' => 'El nombre del producto ya existe',
             'description.required' => 'La descripción del producto es requerida',
             'price.required' => 'El precio del producto es requerido',
-            'price.numeric' => 'El precio del producto debe ser un numero',
+            'price.numeric' => 'El precio del producto debe ser un número',
             'price.min' => 'El precio del producto debe ser mayor a 0',
             'stock.required' => 'El stock del producto es requerido',
-            'stock.numeric' => 'El stock del producto debe ser un numero',
+            'stock.numeric' => 'El stock del producto debe ser un número',
             'stock.min' => 'El stock del producto debe ser mayor a 0',
         ]);
 
-        // Obtener el producto existente
         $product = Product::findOrFail($id);
-
-        // Guardar los valores antiguos del producto
         $oldValues = $product->getOriginal();
 
-        // Actualizar el resto de los campos del producto
         $product->name = $validatedData['name'];
         $product->description = $validatedData['description'];
         $product->price = $validatedData['price'];
         $product->stock = $validatedData['stock'];
-
-
-        // Guardar el producto actualizado
         $product->save();
 
-        // Registrar la auditoría de la transacción (Actualización)
         Log::create([
             'user_name' => $userAuth->name,
             'action' => 'Actualizar Producto',
             'model' => 'Product',
-            'old_values' => json_encode($oldValues), // Los valores anteriores antes de la actualización
+            'old_values' => json_encode($oldValues),
             'new_values' => json_encode([
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => $product->price,
                 'stock' => $product->stock,
                 'image' => $product->image,
-            ]), // Los nuevos valores después de la actualización
-            'created_at' => now(), // Se registra la fecha y hora de la acción
-            'updated_at' => now(), // Se registra la fecha y hora de la acción
+            ]),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        // Redirigir o devolver la vista con el producto actualizado
         return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito.');
     }
 
-
     /**
-     * Remove the specified resource from storage.
+     * Elimina un producto (lo marca como inactivo) de la base de datos.
+     * 
+     * Este método registra la auditoría antes de cambiar el estado del producto, 
+     * elimina la imagen si existe y marca el producto como inactivo.
+     * 
+     * @param string $id El ID del producto a eliminar.
+     * @return \Illuminate\Http\RedirectResponse Redirige a la lista de productos con un mensaje de éxito.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-21
      */
-    public function destroy(string $id){
-        // Obtener el usuario que realiza la acción
+    public function destroy(string $id)
+    {
         $userAuth = User::findOrFail(Auth::id());
 
-        // Obtener el producto por su ID
         $product = Product::findOrFail($id);
 
-        // Registrar la auditoría antes de cambiar el estado
         Log::create([
-            'user_name' => $userAuth->name, // Nombre del usuario
-            'action' => 'Eliminar Producto', // Acción realizada
-            'model' => 'Product', // Modelo afectado
+            'user_name' => $userAuth->name,
+            'action' => 'Eliminar Producto',
+            'model' => 'Product',
             'old_values' => json_encode([
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => $product->price,
                 'stock' => $product->stock,
                 'image' => $product->image,
-                'state' => $product->state, // Estado anterior
+                'state' => $product->state,
             ]),
             'new_values' => json_encode([
-                'state' => 'inactive', // Nuevo estado
+                'state' => 'inactive',
             ]),
-            'created_at' => now(), // Fecha y hora de la transacción
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        // Verificar si el producto tiene imagen y eliminarla
         if (file_exists(public_path($product->image))) {
-            unlink(public_path($product->image)); // Eliminar la imagen del sistema de archivos
+            unlink(public_path($product->image));
         }
 
-        // Cambiar el nombre del producto
         $product->name = time() . '_'.$product->name;
-
-        // Cambiar el estado del producto a 'inactive'
         $product->state = 'inactive';
-
-        // Guardar los cambios en el producto
         $product->save();
 
-        // Redirigir o devolver la vista con el mensaje de éxito
         return redirect()->route('products.index')->with('success', 'Producto marcado como inactivo con éxito.');
     }
 }
