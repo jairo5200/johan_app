@@ -58,11 +58,11 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
                 </div>
 
                 {/* Enlaces principales (se muestran en sm y superiores) */}
-                <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <div className="hidden space-x-8 lg:-my-px lg:ml-10 lg:flex">
                   <NavLink href={route("products.index")} active={route().current("products.index")}>
                     Products
                   </NavLink>
-                  <NavLink href={route("sales.index")} active={route().current("sales.index")}>
+                  <NavLink href={route("sales.index")} active={route().current("sales.index")} >
                     Ventas y devoluciones
                   </NavLink>
                   <NavLink href={route("users.index")} active={route().current("users.index")}>
@@ -78,7 +78,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
               </div>
 
               {/* Opciones del lado derecho en escritorio */}
-              <div className="hidden sm:flex sm:items-center sm:ml-6">
+              <div className="hidden lg:flex lg:items-center lg:ml-6">
                 {/* Theme toggle */}
                 <div className="mr-4">
                   <ThemeToggle />
@@ -179,7 +179,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
               </div>
 
               {/* Hamburger Menu (solo en móviles) */}
-              <div className="-mr-2 flex items-center sm:hidden">
+              <div className="-mr-2 flex items-center lg:hidden">
                 <button
                   onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150"
@@ -316,7 +316,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
         )}
 
         {/* Page Content */}
-        <main className="bg-white dark:bg-gray-900">{children}</main>
+        <main className="bg-white dark:bg-gray-900 px-4">{children}</main>
       </div>
     </div>
   );

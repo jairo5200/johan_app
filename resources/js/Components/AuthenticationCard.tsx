@@ -5,7 +5,7 @@ export default function AuthenticationCard({
   children,
 }: PropsWithChildren<Record<string, unknown>>) {
   return (
-    <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col sm:justify-center items-center px-4 pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
       <div className='animate-small-flicker relative rounded-full animate-flicker'>
         <div className='relative z-40 p-4'>
           <AuthenticationCardLogo />

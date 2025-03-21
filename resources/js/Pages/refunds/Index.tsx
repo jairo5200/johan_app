@@ -68,7 +68,7 @@ export default function Refunds({ refunds }: any) {
           <div className="bg-gray-600 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             
             {/* Filtros de búsqueda y fecha */}
-            <div className="flex justify-between items-center mb-4">
+            <div className="overflow-x-auto flex justify-between items-center mb-4">
               <div className="flex space-x-4">
                 <input
                   type="text"
@@ -97,7 +97,7 @@ export default function Refunds({ refunds }: any) {
 
             {/* Tabla de devoluciones */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
-              <div className="overflow-hidden">
+              <div className="">
                 <table className="w-full table-auto border-collapse">
                   <thead>
                     <tr className="bg-gray-700 text-white">
