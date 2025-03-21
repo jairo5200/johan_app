@@ -128,10 +128,6 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id){
-<<<<<<< HEAD
-=======
-
->>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
         dd($request->all());
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());

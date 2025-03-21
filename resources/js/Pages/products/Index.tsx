@@ -306,7 +306,6 @@ export default function Products({ products }: any) {
                 </div>
               </div>
             )}
-<<<<<<< HEAD
             {/* Modal Editar Producto */}
             {showEditModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -373,8 +372,6 @@ export default function Products({ products }: any) {
                 </div>
               </div>
             )}
-=======
->>>>>>> c6b2b0e74f17295aea197b19f345b602febeda8f
           </div>
         </div>
       </div>
