@@ -12,13 +12,14 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
 import ThemeToggle from '@/Components/ThemeToggle';
+import { usePage } from '@inertiajs/react';
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
 }
 
-export default function AppLayout({ title, renderHeader, children }: PropsWithChildren<Props>) {
+export default function AppLayout({ title, renderHeader, children, }: PropsWithChildren<Props>) {
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -37,6 +38,10 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
     router.post(route('logout'));
   }
 
+
+   const { props } = usePage();
+   const userAuth = props.auth.user;
+// console.log(userAuth.role)
   return (
     <div>
       <Head title={title} />
@@ -65,15 +70,19 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
                   <NavLink href={route("sales.index")} active={route().current("sales.index")} >
                     Ventas y devoluciones
                   </NavLink>
-                  <NavLink href={route("users.index")} active={route().current("users.index")}>
-                    Usuarios
-                  </NavLink>
-                  <NavLink href={route("refunds.index")} active={route().current("refunds.index")}>
-                    Devoluciones
-                  </NavLink>
-                  <NavLink href={route("logs.index")} active={route().current("logs.index")}>
-                    Transacciones
-                  </NavLink>
+                  {(userAuth?.role?.trim().toLowerCase() !== "usuario") && (
+                  <>
+                    <NavLink href={route("users.index")} active={route().current("users.index")}>
+                      Usuarios
+                    </NavLink>
+                    <NavLink href={route("refunds.index")} active={route().current("refunds.index")}>
+                      Devoluciones
+                    </NavLink>
+                    <NavLink href={route("logs.index")} active={route().current("logs.index")}>
+                      Transacciones
+                    </NavLink>
+                  </>
+                )}
                 </div>
               </div>
 
