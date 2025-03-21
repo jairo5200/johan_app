@@ -55,9 +55,7 @@ Route::middleware([
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     // Ruta para eliminar un producto por su ID
     Route::delete('/products/{idProduct}', [ProductController::class, 'destroy'])->name('products.destroy');
-
     // Ruta para actualizar un producto por su ID
-
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
 
     /**

@@ -25,11 +25,22 @@ class RefundController extends Controller
      */
     public function index()
     {
+        // Verificar si el usuario tiene el rol de 'usuario'
+        if ($userAuth->role == 'usuario') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+        // Verificar si el usuario tiene el rol de 'usuario'
+        else if ($userAuth->role == 'admin') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+        
         // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
         
-        // Obtener todos los reembolsos
-        $refunds = Refund::all();
+        // Obtener todos los reembolsos ordenados por la fecha de manera descendente
+        $refunds = Refund::orderBy('created_at', 'asc')->get();
 
         // Devolver la vista React usando Inertia y pasar los reembolsos y el usuario
         return Inertia::render('refunds/Index', [

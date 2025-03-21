@@ -98,7 +98,6 @@ export default function SalesAndReturns({ products, sales }: any) {
     });
   }, [sales, filter, searchTerm]);
 
-  console.log('Ventas filtradas:', filteredSales);
 
   // Agrega un producto al carrito
   const addProduct = () => {
@@ -360,8 +359,8 @@ export default function SalesAndReturns({ products, sales }: any) {
           <div className="bg-gray-500 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             
             {/* Botones de acción */}
-            <div className="flex justify-between items-center mb-4">
-              <div>
+            <div className="overflow-x-auto flex justify-between items-center mb-4">
+              <div className='flex mr-4'>
                 <button 
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-4" 
                   onClick={() => setShowSaleModal(true)}
@@ -405,7 +404,7 @@ export default function SalesAndReturns({ products, sales }: any) {
   
             {/* Tabla de ventas */}
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
-              <div className="overflow-hidden">
+              <div className="">
                 <table className="w-full table-auto border-collapse">
                   <thead>
                     <tr className="dark:bg-gray-700 dark:text-white light:text-black">

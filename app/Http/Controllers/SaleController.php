@@ -30,8 +30,14 @@ class SaleController extends Controller
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
-        // Obtener todas las ventas con los productos y usuarios asociados
-        $sales = Sale::with(['products', 'user'])->get();
+        // Verificar si el usuario tiene el rol de 'usuario'
+        if ($userAuth->role == 'usuario') {
+            // Redirigir al usuario a la vista de productos
+            return redirect()->route('products.index');
+        }
+
+        // Obtener todas las ventas con los productos y usuarios asociados, ordenadas por fecha de manera descendente
+        $sales = Sale::with(['products', 'user'])->orderBy('sale_date', 'asc')->get();
 
         // Obtener los productos activos
         $products = Product::where('state', 'active')->get();

@@ -18,7 +18,7 @@ export default function Users({ users }: any) {
     role: 'usuario', // Valor predeterminado para el rol
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target;
     setData((prevData) => ({
       ...prevData,
@@ -117,7 +117,7 @@ export default function Users({ users }: any) {
               </button>
             </div>
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
-              <div className='overflow-hidden'>
+              <div className=''>
                 <table className="w-full table-auto overflow-hidden border-collapse">
                   <thead>
                     <tr className="bg-gray-700 text-white">

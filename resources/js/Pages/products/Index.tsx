@@ -10,7 +10,7 @@ import { usePage } from '@inertiajs/react';
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5; // Elementos por página
+  const itemsPerPage = 10; // Elementos por página
   const route = useRoute();
 
   // Estado para controlar el modal de edición y almacenar el producto seleccionado
@@ -18,7 +18,7 @@ export default function Products({ products }: any) {
   const [selectedProductForEdit, setSelectedProductForEdit] = useState<any>(null);
 
   // Usaremos useForm para manejar los datos de edición
-  const { put, data: editData, setData: setEditData, reset, errors: editErrors } = useForm({
+  const { put, data: editData, setData: setEditData, errors: editErrors } = useForm({
     name: '',
     description: '',
     price: '',
@@ -106,13 +106,21 @@ export default function Products({ products }: any) {
   const startIndex = (page - 1) * itemsPerPage;
   const visibleItems = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
-  const { delete: deleteProduct, post, data, setData, errors } = useForm({
+  const { delete: deleteProduct, post, data, setData,reset, errors, } = useForm({
     name: '',
     description: '',
     price: '',
     stock: '',
     image: '',
   });
+
+  useEffect(() => {
+    if (page > totalPages && totalPages > 0) {
+      setPage(totalPages);
+    }
+    // Si quieres que, al eliminar, siempre se regrese a la primera página:
+    // if (page > totalPages) setPage(1);
+  }, [page, totalPages]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -135,7 +143,11 @@ export default function Products({ products }: any) {
   };
 
   const handleAddProduct = () => setShowAddProductModal(true);
-  const closeAddProductModal = () => setShowAddProductModal(false);
+  const closeAddProductModal = () => {
+    
+    setShowAddProductModal(false);
+    reset();
+  };
   const closeDeleteModal = () => setShowDeleteModal(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,7 +188,6 @@ export default function Products({ products }: any) {
       data: formData,  // Aquí pasamos el FormData
       onSuccess: () => {
         setShowAddProductModal(false);
-        console.log('Producto agregado con éxito');
       },
       onError: (errors) => {
         if(errors.name){
@@ -212,8 +223,8 @@ export default function Products({ products }: any) {
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-          <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 pt-4 border-2 border-gray-400 shadow-blue-500/50'>
-            <div className="flex justify-between items-center mb-4">
+          <div className=' bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 pt-4 border-2 border-gray-400 shadow-blue-500/50'>
+            <div className="overflow-x-auto flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Productos</h1>
               <div className='flex items-center'>
                 <div>
@@ -225,20 +236,21 @@ export default function Products({ products }: any) {
               </div>
             </div>
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
-              <div className='overflow-hidden'>
-                <table className="w-full table-auto overflow-hidden border-collapse">
+              <div className="min-w-full">
+                <table className="w-full table-auto border-collapse">
                   <thead>
-                    <tr className="bg-gray-800 text-white">
-                      <th className="px-4 py-2 w-[70px] border-r border-b border-gray-300">Imagen</th>
-                      <th className="px-4 py-2 w-[200px] border-r border-b border-gray-300">Producto</th>
-                      <th className="px-4 py-2 w-[600px] border-r border-b border-gray-300">Descripcion</th>
-                      <th className="px-4 py-2 w-[70px] text-center border-r border-b border-gray-300">Precio</th>
-                      <th className="px-2 py-2 w-[60px] text-center border-r border-b border-gray-300">Stock</th>
-                      <th className="px-4 py-2 border-b border-gray-300">Acciones</th>
+                    <tr className="bg-gray-800 text-white text-xs sm:text-sm">
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 border-r border-b border-gray-300">Imagen</th>
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 border-r border-b border-gray-300">Producto</th>
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 border-r border-b border-gray-300">Descripción</th>
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 text-center border-r border-b border-gray-300">Precio</th>
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 text-center border-r border-b border-gray-300">Stock</th>
+                      <th className="px-2 py-1 sm:px-4 sm:py-2 border-b border-gray-300">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
+<<<<<<< HEAD
                     <ProductItem
                       key={product.id}
                       product={product}
@@ -246,6 +258,14 @@ export default function Products({ products }: any) {
                       handleEditProduct={handleEditProduct}
                       isPrivileged={isPrivileged}
                     />
+=======
+                      <ProductItem 
+                        key={product.id} 
+                        product={product} 
+                        handleDeleteProduct={handleDeleteProduct} 
+                        handleEditProduct={handleEditProduct} 
+                      />
+>>>>>>> 5173c09d99fd39c7ada50028b6ea3477b5c2c884
                     ))}
                   </tbody>
                 </table>
@@ -253,7 +273,7 @@ export default function Products({ products }: any) {
             </div>
 
             {/* Paginación */}
-            {totalPages > 0 && (
+            {totalPages > 1 && (
               <div className="flex justify-center space-x-2 mt-4">
                 <button
                   onClick={() => setPage(page - 1)}
@@ -262,17 +282,19 @@ export default function Products({ products }: any) {
                 >
                   « Prev
                 </button>
-
+  
                 {[...Array(totalPages)].map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setPage(index + 1)}
-                    className={`px-4 py-2 rounded-md ${page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 rounded-md ${
+                      page === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                    }`}
                   >
                     {index + 1}
                   </button>
                 ))}
-
+  
                 <button
                   onClick={() => setPage(page + 1)}
                   disabled={page === totalPages}
