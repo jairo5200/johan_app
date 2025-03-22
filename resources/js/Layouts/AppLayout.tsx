@@ -68,22 +68,32 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                   <NavLink href={route("products.index")} active={route().current("products.index")}>
                     Productos
                   </NavLink>
-                  <NavLink href={route("sales.index")} active={route().current("sales.index")} >
+                  <NavLink href={route("sales.index")} active={route().current("sales.index")}>
                     Ventas y devoluciones
                   </NavLink>
-                  {(userAuth?.role?.trim().toLowerCase() !== "usuario") && (
-                  <>
-                    <NavLink href={route("users.index")} active={route().current("users.index")}>
-                      Usuarios
-                    </NavLink>
-                    <NavLink href={route("refunds.index")} active={route().current("refunds.index")}>
-                      Devoluciones
-                    </NavLink>
-                    <NavLink href={route("logs.index")} active={route().current("logs.index")}>
-                      Transacciones
-                    </NavLink>
-                  </>
-                )}
+
+                  {/* Mostrar solo si NO es usuario */}
+                  {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
+                    <>
+                      {/* Solo para super_admin */}
+                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                        <>
+                          <NavLink href={route("users.index")} active={route().current("users.index")}>
+                            Usuarios
+                          </NavLink>
+                          <NavLink href={route("logs.index")} active={route().current("logs.index")}>
+                            Transacciones
+                          </NavLink>
+                        </>
+                      )}
+
+                      {/* Devoluciones y Transacciones para admin y super_admin */}
+                      <NavLink href={route("refunds.index")} active={route().current("refunds.index")}>
+                        Devoluciones
+                      </NavLink>
+
+                    </>
+                  )}
                 </div>
               </div>
 

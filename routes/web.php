@@ -75,6 +75,9 @@ Route::middleware([
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     // Ruta para registrar una nueva venta
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
+    // Ruta para eliminar una venta por su ID
+    Route::delete('/sales/{id}', [SaleController::class, 'destroy'])->name('sales.destroy');
+
 
     /**
      * Rutas para gestionar reembolsos

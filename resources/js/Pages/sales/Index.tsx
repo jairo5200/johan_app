@@ -235,8 +235,30 @@ export default function SalesAndReturns({ products, sales }: any) {
   
     console.log("post() ha sido ejecutado");
   };
+  const { delete: deleteSale } = useForm();
+
+  const confirmDeleteSale = (saleId: number) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar esta venta?")) return;
   
-  
+    deleteSale(route('sales.destroy', saleId), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showAlert("Venta eliminada", "La venta se ha eliminado correctamente", "success")
+          .then(() => {
+            // Aquí podrías recargar la lista de ventas o actualizar el estado.
+            // Por ejemplo: router.reload();
+          });
+      },
+      onError: (errors) => {
+        console.error("Error al eliminar la venta:", errors);
+        if (errors.error) {
+          showAlert("Error al eliminar venta", errors.error, "error");
+        } else {
+          showAlert("Error", "Ocurrió un error al eliminar la venta", "error");
+        }
+      },
+    });
+  };
   
   
   
@@ -434,16 +456,19 @@ export default function SalesAndReturns({ products, sales }: any) {
                           </td>
                           <td className="px-4 py-2 border-r">{formatCOP(sale.total)}</td>
                           <td className="px-4 py-2 text-center">
-                            {(userAuth?.role?.trim().toLowerCase() !== "usuario") ? (
-                              <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">
-                                Eliminar
-                              </button>
-                            ) : (
-                              <div className="flex justify-center text-gray-400">
-                                <LockClosedIcon className="h-5 w-5" title="Sin permisos" />
-                              </div>
-                            )}
-                          </td>
+                          {(userAuth?.role?.trim().toLowerCase() !== "usuario") ? (
+                            <button 
+                              onClick={() => confirmDeleteSale(sale.id)}
+                              className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
+                            >
+                              Eliminar
+                            </button>
+                          ) : (
+                            <div className="flex justify-center text-gray-400">
+                              <LockClosedIcon className="h-5 w-5" title="Sin permisos" />
+                            </div>
+                          )}
+                        </td>
                         </tr>
                       ))
                     ) : (
@@ -634,7 +659,6 @@ export default function SalesAndReturns({ products, sales }: any) {
         </div>
        )}
 
-      {/* Modal para Registrar Devolución */}
       {/* Modal para Registrar Devolución */}
       {showReturnModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
