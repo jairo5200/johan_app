@@ -250,7 +250,6 @@ export default function Products({ products }: any) {
                   </thead>
                   <tbody>
                     {visibleItems.map((product: any) => (
-<<<<<<< HEAD
                     <ProductItem
                       key={product.id}
                       product={product}
@@ -258,14 +257,6 @@ export default function Products({ products }: any) {
                       handleEditProduct={handleEditProduct}
                       isPrivileged={isPrivileged}
                     />
-=======
-                      <ProductItem 
-                        key={product.id} 
-                        product={product} 
-                        handleDeleteProduct={handleDeleteProduct} 
-                        handleEditProduct={handleEditProduct} 
-                      />
->>>>>>> 5173c09d99fd39c7ada50028b6ea3477b5c2c884
                     ))}
                   </tbody>
                 </table>
