@@ -5,6 +5,8 @@ import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
 import Swal from 'sweetalert2';
 import { showAlert } from "@/Components/Showalert2";
+import { usePage } from '@inertiajs/react';
+import { LockClosedIcon } from '@heroicons/react/24/solid';
 import 'animate.css';
 
 // Define la interfaz para los datos del formulario
@@ -332,6 +334,16 @@ export default function SalesAndReturns({ products, sales }: any) {
   );
   
 
+  const { props } = usePage();
+  const userAuth = props.auth.user;
+
+  const formatCOP = (value: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
   
 
   return (
@@ -414,17 +426,23 @@ export default function SalesAndReturns({ products, sales }: any) {
                             {sale.products?.length > 0
                               ? sale.products.map((product: any, index: number) => (
                                   <span key={index}>
-                                    {product.name} ({product.pivot.quantity}x) - ${product.pivot.price}
+                                    {product.name} ({product.pivot.quantity}x) - {formatCOP(product.pivot.price)}
                                     {index !== sale.products.length - 1 && ", "}
                                   </span>
                                 ))
                               : "Sin productos"}
                           </td>
-                          <td className="px-4 py-2 border-r">${sale.total}</td>
-                          <td className="px-4 py-2">
-                            <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">
-                              Eliminar
-                            </button>
+                          <td className="px-4 py-2 border-r">{formatCOP(sale.total)}</td>
+                          <td className="px-4 py-2 text-center">
+                            {(userAuth?.role?.trim().toLowerCase() !== "usuario") ? (
+                              <button className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">
+                                Eliminar
+                              </button>
+                            ) : (
+                              <div className="flex justify-center text-gray-400">
+                                <LockClosedIcon className="h-5 w-5" title="Sin permisos" />
+                              </div>
+                            )}
                           </td>
                         </tr>
                       ))
@@ -512,7 +530,7 @@ export default function SalesAndReturns({ products, sales }: any) {
                     className="p-2 hover:bg-gray-600 cursor-pointer"
                     onClick={() => selectProduct(prod)}
                   >
-                    {prod.name} - ${prod.price}
+                    {prod.name} - {formatCOP(prod.price)}
                   </li>
                 ))}
               </ul>
@@ -532,9 +550,9 @@ export default function SalesAndReturns({ products, sales }: any) {
             
             {/* Input para Precio Unitario (no editable) */}
             <input 
-              type="number" 
+              type="text" 
               placeholder="Precio Unitario" 
-              value={newProduct.price} 
+              value={newProduct.price ? formatCOP(newProduct.price) : ''} 
               disabled 
               className="block w-full mb-2 p-2 border rounded-lg bg-gray-700 text-white" 
             />
@@ -579,8 +597,8 @@ export default function SalesAndReturns({ products, sales }: any) {
                               className="bg-gray-700 px-2 py-1 rounded">+</button>
                           </div>
                         </td>
-                        <td className="px-2 py-1 border">${item.price}</td>
-                        <td className="px-2 py-1 border">${(item.price * item.quantity).toFixed(2)}</td>
+                        <td className="px-2 py-1 border">{formatCOP(item.price)}</td>
+                        <td className="px-2 py-1 border">{formatCOP(item.price * item.quantity)}</td>
                         <td className="px-2 py-1 border"> 
                             <button onClick={() => removeProduct(index)} className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">
                               Retirar
@@ -594,7 +612,7 @@ export default function SalesAndReturns({ products, sales }: any) {
             </div>
 
             {/* Total a Pagar */}
-            <h3 className="text-xl font-bold mt-4">Total a Pagar: ${total.toFixed(2)}</h3>
+            <h3 className="text-xl font-bold mt-4">Total a Pagar: {formatCOP(total)}</h3>
 
             
             {/* Botones de acción */}
@@ -618,38 +636,38 @@ export default function SalesAndReturns({ products, sales }: any) {
 
       {/* Modal para Registrar Devolución */}
       {/* Modal para Registrar Devolución */}
-{showReturnModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
-      <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
-      <form onSubmit={handleReturnSubmit}>
-        {/* Campo para el motivo (ahora con textarea) */}
-        <textarea
-          name="reason"
-          placeholder="Motivo de la devolución..."
-          value={returnData.reason}
-          onChange={(e) => setReturnData('reason', e.target.value)}
-          className="block w-full h-24 mb-2 p-2 border rounded-lg bg-gray-800 text-white resize-none"
-        />
-        
-        {/* Input para Producto con autocompletar */}
-        <input 
-          type="text" 
-          name="product"
-          placeholder="Producto" 
-          value={returnData.product} 
-          onChange={handleReturnProductInputChange}
-          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
-        />
-        {returnFilteredProducts.length > 0 && (
-          <ul className="bg-gray-700 rounded-lg mt-1 shadow-lg">
+      {showReturnModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
+            <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
+            <form onSubmit={handleReturnSubmit}>
+              {/* Campo para el motivo (ahora con textarea) */}
+              <textarea
+                name="reason"
+                placeholder="Motivo de la devolución..."
+                value={returnData.reason}
+                onChange={(e) => setReturnData('reason', e.target.value)}
+                className="block w-full h-24 mb-2 p-2 border rounded-lg bg-gray-800 text-white resize-none"
+              />
+              
+              {/* Input para Producto con autocompletar */}
+              <input 
+                type="text" 
+                name="product"
+                placeholder="Producto" 
+                value={returnData.product} 
+                onChange={handleReturnProductInputChange}
+                className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white" 
+              />
+              {returnFilteredProducts.length > 0 && (
+                <ul className="bg-gray-700 rounded-lg mt-1 shadow-lg">
             {returnFilteredProducts.map((prod: any) => (
               <li 
                 key={prod.id} 
                 className="p-2 hover:bg-gray-600 cursor-pointer"
                 onClick={() => selectReturnProduct(prod)}
               >
-                {prod.name} - ${prod.price}
+                {prod.name} - {formatCOP(prod.price)}
               </li>
             ))}
           </ul>

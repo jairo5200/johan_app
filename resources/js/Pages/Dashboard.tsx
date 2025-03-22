@@ -4,7 +4,7 @@ import ChartComponent from "@/Components/ChartComponent";
 import ProductCard from "@/Components/ProductCard";
 import 'animate.css';
 
-export default function Dashboard({ products, salesDay, salesWeek, salesMonth }: any) {
+export default function Dashboard({ products, salesDay, salesWeek, salesMonth, userAuth }: any) {
   // Filtro para el gráfico dinámico
   const [filter, setFilter] = useState<"day" | "week" | "month">("month");
   // Para la tabla de ventas totales: rango de fechas y filtro de período
@@ -17,7 +17,8 @@ export default function Dashboard({ products, salesDay, salesWeek, salesMonth }:
     const [year, month, day] = dateString.split("-").map(Number);
     return new Date(year, month - 1, day);
   };
-
+  
+console.log(userAuth.role)
   // ----------------------
   // Gráficos superiores
   // ----------------------
