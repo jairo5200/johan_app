@@ -21,7 +21,7 @@ export default function ApplicationMark(
     //   />
     // </svg>
     <img
-    className="w-16  my-1.5"
+    className="w-16"
     src={logoPrueba}
     >
     </img>

@@ -24,20 +24,7 @@ class RefundController extends Controller
      * Fecha de creación: 2025-03-21
      */
     public function index()
-    {   
-        // Obtener el usuario autenticado que realiza la acción
-          $userAuth = User::findOrFail(Auth::id());
-
-        // Verificar si el usuario tiene el rol de 'usuario'
-        if ($userAuth->role == 'usuario') {
-            // Redirigir al usuario a la vista de productos
-            return redirect()->route('products.index');
-        }
-        // Verificar si el usuario tiene el rol de 'usuario'
-        else if ($userAuth->role == 'admin') {
-            // Redirigir al usuario a la vista de productos
-            return redirect()->route('products.index');
-        }
+    {
         
         // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());

@@ -16,10 +16,17 @@ export default function ProductItem({
   isPrivileged
 }: ProductItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const formatCOP = (value: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
 
   return (
     <>
-      <tr className="text-center text-white bg-gray-800 border-gray-300">
+      <tr className="text-center text-white bg-gray-800/60 border-gray-300">
         <td className="px-4 py-2 border-b border-r border-gray-300">
           <img
             src={`/img/${product.image}`}
@@ -30,7 +37,7 @@ export default function ProductItem({
         </td>
         <td className="px-4 py-2 border-b border-r border-gray-300">{product.name}</td>
         <td className="px-4 py-2 w-[600px] border-b border-r border-gray-300">{product.description}</td>
-        <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.price}</td>
+        <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{formatCOP(product.price)}</td>
         <td className="px-4 py-2 border-b border-r border-gray-300 text-center">{product.stock}</td>
         <td className="px-4 py-2 border-b border-gray-300">
           {isPrivileged ? (

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import AppLayout from "@/Layouts/AppLayout";
 import ChartComponent from "@/Components/ChartComponent";
 import ProductCard from "@/Components/ProductCard";
+import 'animate.css';
 
 export default function Dashboard({ products, salesDay, salesWeek, salesMonth, userAuth }: any) {
   // Filtro para el gráfico dinámico
@@ -121,7 +122,6 @@ console.log(userAuth.role)
     (sum: number, s: any) => sum + Number(s.total),
     0
   );
-  console.log("Total Sales Real:", totalSalesReal);
 
   // Función para formatear la fecha para visualización
   const formatDateDisplay = (dateString: string) => {
@@ -139,7 +139,7 @@ console.log(userAuth.role)
     <AppLayout
       title="Dashboard"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-amber-100 leading-tight">
+        <h2 className="font-semibold text-xl text-amber-100 leading-tight animate__animated animate__slideInRight">
           Dashboard
         </h2>
       )}

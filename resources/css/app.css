@@ -94,3 +94,23 @@ input:-webkit-autofill {
 h2  {
   color: #FEF3C7
 }
+
+* {
+		padding: 0;
+		margin: 0;
+	}
+svg { 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: block;
+  background-color: #0e4166;
+  background-image: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), #111827);
+}
+
+button svg{
+  background-color: rgb(31, 41, 55);
+  background-image: none;
+}

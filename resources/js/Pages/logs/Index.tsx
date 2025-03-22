@@ -131,7 +131,7 @@ export default function Logs({ logs }: any) {
     <AppLayout
       title="Transacciones"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 className="font-semibold text-xl leading-tight text-amber-100 animate__animated animate__slideInRight">
           Transacciones
         </h2>
       )}

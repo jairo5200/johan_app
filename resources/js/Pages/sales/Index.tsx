@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { showAlert } from "@/Components/Showalert2";
 import { usePage } from '@inertiajs/react';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
+import 'animate.css';
 
 // Define la interfaz para los datos del formulario
 interface SaleData {
@@ -349,7 +350,7 @@ export default function SalesAndReturns({ products, sales }: any) {
     <AppLayout
       title="Ventas y Devoluciones"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-white leading-tight">
+        <h2 className="font-semibold text-xl leading-tight text-amber-100 animate__animated animate__slideInRight">
           Ventas y Devoluciones
         </h2>
       )}
