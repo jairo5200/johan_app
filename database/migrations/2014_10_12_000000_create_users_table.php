@@ -23,7 +23,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();  // ID único para cada usuario
             $table->string('name');  // Nombre del usuario
-            $table->string('email')->unique();  // Correo electrónico único para cada usuario
+            $table->string('email')->unique()->nullable();  // Correo electrónico único para cada usuario(al momento de desactivar al usuario se vuelve null)
             $table->timestamp('email_verified_at')->nullable();  // Fecha de verificación del correo electrónico (puede ser nula)
             $table->string('password');  // Contraseña del usuario
             $table->rememberToken();  // Token para recordar al usuario (utilizado en la funcionalidad de "Recordarme")

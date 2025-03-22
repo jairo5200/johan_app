@@ -156,20 +156,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
         </div>
       ) : null}
 
-      {/* <!-- Name --> */}
-      <div className="col-span-6 sm:col-span-4">
-        <InputLabel htmlFor="name" value="Name" />
-        <TextInput
-          id="name"
-          type="text"
-          className="mt-1 block w-full"
-          value={form.data.name}
-          onChange={e => form.setData('name', e.currentTarget.value)}
-          autoComplete="name"
-        />
-        <InputError message={form.errors.name} className="mt-2" />
-      </div>
-
+     
       {/* <!-- Email --> */}
       <div className="col-span-6 sm:col-span-4">
         <InputLabel htmlFor="email" value="Email" />
