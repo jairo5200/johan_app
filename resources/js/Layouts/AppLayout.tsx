@@ -12,6 +12,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
 import ThemeToggle from '@/Components/ThemeToggle';
+import AnimatedBackground from "@/Components/AnimatedBackground";
 
 interface Props {
   title: string;
@@ -43,7 +44,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
       <Banner />
 
       {/* Contenedor general sin fondo global, para separar navbar y contenido */}
-      <div className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="min-h-screen relative">
         {/* Navbar con fondo independiente */}
         <nav className="bg-blue-800 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="px-4 sm:px-6 lg:px-8">
@@ -51,7 +52,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
               {/* Logo y enlaces de navegación en escritorio */}
               <div className="flex">
                 {/* Logo */}
-                <div className="flex-shrink-0 flex items-center">
+                <div className="my-2 flex-shrink-0 flex items-center animate-small-flicker animate-flicker rounded-full">
                   <Link href={route("dashboard")}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
@@ -60,7 +61,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
                 {/* Enlaces principales (se muestran en sm y superiores) */}
                 <div className="hidden space-x-8 lg:-my-px lg:ml-10 lg:flex">
                   <NavLink href={route("products.index")} active={route().current("products.index")}>
-                    Products
+                    Productos
                   </NavLink>
                   <NavLink href={route("sales.index")} active={route().current("sales.index")} >
                     Ventas y devoluciones
@@ -96,7 +97,7 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
                             className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-gray-200 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-yellow-400 dark:hover:text-yellow-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 transition duration-150"
                           >
                             {page.props.auth.user?.current_team?.name}
-                            <svg
+                            <svg id='svgUsuario'
                               className="ml-2 -mr-0.5 h-4 w-4"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
@@ -316,7 +317,14 @@ export default function AppLayout({ title, renderHeader, children }: PropsWithCh
         )}
 
         {/* Page Content */}
-        <main className="bg-white dark:bg-gray-900 px-4">{children}</main>
+        <main className="">
+          {children}
+          
+        </main>
+        <AnimatedBackground />
+        {/* <div className="relative w-full h-screen flex items-center justify-center ">
+          <AnimatedBackground />
+        </div> */}
       </div>
     </div>
   );

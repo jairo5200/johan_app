@@ -5,6 +5,7 @@ import ProductItem from '@/Components/ProductItem';
 import BarraBusqueda from "@/Components/BarraBusqueda";
 import useRoute from '@/Hooks/useRoute';
 import { showAlert } from "@/Components/Showalert2";
+import 'animate.css';
 
 export default function Products({ products }: any) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -210,14 +211,14 @@ export default function Products({ products }: any) {
     <AppLayout
       title="Productos"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 className="font-semibold text-xl leading-tight text-amber-100 animate__animated animate__slideInRight">
           Productos
         </h2>
       )}
     >
-      <div className="py-12">
+      <div className="py-10">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-          <div className=' bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 pt-4 border-2 border-gray-400 shadow-blue-500/50'>
+          <div className=' bg-white dark:bg-gray-800/50 rounded-lg shadow-lg p-8 pt-4 border-2 border-gray-400 shadow-blue-500/50'>
             <div className="overflow-x-auto flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Productos</h1>
               <div className='flex items-center'>

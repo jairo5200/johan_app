@@ -9,7 +9,7 @@ export default function ProductTable({ setSearchTerm, searchTerm }: any) {
       <input
         type="text"
         placeholder="Buscar..."
-        className="p-2 w-fullp-2 border rounded-lg bg-gray-800 text-white border rounded-lg"
+        className="p-2 w-fullp-2 border rounded-lg bg-gray-800/50 text-white border rounded-lg"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />

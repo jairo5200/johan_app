@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { showAlert } from "@/Components/Showalert2";
+import 'animate.css';
 
 export default function Users({ users }: any) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -104,7 +105,7 @@ export default function Users({ users }: any) {
     <AppLayout
       title="Usuarios"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-white leading-tight">Usuarios</h2>
+        <h2 className="font-semibold text-xl leading-tight text-amber-100 animate__animated animate__slideInRight">Usuarios</h2>
       )}
     >
       <div className="py-12">
