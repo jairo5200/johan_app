@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\SaleProduct;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use App\Models\Log;
 
 class SaleController extends Controller
@@ -30,8 +32,11 @@ class SaleController extends Controller
         // Obtener el usuario que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
-        // Obtener todas las ventas con los productos y usuarios asociados, ordenadas por fecha de manera descendente
-        $sales = Sale::with(['products', 'user'])->orderBy('sale_date', 'asc')->get();
+        // Obtener todas las ventas con los productos y usuarios asociados, ordenadas por fecha de manera ascendente
+        $sales = Sale::with(['products', 'user'])
+            ->where('state', 'active')  // Filtrar por ventas activas
+            ->orderBy('sale_date', 'asc')
+            ->get();
 
         // Obtener los productos activos
         $products = Product::where('state', 'active')->get();
@@ -179,16 +184,44 @@ class SaleController extends Controller
      */
     public function destroy(string $id)
     {
-        // Obtener el usuario que realiza la acción
-        $userAuth = user::findOrFail(Auth::id());
+        // Iniciar una transacción
+        DB::beginTransaction();
 
-        // Obtener la venta por su ID
-        $sale = Sale::findOrFail($id);
+        try {
+            // Obtener la venta
+            $sale = Sale::findOrFail($id);
 
-        // Eliminar la venta
-        $sale->delete();
+            
+            // Cambiar el estado de la venta a "inactive"
+            $sale->state = 'inactive';
+            $sale->save();
 
-        // Redirigir a la lista de ventas con mensaje de éxito
-        return redirect()->route('sales.index')->with('success', 'Venta eliminada con éxito.');
+            // Obtener los productos relacionados con la venta
+            $saleProducts = SaleProduct::where('sale_id', $id)->get();
+
+            foreach ($saleProducts as $saleProduct) {
+                // Restaurar el stock en la tabla `products`
+                $product = Product::findOrFail($saleProduct->product_id);
+                $product->stock += $saleProduct->quantity;
+                $product->save();
+
+                // Cambiar la cantidad de la relación `sale_product` a 0
+                $saleProduct->quantity = 0;
+                $saleProduct->save();
+            }
+
+            // Confirmar la transacción
+            DB::commit();
+
+            // Retornar alguna respuesta, por ejemplo:
+            return redirect()->route('sales.index')->with('success', 'Venta eliminada con éxito');
+
+        } catch (\Exception $e) {
+            // Si ocurre un error, revertir todos los cambios
+            DB::rollBack();
+            return Redirect::back()->withErrors([
+                'error' => 'Ocurrió un error al eliminar la venta: ' . $e->getMessage()
+            ]);
+        }
     }
 }

@@ -12,6 +12,10 @@ class SaleProduct extends Model
      */
     use HasFactory;
 
+
+    // Especificamos el nombre de la tabla, ya que es singular
+    protected $table = 'sale_product';
+
     /**
      * Los atributos que son asignables en masa.
      *
