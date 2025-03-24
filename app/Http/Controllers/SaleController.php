@@ -184,6 +184,9 @@ class SaleController extends Controller
      */
     public function destroy(string $id)
     {
+        // Obtener el usuario que realiza la acción
+        $userAuth = User::findOrFail(Auth::id());
+
         // Iniciar una transacción
         DB::beginTransaction();
 
@@ -191,7 +194,9 @@ class SaleController extends Controller
             // Obtener la venta
             $sale = Sale::findOrFail($id);
 
-            
+            // Guardar los valores antes de la modificación (log de valores antiguos)
+            $oldSaleState = $sale->state;
+
             // Cambiar el estado de la venta a "inactive"
             $sale->state = 'inactive';
             $sale->save();
@@ -209,6 +214,15 @@ class SaleController extends Controller
                 $saleProduct->quantity = 0;
                 $saleProduct->save();
             }
+
+            // Crear un log para la eliminación (o desactivación) de la venta
+            Log::create([
+                'user_name' => $userAuth->name, // Nombre del usuario que realizó la acción
+                'action' => 'delete', // Acción realizada
+                'model' => 'Sale', // El modelo afectado
+                'old_values' => json_encode(['state' => $oldSaleState]), // Estado antiguo de la venta
+                'new_values' => json_encode(['state' => 'inactive']), // Nuevo estado de la venta
+            ]);
 
             // Confirmar la transacción
             DB::commit();
