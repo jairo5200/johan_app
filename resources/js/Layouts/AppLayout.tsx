@@ -287,77 +287,90 @@ export default function AppLayout({
           >
             {/* Fondo overlay semi-transparente */}
             <div
-              className="absolute inset-0 bg-black bg-opacity-50"
-              onClick={() => setShowingNavigationDropdown(false)}
-            ></div>
-            {/* Contenedor del menú */}
-            <div className="relative mx-4 mt-20 bg-blue-800 dark:bg-gray-800 rounded-lg p-4">
-              {/* Botón para cerrar */}
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setShowingNavigationDropdown(false)}
-                  className="text-white text-2xl focus:outline-none"
-                >
-                  &times;
-                </button>
-              </div>
-              <div className="space-y-2 mt-2">
-                <ResponsiveNavLink
-                  href={route("dashboard")}
-                  active={route().current("dashboard")}
-                >
-                  Dashboard
-                </ResponsiveNavLink>
-                <ResponsiveNavLink
-                  href={route("products.index")}
-                  active={route().current("products.index")}
-                >
-                  Productos
-                </ResponsiveNavLink>
-                <ResponsiveNavLink
-                  href={route("sales.index")}
-                  active={route().current("sales.index")}
-                >
-                  Ventas y devoluciones
-                </ResponsiveNavLink>
-                <ResponsiveNavLink
-                  href={route("users.index")}
-                  active={route().current("users.index")}
-                >
-                  Usuarios
-                </ResponsiveNavLink>
-                <ResponsiveNavLink
-                  href={route("refunds.index")}
-                  active={route().current("refunds.index")}
-                >
-                  Devoluciones
-                </ResponsiveNavLink>
-                <ResponsiveNavLink
-                  href={route("logs.index")}
-                  active={route().current("logs.index")}
-                >
-                  Transacciones
-                </ResponsiveNavLink>
-              </div>
-              {/* Opciones de Configuración para móviles */}
-              <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
-                <ResponsiveNavLink
-                  href={route("profile.show")}
-                  active={route().current("profile.show")}
-                >
-                  Profile
-                </ResponsiveNavLink>
-                {page.props.jetstream.hasApiFeatures && (
-                  <ResponsiveNavLink
-                    href={route("api-tokens.index")}
-                    active={route().current("api-tokens.index")}
+              className={classNames(
+                'fixed inset-0 z-50 flex flex-col bg-black bg-opacity-50 transform transition-all duration-300',
+                {
+                  'translate-y-0 opacity-100': showingNavigationDropdown,
+                  '-translate-y-full opacity-0': !showingNavigationDropdown,
+                }
+              )}
+            >
+              {/* Fondo overlay semi-transparente */}
+              <div
+                className="absolute inset-0 bg-black bg-opacity-50"
+                onClick={() => setShowingNavigationDropdown(false)}
+              ></div>
+              {/* Contenedor del menú */}
+              <div className="relative mx-20 mt-20 dark:bg-gray-800/80 rounded-lg p-4">
+                {/* Botón para cerrar */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setShowingNavigationDropdown(false)}
+                    className="text-white text-2xl focus:outline-none"
                   >
-                    API Tokens
+                    &times;
+                  </button>
+                </div>
+                <div className="space-y-2 mt-2">
+                  {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                        <>
+                          <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                            Dashboard
+                          </ResponsiveNavLink>
+                        </>
+                  )} 
+                  <ResponsiveNavLink
+                    href={route('products.index')}
+                    active={route().current('products.index')}
+                  >
+                    Productos
                   </ResponsiveNavLink>
-                )}
-                <form method="POST" onSubmit={logout}>
-                  <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
-                </form>
+                  <ResponsiveNavLink
+                    href={route('sales.index')}
+                    active={route().current('sales.index')}
+                  >
+                    Ventas y devoluciones
+                  </ResponsiveNavLink>
+                  {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
+                    <>
+                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                        <>
+                          <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')}>
+                            Usuarios
+                          </ResponsiveNavLink>
+                          <ResponsiveNavLink href={route('logs.index')} active={route().current('logs.index')}>
+                            Transacciones
+                          </ResponsiveNavLink>
+                        </>
+                      )}
+                      <ResponsiveNavLink href={route('refunds.index')} active={route().current('refunds.index')}>
+                        Devoluciones
+                      </ResponsiveNavLink>
+                    </>
+                  )}
+                  
+                  
+                </div>
+                {/* Opciones de Configuración para móviles */}
+                <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+                  <ResponsiveNavLink
+                    href={route('profile.show')}
+                    active={route().current('profile.show')}
+                  >
+                    Profile
+                  </ResponsiveNavLink>
+                  {page.props.jetstream.hasApiFeatures && (
+                    <ResponsiveNavLink
+                      href={route('api-tokens.index')}
+                      active={route().current('api-tokens.index')}
+                    >
+                      API Tokens
+                    </ResponsiveNavLink>
+                  )}
+                  <form method="POST" onSubmit={logout}>
+                    <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
+                  </form>
+                </div>
               </div>
             </div>
           </div>

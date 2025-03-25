@@ -18,7 +18,7 @@ export default function Dashboard({ products, salesDay, salesWeek, salesMonth, u
     return new Date(year, month - 1, day);
   };
   
-console.log(userAuth.role)
+
   // ----------------------
   // Gráficos superiores
   // ----------------------
@@ -183,7 +183,7 @@ console.log(userAuth.role)
 
         {/* Sección de Inventario */}
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-16">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
+          <div className="bg-white dark:bg-gray-800/50 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
             <h2 className="font-semibold text-2xl text-amber-100 leading-tight mb-4">
               Inventario
             </h2>
@@ -197,7 +197,7 @@ console.log(userAuth.role)
 
         {/* Sección de Ventas Totales */}
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-16">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
+          <div className="bg-white dark:bg-gray-800/50 rounded-lg shadow-lg p-6 border-2 border-gray-400 shadow-blue-500/50">
             <h2 className="font-semibold text-2xl text-amber-100 leading-tight mb-4">
               Manejo de Ventas Totales
             </h2>

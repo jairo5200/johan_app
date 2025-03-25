@@ -368,7 +368,7 @@ export default function SalesAndReturns({ products, sales }: any) {
   );
   
 
-  const { props } = usePage();
+  const { props }:any = usePage();
   const userAuth = props.auth.user;
 
   const formatCOP = (value: number) => {
@@ -391,7 +391,7 @@ export default function SalesAndReturns({ products, sales }: any) {
     >
       <div className="py-12">
         <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-gray-500 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+          <div className="dark:bg-gray-800/50 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             
             {/* Botones de acción */}
             <div className="overflow-x-auto flex justify-between items-center mb-4">
@@ -533,7 +533,7 @@ export default function SalesAndReturns({ products, sales }: any) {
       </div>
 
       {showSaleModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Carrito de Compras</h2>
             <form onSubmit={handleConfirmSale}>
@@ -673,7 +673,7 @@ export default function SalesAndReturns({ products, sales }: any) {
 
       {/* Modal para Registrar Devolución */}
       {showReturnModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
             <form onSubmit={handleReturnSubmit}>
