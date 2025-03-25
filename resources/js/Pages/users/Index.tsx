@@ -122,7 +122,6 @@ export default function Users({ users }: any) {
                 <table className="w-full table-auto overflow-hidden border-collapse">
                   <thead>
                     <tr className="bg-gray-700 text-white">
-                      <th className="px-4 py-2 border-r border-b border-gray-300">ID Usuario</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Nombre</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Email</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300">Role</th>
@@ -133,7 +132,6 @@ export default function Users({ users }: any) {
                     {users.length > 0 ? (
                       users.map((user: any, index: number) => (
                         <tr key={index} className="text-center text-white bg-gray-800 border-b border-gray-300">
-                          <td className="px-4 py-2 border-r border-b border-gray-300">{user.id}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.name}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.email}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.role}</td>
