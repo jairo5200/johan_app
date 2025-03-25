@@ -110,7 +110,7 @@ export default function Users({ users }: any) {
     >
       <div className="py-12">
         <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-         <div className="bg-gray-600 dark:bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
+         <div className="dark:bg-gray-800/50 rounded-lg shadow-lg p-8 border-2 border-gray-400 shadow-blue-500/50">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Lista de Usuarios</h1>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddUser}>
@@ -121,18 +121,18 @@ export default function Users({ users }: any) {
               <div className=''>
                 <table className="w-full table-auto overflow-hidden border-collapse">
                   <thead>
-                    <tr className="bg-gray-700 text-white">
-                      <th className="px-4 py-2 border-r border-b border-gray-300">ID Usuario</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Nombre</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Email</th>
-                      <th className="px-4 py-2 border-r border-b border-gray-300">Role</th>
+                    <tr className="bg-gray-700/50 text-white">
+                      <th className="px-4 py-2 border-r border-b border-gray-300/50">ID Usuario</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300/50">Nombre</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300/50">Email</th>
+                      <th className="px-4 py-2 border-r border-b border-gray-300/50">Role</th>
                       <th className="px-4 py-2 border-b border-gray-300">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.length > 0 ? (
                       users.map((user: any, index: number) => (
-                        <tr key={index} className="text-center text-white bg-gray-800 border-b border-gray-300">
+                        <tr key={index} className="text-center text-white bg-gray-800/50 border-b border-gray-300">
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.id}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.name}</td>
                           <td className="px-4 py-2 border-r border-b border-gray-300">{user.email}</td>

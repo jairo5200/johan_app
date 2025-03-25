@@ -40,7 +40,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
   }
 
 
-   const { props } = usePage();
+   const { props } : any = usePage();
    const userAuth = props.auth.user;
 // console.log(userAuth.role)
   return (
@@ -76,11 +76,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                   {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
                     <>
                       {/* Solo para super_admin */}
-<<<<<<< HEAD
-                      {userAuth?.role?.trim().toLowerCase() === "superadmin" && (
-=======
-                      {userAuth?.role?.trim().toLowerCase() == "super_admin" && (
->>>>>>> 15551cd7e2dd98e7e674c5b3166ee90b638ab9ed
+                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
                         <>
                           <NavLink href={route("users.index")} active={route().current("users.index")}>
                             Usuarios
@@ -104,9 +100,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
               {/* Opciones del lado derecho en escritorio */}
               <div className="hidden lg:flex lg:items-center lg:ml-6">
                 {/* Theme toggle */}
-                <div className="mr-4">
-                  <ThemeToggle />
-                </div>
+                
                 {/* Teams Dropdown (si corresponde) */}
                 {page.props.jetstream.hasTeamFeatures && (
                   <div className="ml-3 relative">
@@ -268,12 +262,13 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                   </button>
                 </div>
                 <div className="space-y-2 mt-2">
-                  <ResponsiveNavLink
-                    href={route('dashboard')}
-                    active={route().current('dashboard')}
-                  >
-                    Dashboard
-                  </ResponsiveNavLink>
+                  {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                        <>
+                          <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                            Dashboard
+                          </ResponsiveNavLink>
+                        </>
+                  )} 
                   <ResponsiveNavLink
                     href={route('products.index')}
                     active={route().current('products.index')}
@@ -286,24 +281,25 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                   >
                     Ventas y devoluciones
                   </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('users.index')}
-                    active={route().current('users.index')}
-                  >
-                    Usuarios
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('refunds.index')}
-                    active={route().current('refunds.index')}
-                  >
-                    Devoluciones
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('logs.index')}
-                    active={route().current('logs.index')}
-                  >
-                    Transacciones
-                  </ResponsiveNavLink>
+                  {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
+                    <>
+                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                        <>
+                          <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')}>
+                            Usuarios
+                          </ResponsiveNavLink>
+                          <ResponsiveNavLink href={route('logs.index')} active={route().current('logs.index')}>
+                            Transacciones
+                          </ResponsiveNavLink>
+                        </>
+                      )}
+                      <ResponsiveNavLink href={route('refunds.index')} active={route().current('refunds.index')}>
+                        Devoluciones
+                      </ResponsiveNavLink>
+                    </>
+                  )}
+                  
+                  
                 </div>
                 {/* Opciones de Configuración para móviles */}
                 <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">

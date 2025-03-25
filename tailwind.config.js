@@ -3,8 +3,7 @@ import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: 'class', // Habilita el modo oscuro a través de una clase
+export default { // Habilita el modo oscuro a través de una clase
   content: [
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './vendor/laravel/jetstream/**/*.blade.php',
