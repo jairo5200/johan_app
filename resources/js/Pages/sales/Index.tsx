@@ -3,8 +3,8 @@ import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
-import Swal from 'sweetalert2';
-import { showAlert } from "@/Components/Showalert2";
+// import Swal from 'sweetalert2';
+import { showAlert, showConfirmAlert } from "@/Components/Showalert2";
 import { usePage } from '@inertiajs/react';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import 'animate.css';
@@ -27,6 +27,8 @@ type CartItem = {
   price: number;
 };
 
+
+
 export default function SalesAndReturns({ products, sales }: any) {
   // Estados para los modales generales
   const [showSaleModal, setShowSaleModal] = useState(false);
@@ -36,6 +38,17 @@ export default function SalesAndReturns({ products, sales }: any) {
   const route = useRoute();
   const today = new Date();
   const todayISO = today.toISOString().split('T')[0];
+
+  useEffect(() => {
+    if (showSaleModal) {
+      const today = new Date().toISOString().split("T")[0];
+      setPurchaseDate(today);
+      setData((prev) => ({
+        ...prev,
+        purchaseDate: today,
+      }));
+    }
+  }, [showSaleModal]);
 
 
   // Usa useForm con la interfaz SaleData
@@ -238,26 +251,27 @@ export default function SalesAndReturns({ products, sales }: any) {
   const { delete: deleteSale } = useForm();
 
   const confirmDeleteSale = (saleId: number) => {
-    if (!confirm("¿Estás seguro de que deseas eliminar esta venta?")) return;
-  
-    deleteSale(route('sales.destroy', saleId), {
-      preserveScroll: true,
-      onSuccess: () => {
-        showAlert("Venta eliminada", "La venta se ha eliminado correctamente", "success")
-          .then(() => {
-            // Aquí podrías recargar la lista de ventas o actualizar el estado.
-          });
-      },
-      onError: (errors) => {
-        console.error("Error al eliminar la venta:", errors);
-        if (errors.error) {
-          showAlert("Error al eliminar venta", errors.error, "error");
-        } else {
-          showAlert("Error", "Ocurrió un error al eliminar la venta", "error");
-        }
-      },
+    showConfirmAlert(
+      "¿Estás seguro?",
+      "Esta acción no se puede deshacer",
+      "Sí, eliminar",
+      "Cancelar"
+    ).then((result) => {
+      if (result.isConfirmed) {
+        deleteSale(route("sales.destroy", saleId), {
+          preserveScroll: true,
+          onSuccess: () => {
+            showAlert("Venta eliminada", "La venta se ha eliminado correctamente", "success");
+          },
+          onError: (errors) => {
+            console.error("Error al eliminar la venta:", errors);
+            showAlert("Error", errors.error || "Ocurrió un error al eliminar la venta", "error");
+          },
+        });
+      }
     });
   };
+  
   
   
   
@@ -530,8 +544,8 @@ export default function SalesAndReturns({ products, sales }: any) {
               type="date" 
               name="purchaseDate"
               value={purchaseDate} 
-              onChange={handleChange}
-              className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
+              readOnly
+              className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white cursor-not-allowed" 
             />
             {/* Formulario para agregar un producto */}
           <div className="mb-4">
@@ -709,12 +723,12 @@ export default function SalesAndReturns({ products, sales }: any) {
         {/* Fecha de Compra */}
         <label className="block mb-2">Fecha de Compra:</label>
         <input 
-          type="date" 
-          name="refundDate"
-          value={returnData.refundDate} 
-          onChange={(e) => setReturnData('refundDate', e.target.value)}
-          className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white" 
-        />
+            type="date" 
+            name="refundDate"
+            value={returnData.refundDate} 
+            readOnly
+            className="block w-full mb-4 p-2 border rounded-lg bg-gray-800 text-white cursor-not-allowed" 
+          />
 
         <div className="flex justify-end mt-4">
           <button 

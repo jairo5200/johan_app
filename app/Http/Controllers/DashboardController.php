@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\Log;
 use App\Models\AccessAttempt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -84,6 +85,11 @@ class DashboardController extends Controller
         // Obtener los productos activos
         $products = Product::where('state', 'active')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React utilizando Inertia y pasar los datos necesarios al front-end
         return Inertia::render('Dashboard', [
             'products' => $products,
@@ -91,6 +97,7 @@ class DashboardController extends Controller
             'salesWeek' => $salesByWeek,
             'salesMonth' => $salesByMonth,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
     }
 }

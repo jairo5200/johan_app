@@ -141,6 +141,7 @@ class SaleController extends Controller
             'model' => 'Sale', // Modelo afectado
             'old_values' => json_encode($oldValues), // Valores antiguos (stock antes de la venta)
             'new_values' => json_encode($newValues), // Nuevos valores (stock después de la venta)
+            'state' => 'active',
             'created_at' => now(), // Fecha y hora de la transacción
             'updated_at' => now(), // Fecha y hora de la transacción
         ]);
@@ -218,7 +219,7 @@ class SaleController extends Controller
             // Crear un log para la eliminación (o desactivación) de la venta
             Log::create([
                 'user_name' => $userAuth->name, // Nombre del usuario que realizó la acción
-                'action' => 'delete', // Acción realizada
+                'action' => 'Eliminar venta', // Acción realizada
                 'model' => 'Sale', // El modelo afectado
                 'old_values' => json_encode(['state' => $oldSaleState]), // Estado antiguo de la venta
                 'new_values' => json_encode(['state' => 'inactive']), // Nuevo estado de la venta

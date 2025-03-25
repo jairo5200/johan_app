@@ -22,7 +22,8 @@ class Log extends Model
         'action',        // Acción realizada (por ejemplo, 'Crear Usuario', 'Eliminar Producto', etc.)
         'model',         // Modelo que se ha modificado (por ejemplo, 'User', 'Product', 'Sale', etc.)
         'old_values',    // Valores anteriores antes de que se realizara la acción (se almacena como JSON)
-        'new_values',    // Nuevos valores después de realizar la acción (se almacena como JSON)
+        'new_values',   // Nuevos valores después de realizar la acción (se almacena como JSON)
+        'state',        // estado del log 
         'created_at',    // Fecha y hora en que se realizó la acción
         'updated_at',    // Fecha y hora en que se actualizó el registro del log (generalmente igual a created_at)
     ];
@@ -42,6 +43,7 @@ class Log extends Model
      * - `model`: Nombre del modelo afectado (por ejemplo, "User", "Product", "Sale").
      * - `old_values`: Valores anteriores antes de la acción (almacenados como JSON).
      * - `new_values`: Nuevos valores después de la acción (almacenados como JSON).
+     * - `state`: Estado del log (por ejemplo, "inactive", "active", etc.).
      * - `created_at`: Fecha y hora en que se realizó la acción.
      * - `updated_at`: Fecha y hora de la última actualización del registro.
      * 

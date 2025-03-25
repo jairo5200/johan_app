@@ -30,6 +30,7 @@ export default function Logs({ logs }: any) {
       const lowerAction = action.toLowerCase();
       const lowerModel = model ? model.toLowerCase() : '';
 
+
       // Caso: Venta Realizada (se espera un array de objetos)
       if (lowerAction === 'venta realizada') {
         if (!Array.isArray(parsed))
@@ -87,6 +88,34 @@ export default function Logs({ logs }: any) {
           </ul>
         );
       }
+      // Caso: Acciones relacionadas con eliminacion de ventas
+      else if (
+        lowerModel === 'sale' &&
+        (lowerAction.includes('eliminar') || lowerAction.includes('modificar') || lowerAction === 'delete' || lowerAction === 'update')
+      ) {
+        if (Array.isArray(parsed)) {
+          return (
+            <ul>
+              {parsed.map((item: any, index: number) => (
+                <li key={index}>
+                  {item.product_name} (ID: {item.product_id}) - Stock: {item.old_stock} → {item.new_stock} 
+                  {item.quantity_sold ? ` (Vendidos: ${item.quantity_sold})` : ''} - Precio: {item.price}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        return (
+          <ul>
+            {Object.entries(parsed).map(([key, value]) => (
+              <li key={key}>
+                <strong>{key}:</strong> {String(value)}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+      
       return 'Datos no reconocidos';
     } catch {
       return 'Error al formatear datos';
