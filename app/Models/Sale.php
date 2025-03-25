@@ -21,6 +21,7 @@ class Sale extends Model
         'sale_date', // la fecha que se realiza la venta
         'user_id',  // El ID del usuario que realiza la venta
         'total',    // El total de la venta
+        'state',   // El estado de la venta (pendiente, pagado, etc.)
     ];
 
     /**

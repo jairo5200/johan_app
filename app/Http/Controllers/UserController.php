@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AccessAttempt;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
@@ -30,11 +31,23 @@ class UserController extends Controller
 
         // Verificar si el usuario tiene el rol de 'usuario'
         if ($userAuth->role == 'usuario') {
+            // Registrar el intento de acceso
+            AccessAttempt::create([
+                'user_id' => $userAuth->id,
+                'route' => url()->current(), // Obtener la URL actual a la que intentan acceder
+            ]);
+
             // Redirigir al usuario a la vista de productos
             return redirect()->route('products.index');
         }
-        // Verificar si el usuario tiene el rol de 'usuario'
-        else if ($userAuth->role == 'admin') {
+        // Verificar si el usuario tiene el rol de 'admin'
+        if ($userAuth->role == 'admin') {
+            // Registrar el intento de acceso
+            AccessAttempt::create([
+                'user_id' => $userAuth->id,
+                'route' => url()->current(), // Obtener la URL actual a la que intentan acceder
+            ]);
+
             // Redirigir al usuario a la vista de productos
             return redirect()->route('products.index');
         }
@@ -121,6 +134,14 @@ class UserController extends Controller
         // Obtener el usuario por su ID
         $user = User::findOrFail($id);
 
+
+        // Verificar si el usuario es "super_admin" y evitar que sea eliminado
+        if ($user->role === 'super_admin') {
+            return Redirect::back()->withErrors([
+                'error' => 'No puedes eliminar a un usuario con rol de super_admin.'
+            ]);
+        }
+
         // Verificar si el usuario está intentando eliminar su propio perfil
         if(auth()->id() == $user->id) {
             // Redirigir con un mensaje de error si el usuario intenta eliminarse a sí mismo
@@ -146,6 +167,9 @@ class UserController extends Controller
 
         // Modificar el nombre del usuario para marcarlo como eliminado
         $user->name = 'Eliminado (' . $user->name . ')';
+
+        // Borrar el correo electrónico (Gmail) del usuario
+        $user->email = null;
 
         // Guardar los cambios en la base de datos
         $user->save();

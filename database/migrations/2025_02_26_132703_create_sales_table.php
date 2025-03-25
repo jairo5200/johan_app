@@ -23,6 +23,7 @@ return new class extends Migration
             $table->Date('sale_date');  // Fecha en la que se realizó la venta
             $table->integer('total');  // Total de la venta
             $table->foreignId('user_id')->constrained()->onDelete('restrict');  // Relación con el usuario (usuario que realizó la venta)
+            $table->string('state')->default('active');  // Estado de la venta
             $table->timestamps();  // Campos de marca de tiempo: created_at y updated_at
         });
     }

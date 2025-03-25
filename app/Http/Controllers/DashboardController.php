@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\AccessAttempt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,11 +32,23 @@ class DashboardController extends Controller
 
         // Verificar si el usuario tiene el rol de 'usuario'
         if ($userAuth->role == 'usuario') {
+            // Registrar el intento de acceso
+            AccessAttempt::create([
+                'user_id' => $userAuth->id,
+                'route' => url()->current(), // Obtener la URL actual a la que intentan acceder
+            ]);
+
             // Redirigir al usuario a la vista de productos
             return redirect()->route('products.index');
         }
-        // Verificar si el usuario tiene el rol de 'usuario'
-        else if ($userAuth->role == 'admin') {
+        // Verificar si el usuario tiene el rol de 'admin'
+        if ($userAuth->role == 'admin') {
+            // Registrar el intento de acceso
+            AccessAttempt::create([
+                'user_id' => $userAuth->id,
+                'route' => url()->current(), // Obtener la URL actual a la que intentan acceder
+            ]);
+
             // Redirigir al usuario a la vista de productos
             return redirect()->route('products.index');
         }
