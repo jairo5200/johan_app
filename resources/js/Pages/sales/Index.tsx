@@ -3,7 +3,6 @@ import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import useRoute from '@/Hooks/useRoute';
 import { useMemo } from 'react';
-// import Swal from 'sweetalert2';
 import { showAlert, showConfirmAlert } from "@/Components/Showalert2";
 import { usePage } from '@inertiajs/react';
 import { LockClosedIcon } from '@heroicons/react/24/solid';

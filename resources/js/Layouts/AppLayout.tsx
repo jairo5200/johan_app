@@ -14,13 +14,27 @@ import { Team } from '@/types';
 import ThemeToggle from '@/Components/ThemeToggle';
 import { usePage } from '@inertiajs/react';
 import AnimatedBackground from '@/Components/AnimatedBackground';
+import NotificationsWidget from '@/Components/NotificationsWidget';
+import NotificationBell from '@/Components/NotificationBell';
+
+// Si tienes una definición centralizada de Notification, mejor definirla en un archivo de tipos
+export interface Notification {
+  id: number;
+  message: string;
+  created_at: string;
+  user_name?: string;
+}
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
 }
 
-export default function AppLayout({ title, renderHeader, children, }: PropsWithChildren<Props>) {
+export default function AppLayout({
+  title,
+  renderHeader,
+  children,
+}: PropsWithChildren<Props>) {
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -39,73 +53,93 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
     router.post(route('logout'));
   }
 
+  const { props } = usePage();
+  const userAuth = props.auth.user;
+  // Se asume que 'notificacionesActivas' se envía desde el backend
+  const notificacionesActivas: Notification[] = props.notificacionesActivas || [];
 
-   const { props } = usePage();
-   const userAuth = props.auth.user;
-// console.log(userAuth.role)
+
   return (
     <div>
       <Head title={title} />
       <Banner />
-
+  
       {/* Contenedor general sin fondo global, para separar navbar y contenido */}
       <div className="min-h-screen relative">
         {/* Navbar con fondo independiente */}
         <nav className="bg-blue-800 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center">
-              {/* Logo y enlaces de navegación en escritorio */}
-              <div className="flex">
+              {/* Izquierda: Logo, enlaces y (opcional) widget de notificaciones */}
+              <div className="flex items-center">
                 {/* Logo */}
                 <div className="my-2 flex-shrink-0 flex items-center animate-small-flicker animate-flicker rounded-full">
                   <Link href={route("dashboard")}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
                 </div>
-
+  
                 {/* Enlaces principales (se muestran en sm y superiores) */}
                 <div className="hidden space-x-8 lg:-my-px lg:ml-10 lg:flex">
-                  <NavLink href={route("products.index")} active={route().current("products.index")}>
+                  <NavLink
+                    href={route("products.index")}
+                    active={route().current("products.index")}
+                  >
                     Productos
                   </NavLink>
-                  <NavLink href={route("sales.index")} active={route().current("sales.index")}>
+                  <NavLink
+                    href={route("sales.index")}
+                    active={route().current("sales.index")}
+                  >
                     Ventas y devoluciones
                   </NavLink>
-
+  
                   {/* Mostrar solo si NO es usuario */}
                   {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
                     <>
                       {/* Solo para super_admin */}
-                      {userAuth?.role?.trim().toLowerCase() == "super_admin" && (
+                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
                         <>
-                          <NavLink href={route("users.index")} active={route().current("users.index")}>
+                          <NavLink
+                            href={route("users.index")}
+                            active={route().current("users.index")}
+                          >
                             Usuarios
                           </NavLink>
-                          <NavLink href={route("logs.index")} active={route().current("logs.index")}>
+                          <NavLink
+                            href={route("logs.index")}
+                            active={route().current("logs.index")}
+                          >
                             Transacciones
                           </NavLink>
                         </>
                       )}
-
+  
                       {/* Devoluciones y Transacciones para admin y super_admin */}
-                      <NavLink href={route("refunds.index")} active={route().current("refunds.index")}>
+                      <NavLink
+                        href={route("refunds.index")}
+                        active={route().current("refunds.index")}
+                      >
                         Devoluciones
                       </NavLink>
-
                     </>
                   )}
                 </div>
+  
               </div>
-
-              {/* Opciones del lado derecho en escritorio */}
-              <div className="hidden lg:flex lg:items-center lg:ml-6">
-                {/* Theme toggle */}
-                <div className="mr-4">
-                  <ThemeToggle />
-                </div>
+  
+              {/* Derecha: Opciones del usuario y botón de notificaciones (reemplaza al ThemeToggle) */}
+              <div className="flex items-center">
+                {/* Mostrar NotificationBell solo para super_admin */}
+                {userAuth && userAuth.role === "super_admin" && (
+                  <div className="mr-4 hidden lg:block">
+                    <NotificationBell notifications={notificacionesActivas} />
+                  </div>
+                )}
+  
                 {/* Teams Dropdown (si corresponde) */}
                 {page.props.jetstream.hasTeamFeatures && (
-                  <div className="ml-3 relative">
+                  <div className="ml-3 relative hidden lg:block">
                     <Dropdown
                       align="right"
                       width="60"
@@ -116,7 +150,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                             className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-gray-200 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-yellow-400 dark:hover:text-yellow-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 transition duration-150"
                           >
                             {page.props.auth.user?.current_team?.name}
-                            <svg id='svgUsuario'
+                            <svg
                               className="ml-2 -mr-0.5 h-4 w-4"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
@@ -141,6 +175,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                     </Dropdown>
                   </div>
                 )}
+  
                 {/* Settings Dropdown */}
                 <div className="ml-3 relative">
                   <Dropdown
@@ -196,136 +231,138 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                     </form>
                   </Dropdown>
                 </div>
-              </div>
-
-              {/* Hamburger Menu (solo en móviles) */}
-              <div className="-mr-2 flex items-center lg:hidden">
-                <button
-                  onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150"
-                >
-                  <svg
-                    className="h-6 w-6"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
+  
+                {/* Botón Hamburguesa (solo en móviles) */}
+                <div className="-mr-2 flex items-center lg:hidden">
+                  <button
+                    onClick={() =>
+                      setShowingNavigationDropdown(!showingNavigationDropdown)
+                    }
+                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150"
                   >
-                    <path
-                      className={classNames({
-                        hidden: showingNavigationDropdown,
-                        'inline-flex': !showingNavigationDropdown,
-                      })}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                    <path
-                      className={classNames({
-                        hidden: !showingNavigationDropdown,
-                        'inline-flex': showingNavigationDropdown,
-                      })}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      className="h-6 w-6"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        className={classNames({
+                          hidden: showingNavigationDropdown,
+                          "inline-flex": !showingNavigationDropdown,
+                        })}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                      <path
+                        className={classNames({
+                          hidden: !showingNavigationDropdown,
+                          "inline-flex": showingNavigationDropdown,
+                        })}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Menú Responsive (móviles) siempre renderizado */}
-          {showingNavigationDropdown && (
+        </nav>
+  
+        {/* Menú Responsive (móviles) siempre renderizado */}
+        {showingNavigationDropdown && (
+          <div
+            className={classNames(
+              "fixed inset-0 z-50 flex flex-col bg-black bg-opacity-50 transform transition-all duration-300",
+              {
+                "translate-y-0 opacity-100": showingNavigationDropdown,
+                "-translate-y-full opacity-0": !showingNavigationDropdown,
+              }
+            )}
+          >
+            {/* Fondo overlay semi-transparente */}
             <div
-              className={classNames(
-                'fixed inset-0 z-50 flex flex-col bg-black bg-opacity-50 transform transition-all duration-300',
-                {
-                  'translate-y-0 opacity-100': showingNavigationDropdown,
-                  '-translate-y-full opacity-0': !showingNavigationDropdown,
-                }
-              )}
-            >
-              {/* Fondo overlay semi-transparente */}
-              <div
-                className="absolute inset-0 bg-black bg-opacity-50"
-                onClick={() => setShowingNavigationDropdown(false)}
-              ></div>
-              {/* Contenedor del menú */}
-              <div className="relative mx-4 mt-20 bg-blue-800 dark:bg-gray-800 rounded-lg p-4">
-                {/* Botón para cerrar */}
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setShowingNavigationDropdown(false)}
-                    className="text-white text-2xl focus:outline-none"
-                  >
-                    &times;
-                  </button>
-                </div>
-                <div className="space-y-2 mt-2">
+              className="absolute inset-0 bg-black bg-opacity-50"
+              onClick={() => setShowingNavigationDropdown(false)}
+            ></div>
+            {/* Contenedor del menú */}
+            <div className="relative mx-4 mt-20 bg-blue-800 dark:bg-gray-800 rounded-lg p-4">
+              {/* Botón para cerrar */}
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowingNavigationDropdown(false)}
+                  className="text-white text-2xl focus:outline-none"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="space-y-2 mt-2">
+                <ResponsiveNavLink
+                  href={route("dashboard")}
+                  active={route().current("dashboard")}
+                >
+                  Dashboard
+                </ResponsiveNavLink>
+                <ResponsiveNavLink
+                  href={route("products.index")}
+                  active={route().current("products.index")}
+                >
+                  Productos
+                </ResponsiveNavLink>
+                <ResponsiveNavLink
+                  href={route("sales.index")}
+                  active={route().current("sales.index")}
+                >
+                  Ventas y devoluciones
+                </ResponsiveNavLink>
+                <ResponsiveNavLink
+                  href={route("users.index")}
+                  active={route().current("users.index")}
+                >
+                  Usuarios
+                </ResponsiveNavLink>
+                <ResponsiveNavLink
+                  href={route("refunds.index")}
+                  active={route().current("refunds.index")}
+                >
+                  Devoluciones
+                </ResponsiveNavLink>
+                <ResponsiveNavLink
+                  href={route("logs.index")}
+                  active={route().current("logs.index")}
+                >
+                  Transacciones
+                </ResponsiveNavLink>
+              </div>
+              {/* Opciones de Configuración para móviles */}
+              <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+                <ResponsiveNavLink
+                  href={route("profile.show")}
+                  active={route().current("profile.show")}
+                >
+                  Profile
+                </ResponsiveNavLink>
+                {page.props.jetstream.hasApiFeatures && (
                   <ResponsiveNavLink
-                    href={route('dashboard')}
-                    active={route().current('dashboard')}
+                    href={route("api-tokens.index")}
+                    active={route().current("api-tokens.index")}
                   >
-                    Dashboard
+                    API Tokens
                   </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('products.index')}
-                    active={route().current('products.index')}
-                  >
-                    Productos
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('sales.index')}
-                    active={route().current('sales.index')}
-                  >
-                    Ventas y devoluciones
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('users.index')}
-                    active={route().current('users.index')}
-                  >
-                    Usuarios
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('refunds.index')}
-                    active={route().current('refunds.index')}
-                  >
-                    Devoluciones
-                  </ResponsiveNavLink>
-                  <ResponsiveNavLink
-                    href={route('logs.index')}
-                    active={route().current('logs.index')}
-                  >
-                    Transacciones
-                  </ResponsiveNavLink>
-                </div>
-                {/* Opciones de Configuración para móviles */}
-                <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
-                  <ResponsiveNavLink
-                    href={route('profile.show')}
-                    active={route().current('profile.show')}
-                  >
-                    Profile
-                  </ResponsiveNavLink>
-                  {page.props.jetstream.hasApiFeatures && (
-                    <ResponsiveNavLink
-                      href={route('api-tokens.index')}
-                      active={route().current('api-tokens.index')}
-                    >
-                      API Tokens
-                    </ResponsiveNavLink>
-                  )}
-                  <form method="POST" onSubmit={logout}>
-                    <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
-                  </form>
-                </div>
+                )}
+                <form method="POST" onSubmit={logout}>
+                  <ResponsiveNavLink as="button">Log Out</ResponsiveNavLink>
+                </form>
               </div>
             </div>
-          )}
-        </nav>
-
+          </div>
+        )}
+  
         {/* Page Heading */}
         {renderHeader && (
           <header className="bg-blue-500 dark:bg-gray-800 shadow">
@@ -334,18 +371,11 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
             </div>
           </header>
         )}
-
+  
         {/* Page Content */}
-        <main className="">
-          {children}
-          
-        </main>
+        <main>{children}</main>
         <AnimatedBackground />
-        {/* <div className="relative w-full h-screen flex items-center justify-center ">
-          <AnimatedBackground />
-        </div> */}
       </div>
     </div>
   );
-}
-
+} 

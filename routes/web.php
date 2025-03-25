@@ -92,4 +92,5 @@ Route::middleware([
      */
     // Ruta para ver los registros de auditoría
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
+    Route::put('/logs/{id}', [LogController::class, 'update'])->name('logs.update');
 });
