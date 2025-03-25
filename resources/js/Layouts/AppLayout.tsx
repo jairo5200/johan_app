@@ -76,7 +76,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                   {userAuth?.role?.trim().toLowerCase() !== "usuario" && (
                     <>
                       {/* Solo para super_admin */}
-                      {userAuth?.role?.trim().toLowerCase() === "super_admin" && (
+                      {userAuth?.role?.trim().toLowerCase() === "superadmin" && (
                         <>
                           <NavLink href={route("users.index")} active={route().current("users.index")}>
                             Usuarios

@@ -246,7 +246,6 @@ export default function SalesAndReturns({ products, sales }: any) {
         showAlert("Venta eliminada", "La venta se ha eliminado correctamente", "success")
           .then(() => {
             // Aquí podrías recargar la lista de ventas o actualizar el estado.
-            // Por ejemplo: router.reload();
           });
       },
       onError: (errors) => {
