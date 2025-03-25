@@ -18,7 +18,7 @@ export default function Dashboard({ products, salesDay, salesWeek, salesMonth, u
     return new Date(year, month - 1, day);
   };
   
-console.log(userAuth.role)
+
   // ----------------------
   // Gráficos superiores
   // ----------------------
