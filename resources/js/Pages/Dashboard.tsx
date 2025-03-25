@@ -4,7 +4,7 @@ import ChartComponent from "@/Components/ChartComponent";
 import ProductCard from "@/Components/ProductCard";
 import 'animate.css';
 
-export default function Dashboard({ products, salesDay, salesWeek, salesMonth, userAuth }: any) {
+export default function Dashboard({ products, salesDay, salesWeek, salesMonth, userAuth,notificacionesActivas }: any) {
   // Filtro para el gráfico dinámico
   const [filter, setFilter] = useState<"day" | "week" | "month">("month");
   // Para la tabla de ventas totales: rango de fechas y filtro de período
@@ -47,6 +47,7 @@ console.log(userAuth.role)
       annualData[idx] = Number(item.total_sales);
     }
   });
+
 
   // -----------------------------
   // (Opcional) Si querés seguir usando ventas mensuales consolidadas, lo de salesMonth:

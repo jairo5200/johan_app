@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('model'); // Nombre del modelo (Product, User, etc.)
             $table->text('old_values')->nullable(); // Valores antiguos (antes de la acción)
             $table->text('new_values')->nullable(); // Valores nuevos (después de la acción)
+            $table->string('state')->default('inactive');  // Estado del log, se establece 'inactive' por defecto
             $table->timestamp('created_at')->useCurrent(); // Fecha y hora de la transacción
             $table->timestamp('updated_at')->useCurrent(); // Fecha y hora de la transacción
         });
