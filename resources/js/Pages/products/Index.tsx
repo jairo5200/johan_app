@@ -70,7 +70,7 @@ export default function Products({ products }: any) {
     formData.append("image", editData.image); // Aquí editData.image es el archivo
   }
     
-    console.log(editData); // Depura el contenido del formulario
+    
     put(route('products.update', selectedProductForEdit.id), {
       onSuccess: () => {
         setShowEditModal(false);
