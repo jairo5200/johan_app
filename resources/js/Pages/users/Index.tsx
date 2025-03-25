@@ -122,7 +122,6 @@ export default function Users({ users }: any) {
                 <table className="w-full table-auto overflow-hidden border-collapse">
                   <thead>
                     <tr className="bg-gray-700/50 text-white">
-                      <th className="px-4 py-2 border-r border-b border-gray-300/50">ID Usuario</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300/50">Nombre</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300/50">Email</th>
                       <th className="px-4 py-2 border-r border-b border-gray-300/50">Role</th>
@@ -157,7 +156,7 @@ export default function Users({ users }: any) {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Eliminar Usuario</h2>
             <p>¿Estás seguro de que deseas eliminar a {selectedUser?.name}?</p>
@@ -170,7 +169,7 @@ export default function Users({ users }: any) {
       )}
 
       {showAddUserModal && (
-         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
         <Head title="Crear Usuario" />
             <div className="container mx-auto p-4">

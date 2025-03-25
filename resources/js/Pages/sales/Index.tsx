@@ -534,7 +534,7 @@ export default function SalesAndReturns({ products, sales }: any) {
       </div>
 
       {showSaleModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Carrito de Compras</h2>
             <form onSubmit={handleConfirmSale}>
@@ -674,7 +674,7 @@ export default function SalesAndReturns({ products, sales }: any) {
 
       {/* Modal para Registrar Devolución */}
       {showReturnModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-[500px] border border-gray-700">
             <h2 className="text-2xl font-bold mb-4">Registrar Devolución</h2>
             <form onSubmit={handleReturnSubmit}>

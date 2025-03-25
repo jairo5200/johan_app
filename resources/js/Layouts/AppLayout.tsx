@@ -201,7 +201,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                 <button
                   onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 transition duration-150"
-                >
+                > 
                   <svg
                     className="h-6 w-6"
                     stroke="currentColor"
@@ -251,7 +251,7 @@ export default function AppLayout({ title, renderHeader, children, }: PropsWithC
                 onClick={() => setShowingNavigationDropdown(false)}
               ></div>
               {/* Contenedor del menú */}
-              <div className="relative mx-4 mt-20 bg-blue-800 dark:bg-gray-800 rounded-lg p-4">
+              <div className="relative mx-20 mt-20 dark:bg-gray-800/80 rounded-lg p-4">
                 {/* Botón para cerrar */}
                 <div className="flex justify-end">
                   <button
