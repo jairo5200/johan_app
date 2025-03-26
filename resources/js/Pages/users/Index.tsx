@@ -27,6 +27,18 @@ export default function Users({ users, notificacionesActivas }: any) {
     }));
   };
 
+  const handleCloseModal = () => {
+  setShowAddUserModal(false);
+  setData({
+    name: "",
+    email: "",
+    role: "",
+    password: "",
+    confirmPassword: "",
+  });
+};
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +47,13 @@ export default function Users({ users, notificacionesActivas }: any) {
       preserveScroll: true, // Evita que la página haga un refresh inesperado
       onSuccess: () => {
         console.log('Usuario registrado con éxito');
+        setData({
+          name: "",
+          email: "",
+          role: "", // o el valor por defecto
+          password: "",
+          confirmPassword: "",
+        });
   
         showAlert("Usuario agregado", "El usuario se ha registrado correctamente", "success")
           .then(() => {
@@ -258,7 +277,7 @@ export default function Users({ users, notificacionesActivas }: any) {
                 </div>
 
                 <div className="flex justify-end mt-4">
-                <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={() => setShowAddUserModal(false)}>Cancelar</button>
+                <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={handleCloseModal}>Cancelar</button>
                 <button
                     type="submit"
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
