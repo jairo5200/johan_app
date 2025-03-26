@@ -4,6 +4,7 @@ import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default { // Habilita el modo oscuro a través de una clase
+  darkMode: 'class',
   content: [
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './vendor/laravel/jetstream/**/*.blade.php',
@@ -20,11 +21,11 @@ export default { // Habilita el modo oscuro a través de una clase
 
         // Puedes seguir usando tus colores para elementos específicos
         primary: {
-          light: '#D36135',  // Por ejemplo, fondo de botones o tarjetas
+            // Por ejemplo, fondo de botones o tarjetas
           dark: '#1a202c',   // Valor para modo oscuro
         },
         secondary: {
-          light: '#CE4257',  // Por ejemplo, para el navbar u otros elementos
+            // Por ejemplo, para el navbar u otros elementos
           dark: '#2d3748',   // Valor para modo oscuro
         },
       },

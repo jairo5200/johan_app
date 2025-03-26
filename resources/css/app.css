@@ -2,20 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer utilities {
-    @keyframes flicker {
-        0%, 100% {
-        box-shadow: 0 0 10px 2px rgba(255, 255, 0, 0.8);
-        }
-        50% {
-        box-shadow: 0 0 10px 2px rgba(255, 255, 0, 0.1);
-        }
-    }
-
-    .animate-flicker {
-        animation: flicker 1.5s infinite ease-in-out;
-    }
-} */
 
 @layer utilities {
     @keyframes small-flicker {
