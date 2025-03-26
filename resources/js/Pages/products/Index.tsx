@@ -266,9 +266,14 @@ export default function Products({ products, notificacionesActivas }: any) {
                 <div>
                   <BarraBusqueda setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
                 </div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddProduct}>
+                {isPrivileged ? (
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" onClick={handleAddProduct}>
                   Agregar Producto
-                </button>
+                  </button>
+                ): (
+                  <div></div>
+                )}
+                
               </div>
             </div>
             <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300">
@@ -349,89 +354,89 @@ export default function Products({ products, notificacionesActivas }: any) {
             {/* Modal Agregar Producto */}
             {showAddProductModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
-                  <h2 className="text-2xl font-bold mb-4">Agregar Producto</h2>
-                  <form onSubmit={handleSubmit}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Nombre del producto"
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="description"
-                      placeholder="Descripción"
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="price"
-                      value={price}
-                      placeholder="Precio"
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      name="stock"
-                      placeholder="Stock"
-                      className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
-                      onChange={handleChange}
-                    />
-                      <div className="col-sm">
-                          <div className="grid grid-cols-1  mx-7">
-                            <label className="uppercase md:text-m text-m font-semibold mb-1">Subir Imagen</label>
-                            <div className='flex items-center justify-center w-full'>
-                              <label className="flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group">
-                                {imagePreview ? (
-                                  <img
-                                    src={imagePreview}
-                                    alt="Vista previa"
-                                    className="w-full h-full object-contain cursor-pointer"
-                                    
+                    <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
+                      <h2 className="text-2xl font-bold mb-4">Agregar Producto</h2>
+                      <form onSubmit={handleSubmit}>
+                        <input
+                          type="text"
+                          name="name"
+                          placeholder="Nombre del producto"
+                          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                          onChange={handleChange}
+                        />
+                        <input
+                          type="text"
+                          name="description"
+                          placeholder="Descripción"
+                          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                          onChange={handleChange}
+                        />
+                        <input
+                          type="text"
+                          name="price"
+                          value={price}
+                          placeholder="Precio"
+                          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                          onChange={handleChange}
+                        />
+                        <input
+                          type="text"
+                          name="stock"
+                          placeholder="Stock"
+                          className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
+                          onChange={handleChange}
+                        />
+                          <div className="col-sm">
+                            <div className="grid grid-cols-1  mx-7">
+                              <label className="uppercase md:text-m text-m font-semibold mb-1">Subir Imagen</label>
+                              <div className='flex items-center justify-center w-full'>
+                                <label className="flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group">
+                                  {imagePreview ? (
+                                    <img
+                                      src={imagePreview}
+                                      alt="Vista previa"
+                                      className="w-full h-full object-contain cursor-pointer"
+                                      
+                                    />
+                                    ) : (
+                                    <div className="flex flex-col items-center justify-center pt-7">
+                                      <svg
+                                        className="w-10 h-10 text-purple-400 group-hover:text-purple-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        ></path>
+                                      </svg>
+                                      <p className="text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider">
+                                        Seleccione la imagen
+                                      </p>
+                                    </div>
+                                  )}
+                                  <input
+                                    name="image"
+                                    id="image"
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleChange}
                                   />
-                                  ) : (
-                                  <div className="flex flex-col items-center justify-center pt-7">
-                                    <svg
-                                      className="w-10 h-10 text-purple-400 group-hover:text-purple-600"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                      ></path>
-                                    </svg>
-                                    <p className="text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider">
-                                      Seleccione la imagen
-                                    </p>
-                                  </div>
-                                )}
-                                <input
-                                  name="image"
-                                  id="image"
-                                  type="file"
-                                  className="hidden"
-                                  accept="image/*"
-                                  onChange={handleChange}
-                                />
-                              </label>
+                                </label>
+                              </div>
                             </div>
                           </div>
-                      </div>
-                    <div className="flex justify-end mt-4">
-                      <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddProductModal}>Cancelar</button>
-                      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
+                        <div className="flex justify-end mt-4">
+                          <button className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onClick={closeAddProductModal}>Cancelar</button>
+                          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar</button>
+                        </div>
+                      </form>
                     </div>
-                  </form>
-                </div>
               </div>
             )}
             {/* Modal Editar Producto */}
