@@ -140,7 +140,7 @@ export default function Dashboard({ products, salesDay, salesWeek, salesMonth, u
     <AppLayout
       title="Dashboard"
       renderHeader={() => (
-        <h2 className="font-semibold text-xl text-amber-100 leading-tight animate__animated animate__slideInRight">
+        <h2 className="font-semibold text-xl text-amber-100 leading-tight">
           Dashboard
         </h2>
       )}
