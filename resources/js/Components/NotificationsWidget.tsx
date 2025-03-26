@@ -3,10 +3,11 @@ import { router } from '@inertiajs/core';
 
 interface Notification {
   id: number;
-  message: string;
+  action: string;           // "Venta Realizada"
   created_at: string;
   user_name?: string;
-  product?: string; // si se envía esta info
+  new_values?: string;      // Cadena JSON con los detalles del producto
+  // Puedes agregar otros campos si lo necesitas
 }
 
 interface NotificationsWidgetProps {
@@ -20,6 +21,7 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
   const [showRead, setShowRead] = useState(false);
 
   useEffect(() => {
+    console.log("Notificaciones recibidas:", notifications);
     setUnread(notifications);
     setRead([]);
   }, [notifications]);
@@ -31,10 +33,10 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
       if (marked) {
         setRead(prevRead => {
           const newRead = [marked, ...prevRead];
-          return newRead.slice(0, 10); // mantiene solo las 10 más recientes
+          return newRead.slice(0, 10); // conserva solo las 10 más recientes
         });
 
-        // Enviar la actualización al backend (cambiando el estado a inactivo)
+        // Enviar la actualización al backend para marcar como leído
         router.put(
           `/logs/${id}`,
           { state: 'inactive' },
@@ -53,6 +55,7 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
     });
   };
 
+  // Si no hay notificaciones, mostrar un mensaje
   if (!unread.length && !read.length) {
     return (
       <div className="p-4 text-sm text-gray-600 dark:text-gray-400">
@@ -61,6 +64,21 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
     );
   }
 
+  // Función para extraer información del producto desde new_values
+  const getProductInfo = (noti: Notification): string | null => {
+    if (noti.new_values) {
+      try {
+        const values = JSON.parse(noti.new_values);
+        if (Array.isArray(values) && values.length > 0) {
+          return values[0].product_name || null;
+        }
+      } catch (e) {
+        console.error("Error parseando new_values", e);
+      }
+    }
+    return null;
+  };
+
   return (
     <>
       <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">
@@ -68,32 +86,36 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
       </h3>
       {unread.length > 0 ? (
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {unread.map((noti) => (
-            <li key={noti.id} className="py-2 flex justify-between items-start">
-              <div>
-                <p className="text-gray-800 dark:text-gray-300">{noti.message}</p>
-                {noti.product && (
+          {unread.map((noti) => {
+            const productInfo = getProductInfo(noti);
+            return (
+              <li key={noti.id} className="py-2 flex justify-between items-start">
+                <div>
+                  {/* Muestra la acción, que es "Venta Realizada" */}
+                  <p className="text-gray-800 dark:text-gray-300">{noti.action}</p>
+                  {productInfo && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Producto: {productInfo}
+                    </p>
+                  )}
+                  {noti.user_name && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Por: {noti.user_name}
+                    </p>
+                  )}
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Producto: {noti.product}
+                    {new Date(noti.created_at).toLocaleString()}
                   </p>
-                )}
-                {noti.user_name && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Por: {noti.user_name}
-                  </p>
-                )}
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(noti.created_at).toLocaleString()}
-                </p>
-              </div>
-              <button 
-                onClick={() => markAsRead(noti.id)} 
-                className="ml-2 text-xs text-blue-500 hover:underline"
-              >
-                Marcar como leído
-              </button>
-            </li>
-          ))}
+                </div>
+                <button 
+                  onClick={() => markAsRead(noti.id)} 
+                  className="ml-2 text-xs text-blue-500 hover:underline"
+                >
+                  Marcar como leído
+                </button>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -110,24 +132,27 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
           </button>
           {showRead && (
             <ul className="mt-2 divide-y divide-gray-200 dark:divide-gray-700">
-              {read.map((noti) => (
-                <li key={noti.id} className="py-2">
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">{noti.message}</p>
-                  {noti.product && (
+              {read.map((noti) => {
+                const productInfo = getProductInfo(noti);
+                return (
+                  <li key={noti.id} className="py-2">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">{noti.action}</p>
+                    {productInfo && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Producto: {productInfo}
+                      </p>
+                    )}
+                    {noti.user_name && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Por: {noti.user_name}
+                      </p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Producto: {noti.product}
+                      {new Date(noti.created_at).toLocaleString()}
                     </p>
-                  )}
-                  {noti.user_name && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Por: {noti.user_name}
-                    </p>
-                  )}
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(noti.created_at).toLocaleString()}
-                  </p>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -137,6 +162,7 @@ const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({ notifications
 };
 
 export default NotificationsWidget;
+
 
 
 
