@@ -161,30 +161,6 @@ export default function Products({ products, notificacionesActivas }: any) {
       setImagePreview(imageUrl);
     }
     const { name, value, files } : any = e.target;
-    if (name === 'price') {
-      let inputValue = e.target.value;
-
-      // 2) Eliminamos todo lo que no sea dígito
-      const onlyDigits = inputValue.replace(/\D/g, '');
-
-      // 3) Convertimos a número
-      const numericValue = Number(onlyDigits);
-
-      // 4) Formateamos usando Intl.NumberFormat
-      //    Nota: Esto no maneja decimales, solo miles. Si quieres decimales, ajusta la lógica.
-      if (numericValue === 0) {
-        setPrice('');
-        return;
-      }
-      const formatted = new Intl.NumberFormat('es-CL').format(numericValue);
-
-      // 5) Agregamos el símbolo de moneda
-      setPrice(`$${formatted}`);
-      setData({
-        ...data,
-        [name]: formatted,
-      })
-    }
     if (name === 'image' && files) {
       // Si el campo es una imagen, actualizamos el archivo
       setData({
@@ -372,9 +348,8 @@ export default function Products({ products, notificacionesActivas }: any) {
                           onChange={handleChange}
                         />
                         <input
-                          type="text"
+                          type="number"
                           name="price"
-                          value={price}
                           placeholder="Precio"
                           className="block w-full mb-2 p-2 border rounded-lg bg-gray-800 text-white"
                           onChange={handleChange}

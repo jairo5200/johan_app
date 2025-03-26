@@ -100,3 +100,8 @@ button svg{
   background-color: rgb(31, 41, 55);
   background-image: none;
 }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
