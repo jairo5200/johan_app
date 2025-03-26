@@ -334,8 +334,8 @@ export default function Products({ products, notificacionesActivas }: any) {
 
             {/* Modal Eliminar Producto */}
             {showDeleteModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
                   <h2 className="text-2xl font-bold mb-4">Eliminar Producto</h2>
                   <p>¿Estás seguro de que deseas eliminar a {selectedProduct?.name}?</p>
                   <div className="flex justify-end mt-4">
@@ -348,8 +348,8 @@ export default function Products({ products, notificacionesActivas }: any) {
 
             {/* Modal Agregar Producto */}
             {showAddProductModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
                   <h2 className="text-2xl font-bold mb-4">Agregar Producto</h2>
                   <form onSubmit={handleSubmit}>
                     <input
@@ -436,8 +436,8 @@ export default function Products({ products, notificacionesActivas }: any) {
             )}
             {/* Modal Editar Producto */}
             {showEditModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
                   <h2 className="text-2xl font-bold mb-4">Editar Producto</h2>
                   <form onSubmit={handleEditSubmit}>
                     <input

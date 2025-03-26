@@ -156,8 +156,8 @@ export default function Users({ users, notificacionesActivas }: any) {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
             <h2 className="text-2xl font-bold mb-4">Eliminar Usuario</h2>
             <p>¿Estás seguro de que deseas eliminar a {selectedUser?.name}?</p>
             <div className="flex justify-end mt-4">
@@ -169,8 +169,8 @@ export default function Users({ users, notificacionesActivas }: any) {
       )}
 
       {showAddUserModal && (
-         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 animate__animated animate__zoomIn">
-          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700">
+         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-white w-96 border border-gray-700 animate__animated animate__zoomIn">
         <Head title="Crear Usuario" />
             <div className="container mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Agregar Usuario</h2>
