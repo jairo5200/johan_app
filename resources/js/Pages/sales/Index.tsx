@@ -28,7 +28,7 @@ type CartItem = {
 
 
 
-export default function SalesAndReturns({ products, sales }: any) {
+export default function SalesAndReturns({ products, sales, notificacionesActivas }: any) {
   // Estados para los modales generales
   const [showSaleModal, setShowSaleModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);

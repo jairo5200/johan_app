@@ -31,10 +31,16 @@ class ProductController extends Controller
         // Obtener los productos activos
         $products = Product::where('state', 'active')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React usando Inertia y pasar los productos como datos
         return Inertia::render('products/Index', [
             'products' => $products,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
     }
 

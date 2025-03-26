@@ -5,7 +5,7 @@ import useRoute from '@/Hooks/useRoute';
 import { showAlert } from "@/Components/Showalert2";
 import 'animate.css';
 
-export default function Users({ users }: any) {
+export default function Users({ users, notificacionesActivas }: any) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);

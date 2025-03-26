@@ -41,11 +41,17 @@ class SaleController extends Controller
         // Obtener los productos activos
         $products = Product::where('state', 'active')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React usando Inertia y pasar las ventas, productos y usuario
         return Inertia::render('sales/Index', [
             'sales' => $sales,
             'products' => $products,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
     }
 

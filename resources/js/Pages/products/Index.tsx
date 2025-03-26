@@ -8,7 +8,7 @@ import { showAlert } from "@/Components/Showalert2";
 import 'animate.css';
 import { usePage } from '@inertiajs/react';
 
-export default function Products({ products }: any) {
+export default function Products({ products, notificacionesActivas }: any) {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10; // Elementos por página

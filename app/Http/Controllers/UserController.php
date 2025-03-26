@@ -55,10 +55,16 @@ class UserController extends Controller
         // Obtener todos los usuarios activos
         $users = User::where('state', 'active')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React usando Inertia y pasar los usuarios y el usuario autenticado
         return Inertia::render('users/Index', [
             'users' => $users,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
     }
 

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import 'animate.css';
 
-export default function Refunds({ refunds }: any) {
+export default function Refunds({ refunds, notificacionesActivas }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('hoy');
 

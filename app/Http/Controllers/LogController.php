@@ -55,11 +55,43 @@ class LogController extends Controller
         // Obtener todos los logs ordenados por fecha de creación (descendente)
         $logs = Log::orderBy('created_at', 'desc')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React utilizando Inertia y pasar los datos necesarios al front-end
         return Inertia::render('logs/Index', [
             'logs' => $logs,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
+    }
+
+    /**
+     * Actualiza el estado de un log específico a "inactive".
+     * 
+     * Este método busca un log en la base de datos por su ID, y luego cambia su estado a 'inactive'. 
+     * Después de realizar este cambio, guarda el registro actualizado en la base de datos.
+     * 
+     * @param int $id El ID del log a actualizar.
+     * 
+     * Autor: Jairo Bastidas
+     * Fecha de creación: 2025-03-25
+     */
+    public function update($id)
+    {
+        // Obtener el log por su ID. Si no se encuentra, se lanzará una excepción 404.
+        // Este método busca el registro en la base de datos utilizando el ID proporcionado.
+        $log = Log::findOrFail($id);
+
+        // Cambiar el estado del log a 'inactive'.
+        // Este cambio refleja que el log ya no está activo o que ha sido desactivado por alguna razón.
+        $log->state = 'inactive';
+
+        // Guardar el log con el nuevo estado 'inactive' en la base de datos.
+        // El método 'save' persistirá los cambios realizados en el objeto 'Log'.
+        $log->save();
     }
 
 }

@@ -32,10 +32,16 @@ class RefundController extends Controller
         // Obtener todos los reembolsos ordenados por la fecha de manera descendente
         $refunds = Refund::orderBy('created_at', 'asc')->get();
 
+        $notificacionesActivas = [];
+        if ($userAuth->role == 'super_admin') {
+            $notificacionesActivas = Log::where('state', 'active')->get();
+        }
+
         // Devolver la vista React usando Inertia y pasar los reembolsos y el usuario
         return Inertia::render('refunds/Index', [
             'refunds' => $refunds,
             'userAuth' => $userAuth,
+            'notificacionesActivas' => $notificacionesActivas,
         ]);
     }
 
