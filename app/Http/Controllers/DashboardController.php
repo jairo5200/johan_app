@@ -82,8 +82,8 @@ class DashboardController extends Controller
         ->orderBy('month')
         ->get();
 
-        // Obtener los productos activos
-        $products = Product::where('state', 'active')->get();
+        // Obtener los productos activos con stock menor a 5
+        $products = Product::where('state', 'active')->where('stock', '<', 6)->get();
 
         $notificacionesActivas = [];
         if ($userAuth->role == 'super_admin') {
