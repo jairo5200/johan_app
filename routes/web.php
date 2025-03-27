@@ -32,19 +32,18 @@ Route::get('/', function () {
 
 // Ruta de logout, fuera del grupo protegido
 Route::post('/logout', function () {
-    Auth::logout();  // Cerrar sesión del usuario
-    // Borrar cualquier cookie de sesión
-    session()->invalidate();
-    session()->regenerateToken();
+    Auth::logout(); // logout user
+    Session::flush();
+    Redirect::back();
     return redirect('/');  // Redirigir al login o página principal
 })->name('logout');
 
 // Rutas protegidas por autenticación y con middleware de prevención de caché
 Route::middleware([
+    'preventCache',
     'auth:sanctum',  // Middleware que protege la ruta con autenticación de Sanctum
     config('jetstream.auth_session'), // Middleware para la sesión de Jetstream
     'verified', // Verifica que el usuario haya confirmado su correo
-    'preventCache', // Agregamos el middleware de prevenir caché
 ])->group(function () {
 
     /**
@@ -102,3 +101,5 @@ Route::middleware([
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
     Route::put('/logs/{id}', [LogController::class, 'update'])->name('logs.update');
 });
+
+

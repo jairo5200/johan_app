@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class PreventCacheMiddleware
 {
@@ -17,16 +16,9 @@ class PreventCacheMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Obtener la respuesta original
-        $response = $next($request);
-
-        // Añadir encabezados para prevenir cache
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-        $response->headers->set('Surrogate-Control', 'no-store');
-
-        // Retornar la respuesta con los encabezados de caché modificados
-        return $response;
+        $response=$next($request);
+        return $response->header('Cache-Control','nocache,no-store,max-age=0,must-revalidate')
+            ->header('Pragma','no-cache')
+            ->header('Expires','Sun, 02 Jan 1990 00:00:00 GMT');
     }
 }

@@ -38,8 +38,6 @@ export default function AppLayout({
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-  const { props } = usePage();
-  const [userAuth, setUserAuth] = useState(props.auth.user || null);
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -52,11 +50,22 @@ export default function AppLayout({
 
   function logout(e: React.FormEvent) {
     e.preventDefault();
+  
+    // Realiza el logout
     router.post(route('logout'));
-    setUserAuth(null);
+  
+    // Cambia el estado del historial para evitar volver atrás
+    window.history.pushState(null, '', window.location.href);
+    window.onpopstate = function () {
+      window.history.pushState(null, '', window.location.href);
+    };
+  
+    // Redirige a la página de login
+    router.get(route('/'));
   }
 
-
+  const { props } = usePage();
+  const userAuth = props.auth.user;
   // Se asume que 'notificacionesActivas' se envía desde el backend
   const notificacionesActivas: Notification[] = props.notificacionesActivas || [];
 
@@ -380,8 +389,8 @@ export default function AppLayout({
   
         {/* Page Heading */}
         {renderHeader && (
-          <header className="bg-blue-500 dark:bg-gray-800 shadow overflow-hidden">
-            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 animate__animated animate__slideInRight">
+          <header className="bg-blue-500 dark:bg-gray-800 shadow">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
               {renderHeader()}
             </div>
           </header>

@@ -25,6 +25,9 @@ export default function Login({ canResetPassword, status }: Props) {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     form.post(route('login'), {
+      onSuccess: () => {
+        // Guardar en localStorage para indicar que el usuario está logueado
+        localStorage.setItem('isLoggedIn', '1')},
       onFinish: () => form.reset('password'),
     });
   }
