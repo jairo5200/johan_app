@@ -43,7 +43,8 @@ Route::middleware([
     'preventCache',
     'auth:sanctum',  // Middleware que protege la ruta con autenticación de Sanctum
     config('jetstream.auth_session'), // Middleware para la sesión de Jetstream
-    'verified', // Verifica que el usuario haya confirmado su correo
+    'verified',
+    'throttle:2' // Verifica que el usuario haya confirmado su correo
 ])->group(function () {
 
     /**
