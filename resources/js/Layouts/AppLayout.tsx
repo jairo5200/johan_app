@@ -380,8 +380,8 @@ export default function AppLayout({
   
         {/* Page Heading */}
         {renderHeader && (
-          <header className="bg-blue-500 dark:bg-gray-800 shadow">
-            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <header className="bg-blue-500 dark:bg-gray-800 shadow overflow-hidden">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 animate__animated animate__slideInRight">
               {renderHeader()}
             </div>
           </header>
