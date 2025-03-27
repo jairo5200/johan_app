@@ -46,16 +46,15 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 
   return (
     <ActionSection
-      title={'Browser Sessions'}
+      title={'Sesiones del navegador'}
       description={
-        'Manage and log out your active sessions on other browsers and devices.'
+        'Administre y cierre sesión en sus sesiones activas en otros navegadores y dispositivos.'
       }
     >
       <div className="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-        If necessary, you may log out of all of your other browser sessions
-        across all of your devices. Some of your recent sessions are listed
-        below; however, this list may not be exhaustive. If you feel your
-        account has been compromised, you should also update your password.
+        Si es necesario, puede cerrar sesión en todas sus demás sesiones de navegador en todos sus dispositivos. 
+        A continuación, se enumeran algunas de sus sesiones recientes; sin embargo, esta lista puede no ser exhaustiva. 
+        Si cree que su cuenta ha sido vulnerada, también debería actualizar su contraseña.
       </div>
 
       {/* <!-- Other Browser Sessions --> */}
@@ -104,7 +103,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
                     {session.ip_address},
                     {session.is_current_device ? (
                       <span className="text-green-500 font-semibold">
-                        This device
+                        Este dispositivo
                       </span>
                     ) : (
                       <span>Last active {session.last_active}</span>
@@ -119,7 +118,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 
       <div className="flex items-center mt-5">
         <PrimaryButton onClick={confirmLogout}>
-          Log Out Other Browser Sessions
+          Cerrar sesión en otras sesiones del navegador
         </PrimaryButton>
 
         <ActionMessage on={form.recentlySuccessful} className="ml-3">
@@ -129,14 +128,14 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 
       {/* <!-- Log Out Other Devices Confirmation Modal --> */}
       <DialogModal isOpen={confirmingLogout} onClose={closeModal}>
-        <DialogModal.Content title={'Log Out Other Browser Sessions'}>
-          Please enter your password to confirm you would like to log out of
-          your other browser sessions across all of your devices.
+        <DialogModal.Content title={'Cerrar sesión en otras sesiones del navegador'}>
+          Ingrese su contraseña para confirmar que desea cerrar sesión 
+          en sus otros navegadores en todos sus dispositivos.
           <div className="mt-4">
             <TextInput
               type="password"
               className="mt-1 block w-3/4"
-              placeholder="Password"
+              placeholder="Contraseña"
               ref={passwordRef}
               value={form.data.password}
               onChange={e => form.setData('password', e.currentTarget.value)}
@@ -154,7 +153,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
             className={classNames('ml-2', { 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Log Out Other Browser Sessions
+            Cerrar sesión en otras sesiones del navegador
           </PrimaryButton>
         </DialogModal.Footer>
       </DialogModal>

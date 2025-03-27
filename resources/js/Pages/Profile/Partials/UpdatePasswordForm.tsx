@@ -8,6 +8,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { showAlert } from '@/Components/Showalert2';
 
 export default function UpdatePasswordForm() {
   const route = useRoute();
@@ -41,27 +42,27 @@ export default function UpdatePasswordForm() {
   return (
     <FormSection
       onSubmit={updatePassword}
-      title={'Update Password'}
+      title={'Actualizar Contraseña'}
       description={
-        'Ensure your account is using a long, random password to stay secure.'
+        'Asegúrese de que su cuenta esté utilizando una contraseña larga y aleatoria para mantenerse seguro.'
       }
       renderActions={() => (
         <>
           <ActionMessage on={form.recentlySuccessful} className="mr-3">
-            Saved.
+            Guardado.
           </ActionMessage>
 
           <PrimaryButton
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Save
+            Guardar
           </PrimaryButton>
         </>
       )}
     >
       <div className="col-span-6 sm:col-span-4">
-        <InputLabel htmlFor="current_password">Current Password</InputLabel>
+        <InputLabel htmlFor="current_password">Contraseña Actual</InputLabel>
         <TextInput
           id="current_password"
           type="password"
@@ -77,7 +78,7 @@ export default function UpdatePasswordForm() {
       </div>
 
       <div className="col-span-6 sm:col-span-4">
-        <InputLabel htmlFor="password">New Password</InputLabel>
+        <InputLabel htmlFor="password">Nueva Contraseña</InputLabel>
         <TextInput
           id="password"
           type="password"
@@ -92,7 +93,7 @@ export default function UpdatePasswordForm() {
 
       <div className="col-span-6 sm:col-span-4">
         <InputLabel htmlFor="password_confirmation">
-          Confirm Password
+          Confirmar Contraseña
         </InputLabel>
         <TextInput
           id="password_confirmation"

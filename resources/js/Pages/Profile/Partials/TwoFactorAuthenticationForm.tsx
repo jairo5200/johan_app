@@ -107,38 +107,38 @@ export default function TwoFactorAuthenticationForm({
 
   return (
     <ActionSection
-      title={'Two Factor Authentication'}
+      title={'Autenticación de Dos Factores'}
       description={
-        'Add additional security to your account using two factor authentication.'
+        'Agregue seguridad adicional a su cuenta utilizando la autenticación de dos factores.'
       }
     >
       {(() => {
         if (twoFactorEnabled && !confirming) {
           return (
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              You have enabled two factor authentication.
+              Ha habilitado la autenticación de dos factores.
             </h3>
           );
         }
         if (confirming) {
           return (
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Finish enabling two factor authentication.
+              Terminar de habilitar la autenticación de dos factores.
             </h3>
           );
         }
         return (
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            You have not enabled two factor authentication.
+            No ha habilitado la autenticación de dos factores.
           </h3>
         );
       })()}
 
       <div className="mt-3 max-w-xl text-sm text-gray-600 dark:text-gray-400">
         <p>
-          When two factor authentication is enabled, you will be prompted for a
-          secure, random token during authentication. You may retrieve this
-          token from your phone's Google Authenticator application.
+          Cuando la autenticación de dos factores esté habilitada, 
+          se te solicitará un token aleatorio y seguro durante la autenticación. 
+          Puedes obtener este token desde la aplicación Google Authenticator de tu teléfono.
         </p>
       </div>
 
@@ -149,16 +149,15 @@ export default function TwoFactorAuthenticationForm({
               <div className="mt-4 max-w-xl text-sm text-gray-600 dark:text-gray-400">
                 {confirming ? (
                   <p className="font-semibold">
-                    To finish enabling two factor authentication, scan the
-                    following QR code using your phone's authenticator
-                    application or enter the setup key and provide the generated
-                    OTP code.
+                    Para finalizar la activación de la autenticación de dos factores, 
+                    escanee el siguiente código QR con la aplicación de autenticación de su teléfono 
+                    o ingrese la clave de configuración y proporcione el código OTP generado.
                   </p>
                 ) : (
                   <p>
-                    Two factor authentication is now enabled. Scan the following
-                    QR code using your phone's authenticator application or
-                    enter the setup key.
+                    La autenticación de dos factores ya está habilitada. 
+                    Escanea el siguiente código QR con la aplicación de autenticación 
+                    de tu teléfono o introduce la clave de configuración.
                   </p>
                 )}
               </div>
@@ -210,9 +209,9 @@ export default function TwoFactorAuthenticationForm({
             <div>
               <div className="mt-4 max-w-xl text-sm text-gray-600 dark:text-gray-400">
                 <p className="font-semibold">
-                  Store these recovery codes in a secure password manager. They
-                  can be used to recover access to your account if your two
-                  factor authentication device is lost.
+                  Guarda estos códigos de recuperación en un gestor de contraseñas seguro. 
+                  Pueden usarse para recuperar el acceso a tu cuenta si pierdes 
+                  tu dispositivo de autenticación de dos factores.
                 </p>
               </div>
 
@@ -235,21 +234,21 @@ export default function TwoFactorAuthenticationForm({
                   className={classNames('mr-3', { 'opacity-25': enabling })}
                   disabled={enabling}
                 >
-                  Confirm
+                  Confirmar
                 </PrimaryButton>
               </ConfirmsPassword>
             ) : null}
             {recoveryCodes.length > 0 && !confirming ? (
               <ConfirmsPassword onConfirm={regenerateRecoveryCodes}>
                 <SecondaryButton className="mr-3">
-                  Regenerate Recovery Codes
+                  Regenerar códigos de recuperación
                 </SecondaryButton>
               </ConfirmsPassword>
             ) : null}
             {recoveryCodes.length === 0 && !confirming ? (
               <ConfirmsPassword onConfirm={showRecoveryCodes}>
                 <SecondaryButton className="mr-3">
-                  Show Recovery Codes
+                  Mostrar códigos de recuperación
                 </SecondaryButton>
               </ConfirmsPassword>
             ) : null}
@@ -260,7 +259,7 @@ export default function TwoFactorAuthenticationForm({
                   className={classNames('mr-3', { 'opacity-25': disabling })}
                   disabled={disabling}
                 >
-                  Cancel
+                  Cancelar
                 </SecondaryButton>
               </ConfirmsPassword>
             ) : (
@@ -269,7 +268,7 @@ export default function TwoFactorAuthenticationForm({
                   className={classNames({ 'opacity-25': disabling })}
                   disabled={disabling}
                 >
-                  Disable
+                  Desactivar
                 </DangerButton>
               </ConfirmsPassword>
             )}
@@ -282,7 +281,7 @@ export default function TwoFactorAuthenticationForm({
                 className={classNames({ 'opacity-25': enabling })}
                 disabled={enabling}
               >
-                Enable
+                Activar
               </PrimaryButton>
             </ConfirmsPassword>
           </div>

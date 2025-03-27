@@ -19,8 +19,6 @@ export const showAlert = (
     showCancelButton: false,
     allowOutsideClick: false,
     allowEscapeKey: false,
-    didOpen: () => console.log("Alerta mostrada"),
-    didClose: () => console.log("Alerta cerrada"),
   });
 };
 
