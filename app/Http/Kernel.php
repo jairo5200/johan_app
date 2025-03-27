@@ -67,4 +67,14 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    /**
+     * Los middleware de ruta.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $routeMiddleware = [
+        // Otros middleware...
+        'preventCache' => \App\Http\Middleware\PreventCacheMiddleware::class,  // Aquí agregamos nuestro middleware personalizado
+    ];
 }

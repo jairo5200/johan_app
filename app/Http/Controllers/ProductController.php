@@ -25,6 +25,7 @@ class ProductController extends Controller
      */
     public function index()
     {
+        
         // Obtener el usuario autenticado que realiza la acción
         $userAuth = User::findOrFail(Auth::id());
 
@@ -87,7 +88,9 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('img'), $imageName);
+
+            // Cambiar la ruta de destino de la imagen para guardarla en 'public_html/img'
+            $image->move(public_path('../public_html/img'), $imageName);
         }
 
         // Crear el nuevo producto con la imagen guardada
@@ -240,8 +243,10 @@ class ProductController extends Controller
             'updated_at' => now(),
         ]);
 
-        if (file_exists(public_path($product->image))) {
-            unlink(public_path($product->image));
+        $path = public_path('../public_html/img/' . $product->image);
+
+        if (file_exists($path)) {
+            unlink($path);
         }
 
         $product->name = time() . '_'.$product->name;

@@ -29,7 +29,7 @@ export default function ProductItem({
       <tr className="text-center text-white bg-gray-800/60 border-gray-300">
         <td className="px-4 py-2 border-b border-r border-gray-300">
           <img
-            src={`../public/img/${product.image}`}
+            src={`/img/${product.image}`}
             alt={product.name}
             className="w-[3rem] h-[3rem] cursor-pointer"
             onClick={() => setIsOpen(true)}
