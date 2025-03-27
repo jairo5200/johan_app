@@ -11,15 +11,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 /*
-|---------------------------------------------------------------------------
-| Web Routes
-|---------------------------------------------------------------------------
-| Aquí es donde puedes registrar las rutas web para tu aplicación. Estas
-| rutas son cargadas por el RouteServiceProvider dentro de un grupo que
-| contiene el middleware "web". ¡Ahora crea algo increíble!
-|
-| Autor: Jairo Bastidas
-| Fecha de creación: 2025-03-21
+|---------------------------------------------------------------------------|
+| Web Routes                                                                |
+|---------------------------------------------------------------------------|
+| Aquí es donde puedes registrar las rutas web para tu aplicación. Estas   |
+| rutas son cargadas por el RouteServiceProvider dentro de un grupo que     |
+| contiene el middleware "web". ¡Ahora crea algo increíble!                  |
+| Autor: Jairo Bastidas                                                      |
+| Fecha de creación: 2025-03-21                                              |
 */
 
 Route::get('/', function () {
@@ -31,11 +30,21 @@ Route::get('/', function () {
     ]);
 });
 
-// Rutas protegidas por autenticación
+// Ruta de logout, fuera del grupo protegido
+Route::post('/logout', function () {
+    Auth::logout();  // Cerrar sesión del usuario
+    // Borrar cualquier cookie de sesión
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect('/');  // Redirigir al login o página principal
+})->name('logout');
+
+// Rutas protegidas por autenticación y con middleware de prevención de caché
 Route::middleware([
     'auth:sanctum',  // Middleware que protege la ruta con autenticación de Sanctum
     config('jetstream.auth_session'), // Middleware para la sesión de Jetstream
     'verified', // Verifica que el usuario haya confirmado su correo
+    'preventCache', // Agregamos el middleware de prevenir caché
 ])->group(function () {
 
     /**
@@ -77,7 +86,6 @@ Route::middleware([
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
     // Ruta para eliminar una venta por su ID
     Route::delete('/sales/{id}', [SaleController::class, 'destroy'])->name('sales.destroy');
-
 
     /**
      * Rutas para gestionar reembolsos

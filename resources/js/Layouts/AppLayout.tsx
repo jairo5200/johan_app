@@ -38,6 +38,8 @@ export default function AppLayout({
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+  const { props } = usePage();
+  const [userAuth, setUserAuth] = useState(props.auth.user || null);
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -51,10 +53,10 @@ export default function AppLayout({
   function logout(e: React.FormEvent) {
     e.preventDefault();
     router.post(route('logout'));
+    setUserAuth(null);
   }
 
-  const { props } = usePage();
-  const userAuth = props.auth.user;
+
   // Se asume que 'notificacionesActivas' se envía desde el backend
   const notificacionesActivas: Notification[] = props.notificacionesActivas || [];
 
